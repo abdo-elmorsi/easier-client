@@ -1,1 +1,1 @@
-# gym-edge3
+# Easier
