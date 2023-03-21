@@ -1,4 +1,6 @@
 require("./db/mongoose");
+const errorHandler = require("./middlewares/errorHandler");
+
 const express = require("express");
 // to user hot reload
 const morgan = require("morgan");
@@ -11,11 +13,16 @@ const cors = require("cors");
 // to use cookies
 const cookieParser = require("cookie-parser");
 
+
+
 // routes
-const authRoutes = require("../routers/auth");
+const UserRoutes = require("../routers/user");
 
 const app = express();
 dotenv.config();
+
+app.use(errorHandler);
+
 
 //middleWares
 app.use((req, res, next) => {
@@ -33,9 +40,9 @@ app.use(
 );
 
 // routers
-app.use("/api/auth", authRoutes);
+app.use("/users", UserRoutes);
 
-app.get("/api", async (req, res) => {
+app.get("/", async (req, res) => {
     res.send("<h1>Welcome Abdo</h1>");
 });
 

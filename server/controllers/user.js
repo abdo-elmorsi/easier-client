@@ -1,67 +1,121 @@
-const User = require("../models/User");
-const bcrypt = require("bcrypt");
+const User = require("../models/user");
+const cloudinary = require("cloudinary").v2;
 
-const getAllUsers = async (req, res) => {
+const signUp = async (req, res) => {
     try {
-        const user = await User.findById(req.body.userId);
-        if (user.isAdmin) {
-            const users = await User.find();
-            res.status(200).json(users);
-        } else {
-            res.status(403).json(user);
-        }
+        const { name, email, password, phoneNumber, role } = req.body;
+        const user = new User({
+            name,
+            email,
+            password,
+            phoneNumber,
+            role,
+        });
+        await user.save();
+        if (!user)
+            return res.status(400).json({ message: "failed to signup!" });
+
+        const token = user.generateAuthToken();
+        return res.status(201).json({ user, token });
     } catch (error) {
-        return res.status(500).json(error.message);
+        return res.status(400).json({ message: error.message });
     }
 };
 
-const getUser = async (req, res) => {
+const signIn = async (req, res) => {
     try {
-        const user = await User.findById(req.params.id);
-        const { createdAt, updatedAt, password, __v, ...others } = user._doc;
-        res.status(200).json(others);
+        const { email, password } = req.body;
+        if (!email || !password)
+            return res
+                .status(400)
+                .json({ message: "email and password are required!" });
+
+        const user = await User.findUser(email, password);
+        if (!user)
+            return res
+                .status(400)
+                .json({ message: "wrong email or password!" });
+
+        const token = await user.generateAuthToken();
+        return res.status(200).send({ user, token });
     } catch (error) {
-        return res.status(500).json(error);
+        return res.status(400).json({ message: error.message });
     }
 };
 
-const updateUser = async (req, res) => {
-    if (req.body.userId === req.params.id || req.body.isAdmin) {
-        if (req.body.password) {
-            try {
-                const salt = await bcrypt.genSalt(10);
-                req.body.password = await bcrypt.hash(req.body.password, salt);
-            } catch (error) {
-                return res.status(500).json(error.message);
-            }
-        }
-        try {
-            await User.findByIdAndUpdate(req.params.id, { $set: req.body });
-            res.status(200).json("User Updated");
-        } catch (error) {
-            return res.status(500).json(error.message);
-        }
-    } else {
-        res.status(403).json("You can update only your account!");
+const getProfile = async (req, res) => {
+    try {
+        const { user } = req;
+        return res.status(200).json({ user });
+    } catch (error) {
+        return res.status(400).json({ message: error.message });
     }
 };
 
-const deleteUser = async (req, res) => {
-    if (req.body.userId === req.params.id || req.body.isAdmin) {
-        try {
-            await User.findOneAndDelete(req.params.id);
-            res.status(200).json("User Deleted");
-        } catch (error) {
-            return res.status(500).json(error.message);
+const deleteProfile = async (req, res) => {
+    try {
+        const { _id } = req.user;
+        const user = await User.findByIdAndDelete(_id);
+        return res.status(200).json({ user });
+    } catch (error) {
+        return res.status(400).json({ message: error.message });
+    }
+};
+
+const updateProfile = async (req, res) => {
+    try {
+        const { name, email, password, phoneNumber } = req.body;
+        const { _id } = req.user;
+
+        const user = await User.findByIdAndUpdate(
+            _id,
+            { name, email, password, phoneNumber },
+            { new: true, runValidators: true }
+        );
+        if (!user) {
+            return res
+                .status(400)
+                .json({ message: "error while updating a user" });
         }
-    } else {
-        res.status(403).json("You can update only your account!");
+
+        return res.status(200).json({ user });
+    } catch (error) {
+        return res.status(400).json({ message: error.message });
+    }
+};
+
+const uploadProfilePic = async (req, res) => {
+    try {
+        const { user, file } = req;
+
+        cloudinary.config({
+            cloud_name: process.env.cloud_name,
+            api_key: process.env.api_key,
+            api_secret: process.env.api_secret,
+        });
+
+        const { public_id, secure_url } = await cloudinary.uploader.upload(
+            file.path
+        );
+        user.profile_picture = {
+            public_id,
+            secure_url,
+        };
+        if (!public_id || !secure_url)
+            return res.status(400).json({ message: "uploaded failed" });
+
+        await user.save();
+        return res.status(200).json({ message: "uploaded successfully" });
+    } catch (error) {
+        return res.status(400).json({ message: error.message });
     }
 };
 
 module.exports = {
-    getAllUsers,
-    getUser,
-    updateUser,
-    deleteUser,
+    signUp: signUp,
+    signIn: signIn,
+    getProfile: getProfile,
+    deleteProfile: deleteProfile,
+    updateProfile: updateProfile,
+    uploadProfilePic: uploadProfilePic,
 };
