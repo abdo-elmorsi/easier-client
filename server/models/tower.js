@@ -8,15 +8,14 @@ const TowerSchema = new mongoose.Schema(
         },
         address: {
             type: String,
-            required: [true, "Tower address is required!"],
+            required: false,
         },
-        // vendor: {
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     required: true,
-        //     ref: "user",
-        // },
         floors: [
             {
+                name: {
+                    type: String,
+                    required: [true, "Flat name is required!"],
+                },
                 flats: [
                     {
                         name: {
@@ -49,16 +48,40 @@ const TowerSchema = new mongoose.Schema(
                 ],
             },
         ],
+        shops: [
+            {
+                name: {
+                    type: String,
+                    required: [true, "Flat name is required!"],
+                },
+                rentPrice: {
+                    type: Number,
+                    required: [true, "Rent price is required!"],
+                },
+                userName: {
+                    type: String,
+                    required: [true, "Username is required!"],
+                    default: "user",
+                },
+                password: {
+                    type: String,
+                    required: true,
+                    minlength: [6, "Password must be more than 6 characters"],
+                    // default: this.name,
+                },
+            },
+        ],
     },
     {
         timestamps: true,
     }
 );
 
-TowerSchema.pre("save", async function (next) {
-    this.password = this.name;
-    next();
-});
-const Tower = mongoose.model("tower", TowerSchema);
+// TowerSchema.pre("save", async function (next) {
+//     this.password = this.name;
+//     next();
+// });
+
+const Tower = mongoose.model("Tower", TowerSchema);
 
 module.exports = Tower;

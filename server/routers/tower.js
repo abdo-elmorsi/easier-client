@@ -1,18 +1,21 @@
 const router = require("express").Router();
+const { auth } = require("../src/middlewares/auth");
 
 const {
     createTower,
     updateTower,
-    getTower
+    getAllTowers,
+    getTower,
 } = require("../controllers/tower");
 
 // router.post("/", createTower);
 // router.post("/signIn", signIn);
 router
     .route("/")
-    .post(createTower)
-    .get(getTower)
-    .put(updateTower)
-    // .delete(auth, deleteProfile);
+    .post(auth, createTower)
+    .get(auth, getAllTowers)
+    .put(auth, updateTower);
+router.route("/:id").get(auth, getTower);
+// .delete(auth, deleteProfile);
 
 module.exports = router;
