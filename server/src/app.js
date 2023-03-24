@@ -17,6 +17,7 @@ const cookieParser = require("cookie-parser");
 
 // routes
 const UserRoutes = require("../routers/user");
+const TowerRoutes = require("../routers/tower");
 
 const app = express();
 dotenv.config();
@@ -41,6 +42,7 @@ app.use(
 
 // routers
 app.use("/users", UserRoutes);
+app.use("/towers", TowerRoutes);
 
 app.get("/", async (req, res) => {
     res.send("<h1>Welcome Abdo</h1>");

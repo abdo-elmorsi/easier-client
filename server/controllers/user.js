@@ -3,18 +3,16 @@ const cloudinary = require("cloudinary").v2;
 
 const signUp = async (req, res) => {
     try {
-        const { name, email, password, phoneNumber, role } = req.body;
+        const { userName, email, phoneNumber, password } = req.body;
         const user = new User({
-            name,
+            userName,
             email,
-            password,
             phoneNumber,
-            role,
+            password
         });
         await user.save();
         if (!user)
             return res.status(400).json({ message: "failed to signup!" });
-
         const token = user.generateAuthToken();
         return res.status(201).json({ user, token });
     } catch (error) {
@@ -31,6 +29,7 @@ const signIn = async (req, res) => {
                 .json({ message: "email and password are required!" });
 
         const user = await User.findUser(email, password);
+        console.log("user");
         if (!user)
             return res
                 .status(400)
