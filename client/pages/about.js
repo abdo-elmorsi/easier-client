@@ -1,7 +1,7 @@
 import Head from "next/head";
 import React from "react";
 
-const about = () => {
+const About = () => {
   return (
     <>
       <Head>
@@ -12,4 +12,4 @@ const about = () => {
   );
 };
 
-export default about;
+export default About;

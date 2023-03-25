@@ -9,9 +9,16 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.13",
+    "@heroicons/react": "^2.0.16",
+    "@reduxjs/toolkit": "^1.9.3",
+    "install": "^0.13.0",
     "next": "^12.3.4",
+    "npm": "^9.6.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-redux": "^8.0.5",
+    "react-select": "^5.7.2",
     "react-toastify": "^9.1.2",
     "sass": "^1.60.0"
   },
