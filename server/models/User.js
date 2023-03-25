@@ -1,18 +1,21 @@
 const mongoose = require("mongoose");
+const Tower = require("./tower");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { ObjectId } = mongoose.Schema.Types;
 
 const userSchema = new mongoose.Schema(
     {
         userName: {
             type: String,
-            unique: true,
+            unique: false,
             required: [true, "Username is required!"],
         },
         email: {
             type: String,
             unique: true,
+            lowercase: true,
             required: [true, "Please provide your email"],
             validate(value) {
                 if (!validator.isEmail(value)) {
@@ -36,18 +39,17 @@ const userSchema = new mongoose.Schema(
             required: true,
             minlength: [6, "Password must be more than 6 chart"],
         },
-        tower: {
-            type: mongoose.Schema.ObjectId,
-            ref: "tower",
+        role: {
+            type: String,
+            enum: ["tenant", "admin"],
+            default: "tenant",
         },
-        // towers: [
-        //     {
-        //         tower: {
-        //             type: mongoose.Schema.ObjectId,
-        //             ref: "tower",
-        //         },
-        //     },
-        // ],
+        towers: [
+            {
+                type: ObjectId,
+                ref: "Tower",
+            },
+        ],
     },
     {
         timestamps: true,
@@ -63,16 +65,19 @@ userSchema.methods.toJSON = function () {
     return user;
 };
 
-// userSchema.virtual("tower", {
-//     ref: "tower",
+// userSchema.virtual("Tower", {
+//     ref: "Tower",
 //     localField: "_id", // what the local field equal here !! of curse id because we pass it as vendor
 //     foreignField: "vendor", // field name which create the relationship
 // });
 
-userSchema.pre(/^find/, function (next) {
-    this.populate("tower");
-    next();
-});
+// userSchema.pre(/^find/, function (next) {
+//     this.populate({
+//         path: "towers",
+//         select: "-_id -address -floors._id -floors.flats._id",
+//     });
+//     next();
+// });
 
 userSchema.statics.findUser = async (email, password) => {
     const user = await User.findOne({ email });
@@ -91,13 +96,13 @@ userSchema.methods.generateAuthToken = function () {
     return token;
 };
 
-userSchema.pre("save", async function (next) {
+userSchema.pre("save", async function (next) {    
     if (this.isModified("password")) {
         this.password = await bcrypt.hash(this.password, 8);
     }
-    next();
+    return next();
 });
 
-const User = mongoose.model("user", userSchema);
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;

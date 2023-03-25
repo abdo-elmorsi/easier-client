@@ -3,12 +3,13 @@ const cloudinary = require("cloudinary").v2;
 
 const signUp = async (req, res) => {
     try {
-        const { userName, email, phoneNumber, password } = req.body;
+        const { userName, email, phoneNumber, password, towers } = req.body;
         const user = new User({
             userName,
             email,
             phoneNumber,
-            password
+            password,
+            towers,
         });
         await user.save();
         if (!user)
