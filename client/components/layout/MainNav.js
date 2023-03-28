@@ -35,6 +35,16 @@ export default function MainNav() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    if (router.locale === "ar") {
+      document.documentElement.lang = "ar";
+      document.body.dir = "rtl";
+    } else {
+      document.documentElement.lang = "en";
+      document.body.dir = "ltr";
+    }
+  }, [router.locale]);
+
+  useEffect(() => {
     if (localStorage.getItem("theme") === "light") {
       dispatch(toggleTheme("light"));
       document.documentElement.classList.remove("dark");
@@ -59,11 +69,15 @@ export default function MainNav() {
   }, [router]);
 
   const selectLanguageHandler = (value) => {
-    console.log(value);
+    router.push(router.asPath, undefined, { locale: value });
   };
 
   return (
-    <Disclosure as="nav" className="dark:bg-gray-800 shadow-md">
+    <Disclosure
+      as="nav"
+      style={{ direction: "ltr" }}
+      className="dark:bg-gray-800 shadow-md"
+    >
       {({ open }) => (
         <>
           <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -114,7 +128,9 @@ export default function MainNav() {
               </div>
               <ReactSelect
                 options={selectOptions}
-                defaultValue={selectOptions[0]}
+                defaultValue={selectOptions.find(
+                  (ele) => ele.value === router.locale
+                )}
                 onSelectChange={selectLanguageHandler}
                 placeholder="Select a language"
                 isSearchable={false}

@@ -1,5 +1,6 @@
 import Head from "next/head";
 import React from "react";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 const About = () => {
   return (
@@ -13,3 +14,11 @@ const About = () => {
 };
 
 export default About;
+
+export async function getStaticProps({ locale }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
+}

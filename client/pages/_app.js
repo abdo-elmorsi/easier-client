@@ -1,3 +1,4 @@
+import { appWithTranslation } from 'next-i18next'
 import Head from "next/head";
 import "styles/globals.scss";
 import "react-toastify/dist/ReactToastify.css";
@@ -31,4 +32,4 @@ function MyApp({ Component, pageProps }) {
   );
 }
 
-export default MyApp;
+export default appWithTranslation(MyApp)
