@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema(
         },
         role: {
             type: String,
-            enum: ["tenant", "admin"],
+            enum: ["tenant", "admin", "superAdmin"],
             default: "tenant",
         },
         towers: [
@@ -74,7 +74,7 @@ userSchema.methods.toJSON = function () {
 // userSchema.pre(/^find/, function (next) {
 //     this.populate({
 //         path: "towers",
-//         select: "-_id -address -floors._id -floors.flats._id",
+//         // select: "-_id -address -floors._id -floors.flats._id",
 //     });
 //     next();
 // });
@@ -96,7 +96,7 @@ userSchema.methods.generateAuthToken = function () {
     return token;
 };
 
-userSchema.pre("save", async function (next) {    
+userSchema.pre("save", async function (next) {
     if (this.isModified("password")) {
         this.password = await bcrypt.hash(this.password, 8);
     }

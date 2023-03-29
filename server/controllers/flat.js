@@ -1,69 +1,81 @@
 const User = require("../models/user");
+const Flat = require("../models/flat");
 const Tower = require("../models/tower");
 
-const createTower = async (req, res) => {
+const createFlat = async (req, res) => {
     try {
-        const { name, address } = req.body;
-        const tower = new Tower({
-            name,
-            address,
+        const {
+            number,
+            floorNumber,
+            rentPrice,
+            maintenancePrice,
+            userName,
+            password,
+            tower,
+        } = req.body;
+        const flat = new Flat({
+            number,
+            floorNumber,
+            rentPrice,
+            maintenancePrice,
+            userName,
+            password,
+            tower,
         });
-        await tower.save();
-        // add the tower to the user
-        await req.user.updateOne({ $push: { towers: tower._id } });
-        return res.status(201).json(tower);
+        await flat.save();
+        return res.status(201).json(flat);
     } catch (error) {
         return res.status(400).json({ message: error.message });
     }
 };
-const getAllTowers = async (req, res) => {
+
+const getAllFlats = async (req, res) => {
     try {
         const { role } = req.user;
         if (role === "superAdmin" || role === "admin") {
-            const Towers = await Tower.find({});
-            return res.status(200).json({ Towers });
+            const flats = await Flat.find({});
+            return res.status(200).json({ flats });
         } else {
             return res.status(400).json({
-                message: "Your don't have permissions get towers",
+                message: "Your don't have permissions to get flats",
             });
         }
     } catch (error) {
         return res.status(400).json({ message: error.message });
     }
 };
-const getTower = async (req, res) => {
+const getFlat = async (req, res) => {
     try {
         const { role } = req.user;
         if (role === "superAdmin" || role === "admin") {
-            const Towers = await Tower.find({ _id: req.params.id });
-            return res.status(200).json({ Towers });
+            const flat = await Flat.find({ _id: req.params.id });
+            return res.status(200).json({ flat });
         } else {
             return res.status(400).json({
-                message: "Your don't have permissions get the tower",
+                message: "Your don't have permissions get the flat",
             });
         }
     } catch (error) {
         return res.status(400).json({ message: error.message });
     }
 };
-const deleteTower = async (req, res) => {
+const deleteFlat = async (req, res) => {
     try {
         const { role } = req.user;
         if (role === "superAdmin" || role === "admin") {
-            const tower = await Tower.findByIdAndDelete(req.params.id);
-            if (!tower) {
-                return res.status(404).json({ message: "Tower not found!" });
+            const flat = await Flat.findByIdAndDelete(req.params.id);
+            if (!flat) {
+                return res.status(404).json({ message: "Flat not found!" });
             }
-            // delete the tower from the user
-            await req.user.updateOne({ $pull: { towers: tower._id } });
-            // delete all flats in this tower
-            await Flat.deleteMany({ tower: tower._id });
+            // delete the flat from the tower
+            await Tower.updateOne({ $pull: { flats: req.params.id } });
+
             return res
                 .status(200)
-                .json({ message: "Tower deleted successfully." });
+                .json({ message: "Flat deleted successfully." });
         } else {
             return res.status(400).json({
-                message: "Your don't have permissions delete the tower",
+                message: "Your don't have permissions delete the flat",
             });
         }
     } catch (error) {
@@ -71,7 +83,7 @@ const deleteTower = async (req, res) => {
     }
 };
 
-const updateTower = async (req, res) => {
+const updateFlat = async (req, res) => {
     try {
         const { name, email, password, phoneNumber } = req.body;
         const { _id } = req.user;
@@ -94,9 +106,9 @@ const updateTower = async (req, res) => {
 };
 
 module.exports = {
-    createTower,
-    updateTower,
-    getAllTowers,
-    getTower,
-    deleteTower,
+    createFlat,
+    updateFlat,
+    getAllFlats,
+    getFlat,
+    deleteFlat,
 };
