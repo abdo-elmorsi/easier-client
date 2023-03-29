@@ -52,7 +52,7 @@ export default function MainNav() {
       dispatch(toggleTheme("dark"));
       document.documentElement.classList.add("dark");
     } else {
-      dispatch(toggleTheme("light"));
+      dispatch(toggleTheme("dark"));
     }
   }, [theme]);
 
@@ -145,7 +145,6 @@ export default function MainNav() {
                 <SunIcon
                   onClick={() => {
                     dispatch(toggleTheme("dark"));
-                    localStorage.setItem("theme", "dark");
                   }}
                   className="ml-2 h-6 w-6 cursor-pointer"
                 />
@@ -154,7 +153,6 @@ export default function MainNav() {
                 <MoonIcon
                   onClick={() => {
                     dispatch(toggleTheme("light"));
-                    localStorage.setItem("theme", "light");
                   }}
                   className="ml-2 h-6 w-6 text-white cursor-pointer"
                 />
