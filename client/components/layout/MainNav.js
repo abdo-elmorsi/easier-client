@@ -15,7 +15,7 @@ import ReactSelect from "components/select/ReactSelect";
 
 const navigation = [
   { name: "Home", href: "/", current: false },
-  { name: "About", href: "/about", current: false },
+  { name: "Contact", href: "/contact", current: false },
   { name: "Dashboard", href: "/dashboard", current: false },
 ];
 
@@ -127,6 +127,7 @@ export default function MainNav() {
                 </div>
               </div>
               <ReactSelect
+                className="ml-3"
                 options={selectOptions}
                 defaultValue={selectOptions.find(
                   (ele) => ele.value === router.locale
@@ -157,7 +158,9 @@ export default function MainNav() {
                   className="ml-2 h-6 w-6 text-white cursor-pointer"
                 />
               )}
-              <Button className={`ml-4`}>login</Button>
+              <Button className="ml-4" onClick={() => router.push("/login")}>
+                login
+              </Button>
             </div>
           </div>
 

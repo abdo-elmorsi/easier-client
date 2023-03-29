@@ -1,13 +1,19 @@
-import Hero from "components/home-page";
+import Head from "next/head";
+import React from "react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-export default function Home() {
+const Contact = () => {
   return (
-    <section>
-      <Hero />
-    </section>
+    <>
+      <Head>
+        <title>Real State contact</title>
+      </Head>
+      <div>contact</div>
+    </>
   );
-}
+};
+
+export default Contact;
 
 export async function getStaticProps({ locale }) {
   return {

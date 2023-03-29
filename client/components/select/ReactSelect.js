@@ -89,7 +89,7 @@ function ReactSelect({
 
   return (
     <>
-      <div className="sm:col-span-3">
+      <div className={`sm:col-span-3 ${className}`}>
         {label && (
           <label
             htmlFor="select-client"
