@@ -35,16 +35,6 @@ export default function MainNav() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (router.locale === "ar") {
-      document.documentElement.lang = "ar";
-      document.body.dir = "rtl";
-    } else {
-      document.documentElement.lang = "en";
-      document.body.dir = "ltr";
-    }
-  }, [router.locale]);
-
-  useEffect(() => {
     if (localStorage.getItem("theme") === "light") {
       dispatch(toggleTheme("light"));
       document.documentElement.classList.remove("dark");
