@@ -1,12 +1,11 @@
-import { useEffect } from "react";
-import { toast } from "react-toastify";
+import Hero from "components/home-page";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 export default function Home() {
   return (
-    <>
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
-    </>
+    <section>
+      <Hero />
+    </section>
   );
 }
 

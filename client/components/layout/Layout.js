@@ -5,7 +5,9 @@ const Layout = (props) => {
   return (
     <>
       <MainNav />
-      <main>{props.children}</main>
+      <main className="dark:bg-gray-900 remain-height dark:text-gray-300">
+        {props.children}
+      </main>
     </>
   );
 };

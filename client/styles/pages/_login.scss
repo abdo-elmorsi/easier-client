@@ -1,0 +1,34 @@
+@mixin smallScreenMedia {
+  @media only screen and (max-width: 768px) {
+    background-image: linear-gradient(
+        to right,
+        rgba(#f9fafb, 0.9),
+        rgba(#f9fafb, 0.9)
+      ),
+      url("../../public/images/building-1.jpg");
+  }
+}
+
+.login {
+  background-image: linear-gradient(
+      to right,
+      #f9fafb 0%,
+      #f9fafb 50%,
+      transparent 50%
+    ),
+    url("../../public/images/building-1.jpg");
+
+  @include smallScreenMedia;
+
+  body[dir="rtl"] & {
+    background-image: linear-gradient(
+        to left,
+        #f9fafb 0%,
+        #f9fafb 50%,
+        transparent 50%
+      ),
+      url("../../public/images/building-1.jpg");
+
+    @include smallScreenMedia;
+  }
+}

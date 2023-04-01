@@ -2,18 +2,18 @@ import Head from "next/head";
 import React from "react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-const About = () => {
+const Contact = () => {
   return (
     <>
       <Head>
-        <title>Real State about</title>
+        <title>Real State contact</title>
       </Head>
-      <div>about</div>
+      <div>contact</div>
     </>
   );
 };
 
-export default About;
+export default Contact;
 
 export async function getStaticProps({ locale }) {
   return {

@@ -1,4 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "pages/home";
+@import "pages/login";
 
+@layer utilities {
+  .remain-height {
+    min-height: calc(100vh - 4rem);
+  }
+}
