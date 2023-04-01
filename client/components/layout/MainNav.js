@@ -73,7 +73,7 @@ export default function MainNav() {
     <Disclosure
       as="nav"
       style={{ direction: "ltr" }}
-      className="shadow-md dark:bg-gray-800"
+      className="shadow-md dark:bg-gray-800 z-50 relative"
     >
       {({ open }) => (
         <>

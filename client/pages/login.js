@@ -33,7 +33,7 @@ const Login = () => {
         src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
         alt="Your Company"
       />
-      <h2 className="mx-auto mb-6 text-3xl text-gray-800 md:mx-0 lg:text-4xl">
+      <h2 className="mx-auto mb-6 text-3xl text-gray-800 dark:text-white md:mx-0 lg:text-4xl">
         {t("sign in to your account")}
       </h2>
       <Formik
@@ -57,7 +57,7 @@ const Login = () => {
                 placeholder={t("password")}
               />
               <Button className="mt-6" type="submit">
-              {t("login")}
+                {t("login")}
               </Button>
             </Form>
           );
