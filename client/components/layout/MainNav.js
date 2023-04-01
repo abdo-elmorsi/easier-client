@@ -12,16 +12,11 @@ import Button from "components/UI/Button";
 import { toggleTheme } from "store/ThemeSlice";
 import { useDispatch, useSelector } from "react-redux";
 import ReactSelect from "components/select/ReactSelect";
-
-const navigation = [
-  { name: "Home", href: "/", current: false },
-  { name: "Contact", href: "/contact", current: false },
-  { name: "Dashboard", href: "/dashboard", current: false },
-];
+import { useTranslation } from "next-i18next";
 
 const selectOptions = [
-  { value: "ar", label: "ar", image: "/flags/ar.svg" },
-  { value: "en", label: "en", image: "/flags/en.svg" },
+  { value: "ar", label: "العربية", image: "/flags/ar.svg" },
+  { value: "en", label: "english", image: "/flags/en.svg" },
 ];
 
 function classNames(...classes) {
@@ -29,10 +24,10 @@ function classNames(...classes) {
 }
 
 export default function MainNav() {
-  const [nav, setNav] = useState(navigation);
   const router = useRouter();
   const { theme } = useSelector((state) => state.theme);
   const dispatch = useDispatch();
+  const { t } = useTranslation("common");
 
   useEffect(() => {
     if (localStorage.getItem("theme") === "light") {
@@ -46,18 +41,6 @@ export default function MainNav() {
     }
   }, [theme]);
 
-  useEffect(() => {
-    // every time the router changes, we need to update the nav style.
-    const newNav = navigation.map((item) => {
-      if (router.pathname === item.href) {
-        return { ...item, current: true };
-      } else {
-        return { ...item, current: false };
-      }
-    });
-    setNav(newNav);
-  }, [router]);
-
   const selectLanguageHandler = (value) => {
     router.push(router.asPath, undefined, { locale: value });
   };
@@ -66,13 +49,13 @@ export default function MainNav() {
     <Disclosure
       as="nav"
       style={{ direction: "ltr" }}
-      className="dark:bg-gray-800 shadow-md"
+      className="shadow-md dark:bg-gray-800"
     >
       {({ open }) => (
         <>
           <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
             <div className="relative flex h-16 items-center justify-between">
-              <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+              <div className="inset-y-0 left-0 flex items-center sm:hidden">
                 {/* Mobile menu button*/}
                 <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                   <span className="sr-only">Open main menu</span>
@@ -96,23 +79,44 @@ export default function MainNav() {
                     alt="Your Company"
                   />
                 </div>
-                <div className="hidden sm:block ml-auto">
+                <div className="ml-6 hidden sm:block">
                   <div className="flex space-x-4">
-                    {nav.map((item) => (
-                      <Link href={item.href} key={item.name}>
-                        <a
-                          className={classNames(
-                            item.current
-                              ? "dark:bg-gray-900 dark:text-white border-b-2 dark:border-transparent border-blue-700"
-                              : "dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white border-b-2 border-transparent dark:border-transparent hover:border-blue-700",
-                            "dark:rounded-md px-3 py-2 text-sm font-medium"
-                          )}
-                          aria-current={item.current ? "page" : undefined}
-                        >
-                          {item.name}
-                        </a>
-                      </Link>
-                    ))}
+                    <Link href="/">
+                      <a
+                        className={classNames(
+                          router.pathname === "/"
+                            ? "border-b-2 border-blue-700 dark:border-transparent dark:bg-gray-900 dark:text-white"
+                            : "border-b-2 border-transparent hover:border-blue-700 dark:border-transparent dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white",
+                          "px-3 py-2 text-sm font-medium dark:rounded-md"
+                        )}
+                      >
+                        {t("home")}
+                      </a>
+                    </Link>
+                    <Link href="/contact">
+                      <a
+                        className={classNames(
+                          router.pathname === "/contact"
+                            ? "border-b-2 border-blue-700 dark:border-transparent dark:bg-gray-900 dark:text-white"
+                            : "border-b-2 border-transparent hover:border-blue-700 dark:border-transparent dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white",
+                          "px-3 py-2 text-sm font-medium dark:rounded-md"
+                        )}
+                      >
+                        {t("contact")}
+                      </a>
+                    </Link>
+                    <Link href="/dashboard">
+                      <a
+                        className={classNames(
+                          router.pathname === "/dashboard"
+                            ? "border-b-2 border-blue-700 dark:border-transparent dark:bg-gray-900 dark:text-white"
+                            : "border-b-2 border-transparent hover:border-blue-700 dark:border-transparent dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white",
+                          "px-3 py-2 text-sm font-medium dark:rounded-md"
+                        )}
+                      >
+                        {t("dashboard")}
+                      </a>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -127,7 +131,7 @@ export default function MainNav() {
                 isSearchable={false}
                 formatOptionLabel={(client) => (
                   <div className={`flex items-center`}>
-                    <img className="w-4 h-4" src={client.image} alt="logo" />
+                    <img className="h-4 w-4" src={client.image} alt="logo" />
                     <span className="ml-2 capitalize">{client.label}</span>
                   </div>
                 )}
@@ -145,32 +149,53 @@ export default function MainNav() {
                   onClick={() => {
                     dispatch(toggleTheme("light"));
                   }}
-                  className="ml-2 h-6 w-6 text-white cursor-pointer"
+                  className="ml-2 h-6 w-6 cursor-pointer text-white"
                 />
               )}
               <Button className="ml-4" onClick={() => router.push("/login")}>
-                login
+                {t("login")}
               </Button>
             </div>
           </div>
 
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 px-2 pt-2 pb-3">
-              {nav.map((item) => (
-                <Link key={item.name} href={item.href}>
-                  <a
-                    className={classNames(
-                      item.current
-                        ? "dark:bg-gray-900 dark:text-white border-b-2 dark:border-transparent  border-blue-700"
-                        : "dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white border-b-2 border-transparent dark:border-transparent hover:border-blue-700",
-                      "block dark:rounded-md px-3 py-2 text-base font-medium"
-                    )}
-                    aria-current={item.current ? "page" : undefined}
-                  >
-                    {item.name}
-                  </a>
-                </Link>
-              ))}
+              <Link href={"/"}>
+                <a
+                  className={classNames(
+                    router.pathname === "/"
+                      ? "border-b-2 border-blue-700 dark:border-transparent dark:bg-gray-900  dark:text-white"
+                      : "border-b-2 border-transparent hover:border-blue-700 dark:border-transparent dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white",
+                    "block px-3 py-2 text-base font-medium dark:rounded-md"
+                  )}
+                >
+                  {t("home")}
+                </a>
+              </Link>
+              <Link href={"/contact"}>
+                <a
+                  className={classNames(
+                    router.pathname === "/contact"
+                      ? "border-b-2 border-blue-700 dark:border-transparent dark:bg-gray-900  dark:text-white"
+                      : "border-b-2 border-transparent hover:border-blue-700 dark:border-transparent dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white",
+                    "block px-3 py-2 text-base font-medium dark:rounded-md"
+                  )}
+                >
+                  {t("contact")}
+                </a>
+              </Link>
+              <Link href={"/dashboard"}>
+                <a
+                  className={classNames(
+                    router.pathname === "/dashboard"
+                      ? "border-b-2 border-blue-700 dark:border-transparent dark:bg-gray-900  dark:text-white"
+                      : "border-b-2 border-transparent hover:border-blue-700 dark:border-transparent dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white",
+                    "block px-3 py-2 text-base font-medium dark:rounded-md"
+                  )}
+                >
+                  {t("dashboard")}
+                </a>
+              </Link>
             </div>
           </Disclosure.Panel>
         </>

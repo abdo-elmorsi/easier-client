@@ -8,6 +8,7 @@ import store from "../store";
 import { Provider } from "react-redux";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
@@ -45,6 +46,14 @@ function MyApp({ Component, pageProps }) {
       {getLayout(<Component {...pageProps} />)}
     </Provider>
   );
+}
+
+export async function getStaticProps({ locale }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ["common"])),
+    },
+  };
 }
 
 export default appWithTranslation(MyApp);
