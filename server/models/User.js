@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
 const Tower = require("./tower");
+const Flat = require("./flat");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { ObjectId } = mongoose.Schema.Types;
 
-const userSchema = new mongoose.Schema(
+const UserSchema = new mongoose.Schema(
     {
         userName: {
             type: String,
@@ -34,6 +35,10 @@ const userSchema = new mongoose.Schema(
                 }
             },
         },
+        photo: {
+            public_id: String,
+            secure_url: String,
+        },
         password: {
             type: String,
             required: true,
@@ -56,30 +61,16 @@ const userSchema = new mongoose.Schema(
     }
 );
 
-userSchema.methods.toJSON = function () {
+UserSchema.methods.toJSON = function () {
     const user = this.toObject();
     delete user.password;
-    // delete user.profile_picture;
-    // delete user.carts;
-
+    delete user.createdAt;
+    delete user.updatedAt;
+    delete user.__v;
     return user;
 };
 
-// userSchema.virtual("Tower", {
-//     ref: "Tower",
-//     localField: "_id", // what the local field equal here !! of curse id because we pass it as vendor
-//     foreignField: "vendor", // field name which create the relationship
-// });
-
-// userSchema.pre(/^find/, function (next) {
-//     this.populate({
-//         path: "towers",
-//         // select: "-_id -address -floors._id -floors.flats._id",
-//     });
-//     next();
-// });
-
-userSchema.statics.findUser = async (email, password) => {
+UserSchema.statics.findUser = async (email, password) => {
     const user = await User.findOne({ email });
     if (!user) {
         throw new Error("User Doesn't Exist");
@@ -91,18 +82,37 @@ userSchema.statics.findUser = async (email, password) => {
     return user;
 };
 
-userSchema.methods.generateAuthToken = function () {
+UserSchema.methods.generateAuthToken = function () {
     const token = jwt.sign({ _id: this._id.toString() }, process.env.JWT_KEY);
     return token;
 };
 
-userSchema.pre("save", async function (next) {
+UserSchema.pre(/^find/, function (next) {
+    this.populate({
+        path: "towers",
+        select: "name address -flats", // select only the fields you need
+    });
+    next();
+});
+
+UserSchema.pre("remove", async function (next) {
+    try {
+        // `this` refers to the user being removed
+        await Tower.deleteMany({ owner: this._id });
+        await Flat.deleteMany({ tower: { $in: this.towers } });
+        next();
+    } catch (err) {
+        next(err);
+    }
+});
+
+UserSchema.pre("save", async function (next) {
     if (this.isModified("password")) {
         this.password = await bcrypt.hash(this.password, 8);
     }
     return next();
 });
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model("User", UserSchema);
 
 module.exports = User;

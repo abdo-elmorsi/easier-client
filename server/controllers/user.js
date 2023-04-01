@@ -3,28 +3,19 @@ const cloudinary = require("cloudinary").v2;
 
 const createUser = async (req, res) => {
     try {
-        const { role } = req.user;
-        if (role === "superAdmin" || role === "admin") {
-            const { userName, email, phoneNumber, password, role } = req.body;
-            const newUser = new User({
-                userName,
-                email,
-                role,
-                phoneNumber,
-                password,
-            });
-            await newUser.save();
-            if (!newUser)
-                return res
-                    .status(400)
-                    .json({ message: "failed to create user!" });
-            const token = newUser.generateAuthToken();
-            return res.status(201).json({ newUser, token });
-        } else {
-            return res.status(400).json({
-                message: "Your don't have permissions to create user",
-            });
-        }
+        const { userName, email, phoneNumber, password, role } = req.body;
+        const newUser = new User({
+            userName,
+            email,
+            role,
+            phoneNumber,
+            password,
+        });
+        await newUser.save();
+        if (!newUser)
+            return res.status(400).json({ message: "failed to create user!" });
+        const token = newUser.generateAuthToken();
+        return res.status(201).json({ newUser, token });
     } catch (error) {
         return res.status(400).json({ message: error.message });
     }
@@ -61,15 +52,8 @@ const getProfile = async (req, res) => {
 };
 const getAllUsers = async (req, res) => {
     try {
-        const { role } = req.user;
-        if (role === "superAdmin" || role === "admin") {
-            const users = await User.find({});
-            return res.status(200).json({ users });
-        } else {
-            return res
-                .status(400)
-                .json({ message: "Your don't have permissions to get users" });
-        }
+        const users = await User.find({});
+        return res.status(200).json({ users });
     } catch (error) {
         return res.status(400).json({ message: error.message });
     }
@@ -77,20 +61,12 @@ const getAllUsers = async (req, res) => {
 
 const deleteUser = async (req, res) => {
     try {
-        const { role } = req.user;
-        if (role === "superAdmin" || role === "admin") {
-            const user = await User.findByIdAndDelete(req.params.id);
-            if (!user) {
-                return res.status(404).json({ message: "User not found!" });
-            }
-            return res
-                .status(200)
-                .json({ message: "User deleted successfully." });
-        } else {
-            return res.status(400).json({
-                message: "Your don't have permissions to delete user",
-            });
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found!" });
         }
+        user.remove();
+        return res.status(200).json({ message: "User deleted successfully." });
     } catch (error) {
         return res.status(400).json({ message: error.message });
     }
