@@ -1,7 +1,7 @@
 const router = require("express").Router();
 
 const { upload } = require("../src/middlewares/upload");
-const { auth } = require("../src/middlewares/auth");
+const { auth, isAdmin, isSuperAdmin } = require("../src/middlewares/auth");
 const {
     createUser,
     signIn,
@@ -13,13 +13,15 @@ const {
 } = require("../controllers/user");
 
 router.post("/signIn", signIn);
+
 router
     .route("/")
-    .post(auth, createUser)
-    .get(auth, getAllUsers)
-    .put(auth, updateProfile)
-router.get("/profile", auth, getProfile);
-router.route("/:id").delete(auth, deleteUser);
+    .post(auth, isSuperAdmin, createUser)
+    .get(auth, isSuperAdmin, getAllUsers)
+    .put(auth, isAdmin, updateProfile);
+
+router.delete("/:id", auth, isSuperAdmin, deleteUser);
+router.get("/profile", auth, isAdmin, getProfile);
 
 router.post("/upload", auth, upload.single("photo"), uploadProfilePic);
 

@@ -7,6 +7,7 @@ const createTower = async (req, res) => {
         const tower = new Tower({
             name,
             address,
+            owner: req.user._id,
         });
         await tower.save();
         // add the tower to the user
@@ -18,54 +19,31 @@ const createTower = async (req, res) => {
 };
 const getAllTowers = async (req, res) => {
     try {
-        const { role } = req.user;
-        if (role === "superAdmin" || role === "admin") {
-            const Towers = await Tower.find({});
-            return res.status(200).json({ Towers });
-        } else {
-            return res.status(400).json({
-                message: "Your don't have permissions get towers",
-            });
-        }
+        const Towers = await Tower.find({});
+        return res.status(200).json({ Towers });
     } catch (error) {
         return res.status(400).json({ message: error.message });
     }
 };
 const getTower = async (req, res) => {
     try {
-        const { role } = req.user;
-        if (role === "superAdmin" || role === "admin") {
-            const Towers = await Tower.find({ _id: req.params.id });
-            return res.status(200).json({ Towers });
-        } else {
-            return res.status(400).json({
-                message: "Your don't have permissions get the tower",
-            });
-        }
+        const Towers = await Tower.find({ _id: req.params.id });
+        return res.status(200).json({ Towers });
     } catch (error) {
         return res.status(400).json({ message: error.message });
     }
 };
 const deleteTower = async (req, res) => {
     try {
-        const { role } = req.user;
-        if (role === "superAdmin" || role === "admin") {
-            const tower = await Tower.findByIdAndDelete(req.params.id);
-            if (!tower) {
-                return res.status(404).json({ message: "Tower not found!" });
-            }
-            // delete the tower from the user
-            await req.user.updateOne({ $pull: { towers: tower._id } });
-            // delete all flats in this tower
-            await Flat.deleteMany({ tower: tower._id });
-            return res
-                .status(200)
-                .json({ message: "Tower deleted successfully." });
-        } else {
-            return res.status(400).json({
-                message: "Your don't have permissions delete the tower",
-            });
+        const tower = await Tower.findById(req.params.id);
+        if (!tower) {
+            return res.status(404).json({ message: "Tower not found!" });
         }
+        tower.remove();
+        // delete the tower from the user
+        await req.user.updateOne({ $pull: { towers: tower._id } });
+
+        return res.status(200).json({ message: "Tower deleted successfully." });
     } catch (error) {
         return res.status(400).json({ message: error.message });
     }

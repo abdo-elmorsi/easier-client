@@ -8,22 +8,22 @@ const auth = async (req, res, next) => {
         const user = await Users.findById(verified._id);
 
         if (!user) {
-            throw new Error();
+            throw new Error("Authentication failed");
         }
         req.user = user;
         next();
     } catch (e) {
-        res.status(401).send("Please Auth!");
+        res.status(401).send(e.message);
     }
 };
 
-const isAdmin = async (req, res, next) => {
+const checkRole = (role) => async (req, res, next) => {
     try {
-        const { role } = req.user;
-        if (role != "admin") {
+        const { user } = req;
+        if (user.role !== role && user.role !== "superAdmin") {
             return res
                 .status(401)
-                .json({ message: "only admins can perform this action" });
+                .json({ message: `Only ${role}s can perform this action` });
         }
         next();
     } catch (error) {
@@ -31,7 +31,11 @@ const isAdmin = async (req, res, next) => {
     }
 };
 
+const isAdmin = checkRole("admin");
+const isSuperAdmin = checkRole("superAdmin");
+
 module.exports = {
     auth,
     isAdmin,
+    isSuperAdmin,
 };

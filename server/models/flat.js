@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 const { ObjectId } = mongoose.Schema.Types;
 
+function generateDefaultUsernameAndPassword() {
+    return `flat-${this.floorNumber}-${this.number}`;
+}
+
 const FlatSchema = new mongoose.Schema(
     {
         number: {
@@ -22,41 +26,43 @@ const FlatSchema = new mongoose.Schema(
         userName: {
             type: String,
             required: [true, "Username is required!"],
-            default: `flat-${this.floorNumber}-${this.number}`,
+            default: generateDefaultUsernameAndPassword,
         },
         password: {
             type: String,
             required: true,
             minlength: [6, "Password must be more than 6 characters"],
-            default: `flat-${this.floorNumber}-${this.number}`,
+            default: generateDefaultUsernameAndPassword,
         },
         tower: {
-            type: String,
-            required: [true, "Tower id is required!"],
+            type: ObjectId,
+            required: true,
+            ref: "Tower",
         },
-        // floor: {
-        //     type: ObjectId,
-        //     ref: "Floor",
-        // },
     },
     {
         timestamps: true,
     }
 );
 
+FlatSchema.methods.toJSON = function () {
+    const flat = this.toObject();
+    delete flat.userName;
+    delete flat.password;
+    delete flat.createdAt;
+    delete flat.updatedAt;
+    delete flat.__v;
+    return flat;
+};
+
+
 FlatSchema.pre("save", async function (next) {
-    this.userName = `flat-${this.floorNumber}-${this.number}`;
-    this.password = `flat-${this.floorNumber}-${this.number}`;
+    if (this.isNew) {
+        this.userName = generateDefaultUsernameAndPassword.call(this);
+        this.password = generateDefaultUsernameAndPassword.call(this);
+    }
     next();
 });
-
-// FlatSchema.pre(/^find/, function (next) {
-//     this.populate({
-//         path: "floor",
-//         // select: "-_id",
-//     });
-//     next();
-// });
 
 const Flat = mongoose.model("Flat", FlatSchema);
 

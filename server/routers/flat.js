@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { auth } = require("../src/middlewares/auth");
+const { auth, isAdmin, isSuperAdmin } = require("../src/middlewares/auth");
 
 const {
     createFlat,
@@ -13,11 +13,11 @@ const {
 // router.post("/signIn", signIn);
 router
     .route("/")
-    .post(auth, createFlat)
-    .get(auth, getAllFlats)
-    .put(auth, updateFlat);
-router.route("/:id").get(auth, getFlat);
-router.route("/:id").delete(auth, deleteFlat);
+    .post(auth, isAdmin, createFlat)
+    .get(auth, isAdmin, getAllFlats)
+    .put(auth, isAdmin, updateFlat);
+router.route("/:id").get(auth, isAdmin, getFlat);
+router.route("/:id").delete(auth, isAdmin, deleteFlat);
 // .delete(auth, deleteProfile);
 
 module.exports = router;

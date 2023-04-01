@@ -23,6 +23,11 @@ const createFlat = async (req, res) => {
             tower,
         });
         await flat.save();
+        // add the flat to thew tower
+        const theTower = await Tower.findById(flat.tower);
+        await theTower.updateOne({
+            $push: { flats: flat._id },
+        });
         return res.status(201).json(flat);
     } catch (error) {
         return res.status(400).json({ message: error.message });
@@ -31,53 +36,32 @@ const createFlat = async (req, res) => {
 
 const getAllFlats = async (req, res) => {
     try {
-        const { role } = req.user;
-        if (role === "superAdmin" || role === "admin") {
-            const flats = await Flat.find({});
-            return res.status(200).json({ flats });
-        } else {
-            return res.status(400).json({
-                message: "Your don't have permissions to get flats",
-            });
-        }
+        const flats = await Flat.find({});
+        return res.status(200).json({ flats });
     } catch (error) {
         return res.status(400).json({ message: error.message });
     }
 };
 const getFlat = async (req, res) => {
     try {
-        const { role } = req.user;
-        if (role === "superAdmin" || role === "admin") {
-            const flat = await Flat.find({ _id: req.params.id });
-            return res.status(200).json({ flat });
-        } else {
-            return res.status(400).json({
-                message: "Your don't have permissions get the flat",
-            });
-        }
+        const flat = await Flat.find({ _id: req.params.id });
+        return res.status(200).json({ flat });
     } catch (error) {
         return res.status(400).json({ message: error.message });
     }
 };
 const deleteFlat = async (req, res) => {
     try {
-        const { role } = req.user;
-        if (role === "superAdmin" || role === "admin") {
-            const flat = await Flat.findByIdAndDelete(req.params.id);
-            if (!flat) {
-                return res.status(404).json({ message: "Flat not found!" });
-            }
-            // delete the flat from the tower
-            await Tower.updateOne({ $pull: { flats: req.params.id } });
-
-            return res
-                .status(200)
-                .json({ message: "Flat deleted successfully." });
-        } else {
-            return res.status(400).json({
-                message: "Your don't have permissions delete the flat",
-            });
+        const flat = await Flat.findById(req.params.id);
+        if (!flat) {
+            return res.status(404).json({ message: "Flat not found!" });
         }
+        flat.remove();
+        // delete the flat from the tower
+        const tower = await Tower.findById(flat.tower);
+        await tower.updateOne({ $pull: { flats: req.params.id } });
+
+        return res.status(200).json({ message: "Flat deleted successfully." });
     } catch (error) {
         return res.status(400).json({ message: error.message });
     }
