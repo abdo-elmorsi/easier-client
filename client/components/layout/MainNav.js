@@ -14,6 +14,17 @@ import { useDispatch, useSelector } from "react-redux";
 import ReactSelect from "components/select/ReactSelect";
 import { useTranslation } from "next-i18next";
 
+const navigation = [
+  { nameAR: "الرئيسية", nameEN: "Home", href: "/", current: false },
+  { nameAR: "الاتصال", nameEN: "Contact", href: "/contact", current: false },
+  {
+    nameAR: "لوحة القيادة",
+    nameEN: "Dashboard",
+    href: "/dashboard",
+    current: false,
+  },
+];
+
 const selectOptions = [
   { value: "ar", label: "العربية", image: "/flags/ar.svg" },
   { value: "en", label: "english", image: "/flags/en.svg" },
@@ -24,6 +35,7 @@ function classNames(...classes) {
 }
 
 export default function MainNav() {
+  const [nav, setNav] = useState(navigation);
   const router = useRouter();
   const { theme } = useSelector((state) => state.theme);
   const dispatch = useDispatch();
@@ -40,6 +52,18 @@ export default function MainNav() {
       dispatch(toggleTheme("dark"));
     }
   }, [theme]);
+
+  useEffect(() => {
+    // every time the router changes, we need to update the nav style.
+    const newNav = navigation.map((item) => {
+      if (router.pathname === item.href) {
+        return { ...item, current: true };
+      } else {
+        return { ...item, current: false };
+      }
+    });
+    setNav(newNav);
+  }, [router]);
 
   const selectLanguageHandler = (value) => {
     router.push(router.asPath, undefined, { locale: value });
@@ -81,42 +105,21 @@ export default function MainNav() {
                 </div>
                 <div className="ml-6 hidden sm:block">
                   <div className="flex space-x-4">
-                    <Link href="/">
-                      <a
-                        className={classNames(
-                          router.pathname === "/"
-                            ? "border-b-2 border-blue-700 dark:border-transparent dark:bg-gray-900 dark:text-white"
-                            : "border-b-2 border-transparent hover:border-blue-700 dark:border-transparent dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white",
-                          "px-3 py-2 text-sm font-medium dark:rounded-md"
-                        )}
-                      >
-                        {t("home")}
-                      </a>
-                    </Link>
-                    <Link href="/contact">
-                      <a
-                        className={classNames(
-                          router.pathname === "/contact"
-                            ? "border-b-2 border-blue-700 dark:border-transparent dark:bg-gray-900 dark:text-white"
-                            : "border-b-2 border-transparent hover:border-blue-700 dark:border-transparent dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white",
-                          "px-3 py-2 text-sm font-medium dark:rounded-md"
-                        )}
-                      >
-                        {t("contact")}
-                      </a>
-                    </Link>
-                    <Link href="/dashboard">
-                      <a
-                        className={classNames(
-                          router.pathname === "/dashboard"
-                            ? "border-b-2 border-blue-700 dark:border-transparent dark:bg-gray-900 dark:text-white"
-                            : "border-b-2 border-transparent hover:border-blue-700 dark:border-transparent dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white",
-                          "px-3 py-2 text-sm font-medium dark:rounded-md"
-                        )}
-                      >
-                        {t("dashboard")}
-                      </a>
-                    </Link>
+                    {nav.map((item) => (
+                      <Link href={item.href} key={item.nameEN}>
+                        <a
+                          className={classNames(
+                            item.current
+                              ? "border-b-2 border-blue-700 dark:border-transparent dark:bg-gray-900 dark:text-white"
+                              : "border-b-2 border-transparent hover:border-blue-700 dark:border-transparent dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white",
+                            "px-3 py-2 text-sm font-medium dark:rounded-md"
+                          )}
+                          aria-current={item.current ? "page" : undefined}
+                        >
+                          {router.locale === "en" ? item.nameEN : item.nameAR}
+                        </a>
+                      </Link>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -160,42 +163,21 @@ export default function MainNav() {
 
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 px-2 pt-2 pb-3">
-              <Link href={"/"}>
-                <a
-                  className={classNames(
-                    router.pathname === "/"
-                      ? "border-b-2 border-blue-700 dark:border-transparent dark:bg-gray-900  dark:text-white"
-                      : "border-b-2 border-transparent hover:border-blue-700 dark:border-transparent dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white",
-                    "block px-3 py-2 text-base font-medium dark:rounded-md"
-                  )}
-                >
-                  {t("home")}
-                </a>
-              </Link>
-              <Link href={"/contact"}>
-                <a
-                  className={classNames(
-                    router.pathname === "/contact"
-                      ? "border-b-2 border-blue-700 dark:border-transparent dark:bg-gray-900  dark:text-white"
-                      : "border-b-2 border-transparent hover:border-blue-700 dark:border-transparent dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white",
-                    "block px-3 py-2 text-base font-medium dark:rounded-md"
-                  )}
-                >
-                  {t("contact")}
-                </a>
-              </Link>
-              <Link href={"/dashboard"}>
-                <a
-                  className={classNames(
-                    router.pathname === "/dashboard"
-                      ? "border-b-2 border-blue-700 dark:border-transparent dark:bg-gray-900  dark:text-white"
-                      : "border-b-2 border-transparent hover:border-blue-700 dark:border-transparent dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white",
-                    "block px-3 py-2 text-base font-medium dark:rounded-md"
-                  )}
-                >
-                  {t("dashboard")}
-                </a>
-              </Link>
+              {nav.map((item) => (
+                <Link key={item.nameEN} href={item.href}>
+                  <a
+                    className={classNames(
+                      item.current
+                        ? "border-b-2 border-blue-700 dark:border-transparent dark:bg-gray-900  dark:text-white"
+                        : "border-b-2 border-transparent hover:border-blue-700 dark:border-transparent dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white",
+                      "block px-3 py-2 text-base font-medium dark:rounded-md"
+                    )}
+                    aria-current={item.current ? "page" : undefined}
+                  >
+                    {router.locale === "en" ? item.nameEN : item.nameAR}
+                  </a>
+                </Link>
+              ))}
             </div>
           </Disclosure.Panel>
         </>
