@@ -8,9 +8,12 @@ import { useTranslation } from "next-i18next";
 import { userLogin } from "helper/apis/login";
 import { toast } from "react-toastify";
 import Spinner from "components/UI/Spinner";
+import { signIn } from "next-auth/client";
+import { useRouter } from "next/router";
 
 const Login = () => {
   const { t } = useTranslation("common");
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   const initialValues = {
@@ -34,7 +37,12 @@ const Login = () => {
     setIsLoading(true);
     try {
       const respond = await userLogin(submitData);
-      console.log(respond);
+      const result = await signIn("credentials", {
+        redirect: false,
+        user: JSON.stringify(respond),
+      });
+      router.replace("/");
+      toast.success(`${t("welcome")} ${respond.user.userName}`);
     } catch (e) {
       toast.error(e?.data.message);
     } finally {
