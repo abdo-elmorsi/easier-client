@@ -8,5 +8,7 @@
   "login": "Login",
   "username is required": "Username is required",
   "password must be at least 6 characters": "Password must be at least 6 characters",
-  "password is required": "Password is required"
+  "password is required": "Password is required",
+  "UH OH! You're lost": "UH OH! You're lost.",
+  "The page you are looking for does not exist But you can click the button below to go back to the homepage": "The page you are looking for does not exist But you can click the button below to go back to the homepage."
 }

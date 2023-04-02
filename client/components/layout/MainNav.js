@@ -70,11 +70,7 @@ export default function MainNav() {
   };
 
   return (
-    <Disclosure
-      as="nav"
-      style={{ direction: "ltr" }}
-      className="shadow-md dark:bg-gray-800 z-50 relative"
-    >
+    <Disclosure as="nav" className="relative z-50 shadow-md dark:bg-gray-800">
       {({ open }) => (
         <>
           <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -103,8 +99,8 @@ export default function MainNav() {
                     alt="Your Company"
                   />
                 </div>
-                <div className="ml-6 hidden sm:block">
-                  <div className="flex space-x-4">
+                <div className="ml-6 hidden rtl:mr-6 sm:block">
+                  <div className="flex items-center gap-2">
                     {nav.map((item) => (
                       <Link href={item.href} key={item.nameEN}>
                         <a

@@ -8,5 +8,7 @@
   "login": "تسجيل الدخول",
   "username is required": "اسم المستخدم مطلوب",
   "password must be at least 6 characters": "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
-  "password is required": "كلمة المرور مطلوبة"
+  "password is required": "كلمة المرور مطلوبة",
+  "UH OH! You're lost": "أنت ضائع.",
+  "The page you are looking for does not exist But you can click the button below to go back to the homepage": "الصفحة التي تبحث عنها غير موجودة ولكن يمكنك النقر على الزر أدناه للعودة إلى الصفحة الرئيسية."
 }
