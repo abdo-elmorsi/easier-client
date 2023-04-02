@@ -1,13 +1,17 @@
 import Button from "components/UI/Button";
 import Input from "components/formik/Input";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import React from "react";
+import React, { useState } from "react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "next-i18next";
+import { userLogin } from "helper/apis/login";
+import { toast } from "react-toastify";
+import Spinner from "components/UI/Spinner";
 
 const Login = () => {
   const { t } = useTranslation("common");
+  const [isLoading, setIsLoading] = useState(false);
 
   const initialValues = {
     username: "",
@@ -22,8 +26,20 @@ const Login = () => {
       .trim(),
   });
 
-  const onSubmit = (values) => {
-    console.log(values);
+  const onSubmit = async (values) => {
+    const submitData = {
+      email: values.username,
+      password: values.password,
+    };
+    setIsLoading(true);
+    try {
+      const respond = await userLogin(submitData);
+      console.log(respond);
+    } catch (e) {
+      toast.error(e?.data.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -47,7 +63,7 @@ const Login = () => {
               <Input
                 label={t("username")}
                 name="username"
-                type="username"
+                type="text"
                 placeholder={t("username")}
               />
               <Input
@@ -56,8 +72,18 @@ const Login = () => {
                 type="password"
                 placeholder={t("password")}
               />
-              <Button className="mt-6" type="submit">
-                {t("login")}
+              <Button
+                disabled={isLoading}
+                className="mt-6 flex items-center justify-center"
+                type="submit"
+              >
+                {isLoading ? (
+                  <>
+                    <Spinner className="mr-3 h-4 w-4 rtl:ml-3" /> {t("loading")}
+                  </>
+                ) : (
+                  t("login")
+                )}
               </Button>
             </Form>
           );

@@ -6,6 +6,7 @@
   "password": "Password",
   "sign in to your account": "Sign in to your account",
   "login": "Login",
+  "loading":"Loading",
   "username is required": "Username is required",
   "password must be at least 6 characters": "Password must be at least 6 characters",
   "password is required": "Password is required",

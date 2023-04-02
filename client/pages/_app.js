@@ -6,25 +6,10 @@ import { ToastContainer } from "react-toastify";
 import Layout from "components/layout/Layout";
 import store from "../store";
 import { Provider } from "react-redux";
-import { useEffect } from "react";
-import { useRouter } from "next/router";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import GlobalSetting from "helper/settings/GlobalSetting";
 
 function MyApp({ Component, pageProps }) {
-  const router = useRouter();
-
-  useEffect(() => {
-    if (router.locale === "ar") {
-      document.documentElement.lang = "ar";
-      document.body.dir = "rtl";
-      document.body.style.fontFamily = `'Noto Sans Arabic', sans-serif`;
-    } else if (router.locale === "en") {
-      document.documentElement.lang = "en";
-      document.body.dir = "ltr";
-      document.body.style.fontFamily = `'Cairo', sans-serif`;
-    }
-  }, [router.locale]);
-
   const getLayout = Component.getLayout || ((page) => <Layout>{page}</Layout>);
   return (
     <Provider store={store}>
@@ -43,7 +28,11 @@ function MyApp({ Component, pageProps }) {
         pauseOnHover
         theme="light"
       />
-      {getLayout(<Component {...pageProps} />)}
+      {getLayout(
+        <GlobalSetting>
+          <Component {...pageProps} />
+        </GlobalSetting>
+      )}
     </Provider>
   );
 }

@@ -6,6 +6,7 @@
   "password": "كلمة المرور",
   "sign in to your account": "تسجيل الدخول إلى حسابك",
   "login": "تسجيل الدخول",
+  "loading": "جارى التحميل",
   "username is required": "اسم المستخدم مطلوب",
   "password must be at least 6 characters": "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
   "password is required": "كلمة المرور مطلوبة",

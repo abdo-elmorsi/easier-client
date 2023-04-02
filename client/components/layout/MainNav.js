@@ -42,18 +42,6 @@ export default function MainNav() {
   const { t } = useTranslation("common");
 
   useEffect(() => {
-    if (localStorage.getItem("theme") === "light") {
-      dispatch(toggleTheme("light"));
-      document.documentElement.classList.remove("dark");
-    } else if (localStorage.getItem("theme") === "dark") {
-      dispatch(toggleTheme("dark"));
-      document.documentElement.classList.add("dark");
-    } else {
-      dispatch(toggleTheme("dark"));
-    }
-  }, [theme]);
-
-  useEffect(() => {
     // every time the router changes, we need to update the nav style.
     const newNav = navigation.map((item) => {
       if (router.pathname === item.href) {
