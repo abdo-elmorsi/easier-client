@@ -8,32 +8,35 @@ import store from "../store";
 import { Provider } from "react-redux";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import GlobalSetting from "helper/settings/GlobalSetting";
+import { Provider as ProviderAuth } from "next-auth/client";
 
 function MyApp({ Component, pageProps }) {
   const getLayout = Component.getLayout || ((page) => <Layout>{page}</Layout>);
   return (
-    <Provider store={store}>
-      <Head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Real State Management</title>
-      </Head>
-      <ToastContainer
-        position="top-center"
-        autoClose={4000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
-      {getLayout(
-        <GlobalSetting>
-          <Component {...pageProps} />
-        </GlobalSetting>
-      )}
-    </Provider>
+    <ProviderAuth session={pageProps.session}>
+      <Provider store={store}>
+        <Head>
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <title>Real State Management</title>
+        </Head>
+        <ToastContainer
+          position="top-center"
+          autoClose={4000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+        {getLayout(
+          <GlobalSetting>
+            <Component {...pageProps} />
+          </GlobalSetting>
+        )}
+      </Provider>
+    </ProviderAuth>
   );
 }
 

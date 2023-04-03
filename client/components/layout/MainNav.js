@@ -13,17 +13,8 @@ import { toggleTheme } from "store/ThemeSlice";
 import { useDispatch, useSelector } from "react-redux";
 import ReactSelect from "components/select/ReactSelect";
 import { useTranslation } from "next-i18next";
-
-const navigation = [
-  { nameAR: "الرئيسية", nameEN: "Home", href: "/", current: false },
-  { nameAR: "الاتصال", nameEN: "Contact", href: "/contact", current: false },
-  {
-    nameAR: "لوحة القيادة",
-    nameEN: "Dashboard",
-    href: "/dashboard",
-    current: false,
-  },
-];
+import { toast } from "react-toastify";
+import { getSession, signOut } from "next-auth/client";
 
 const selectOptions = [
   { value: "ar", label: "العربية", image: "/flags/ar.svg" },
@@ -35,22 +26,25 @@ function classNames(...classes) {
 }
 
 export default function MainNav() {
-  const [nav, setNav] = useState(navigation);
   const router = useRouter();
   const { theme } = useSelector((state) => state.theme);
   const dispatch = useDispatch();
   const { t } = useTranslation("common");
 
+  const [session, setSession] = useState("");
   useEffect(() => {
-    // every time the router changes, we need to update the nav style.
-    const newNav = navigation.map((item) => {
-      if (router.pathname === item.href) {
-        return { ...item, current: true };
-      } else {
-        return { ...item, current: false };
+    (async () => {
+      try {
+        const respond = await getSession();
+        if (respond) {
+          setSession(respond);
+        } else {
+          setSession("");
+        }
+      } catch (error) {
+        toast.error(error.message);
       }
-    });
-    setNav(newNav);
+    })();
   }, [router]);
 
   const selectLanguageHandler = (value) => {
@@ -89,21 +83,44 @@ export default function MainNav() {
                 </div>
                 <div className="ml-6 hidden rtl:mr-6 sm:block">
                   <div className="flex items-center gap-2">
-                    {nav.map((item) => (
-                      <Link href={item.href} key={item.nameEN}>
+                    <Link href={"/"}>
+                      <a
+                        className={classNames(
+                          router.pathname === "/"
+                            ? "active-desktop-nav"
+                            : "hover-desktop-nav",
+                          "default-desktop-nav"
+                        )}
+                      >
+                        {t("home")}
+                      </a>
+                    </Link>
+                    <Link href={"/contact"}>
+                      <a
+                        className={classNames(
+                          router.pathname === "/contact"
+                            ? "active-desktop-nav"
+                            : "hover-desktop-nav",
+                          "default-desktop-nav"
+                        )}
+                      >
+                        {t("contact")}
+                      </a>
+                    </Link>
+                    {session && (
+                      <Link href={"/dashboard"}>
                         <a
                           className={classNames(
-                            item.current
-                              ? "border-b-2 border-blue-700 dark:border-transparent dark:bg-gray-900 dark:text-white"
-                              : "border-b-2 border-transparent hover:border-blue-700 dark:border-transparent dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white",
-                            "px-3 py-2 text-sm font-medium dark:rounded-md"
+                            router.pathname === "/dashboard"
+                              ? "active-desktop-nav"
+                              : "hover-desktop-nav",
+                            "default-desktop-nav"
                           )}
-                          aria-current={item.current ? "page" : undefined}
                         >
-                          {router.locale === "en" ? item.nameEN : item.nameAR}
+                          {t("dashboard")}
                         </a>
                       </Link>
-                    ))}
+                    )}
                   </div>
                 </div>
               </div>
@@ -119,7 +136,9 @@ export default function MainNav() {
                 formatOptionLabel={(client) => (
                   <div className={`flex items-center`}>
                     <img className="h-4 w-4" src={client.image} alt="logo" />
-                    <span className="ml-2 capitalize">{client.label}</span>
+                    <span className="ml-2 capitalize rtl:mr-2 rtl:ml-0">
+                      {client.label}
+                    </span>
                   </div>
                 )}
               />
@@ -139,29 +158,59 @@ export default function MainNav() {
                   className="ml-2 h-6 w-6 cursor-pointer text-white"
                 />
               )}
-              <Button className="ml-4" onClick={() => router.push("/login")}>
-                {t("login")}
-              </Button>
+              {!session && (
+                <Button className="ml-4" onClick={() => router.push("/login")}>
+                  {t("login")}
+                </Button>
+              )}
+              {session && (
+                <Button className="ml-4" onClick={() => signOut()}>
+                  {t("logout")}
+                </Button>
+              )}
             </div>
           </div>
 
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 px-2 pt-2 pb-3">
-              {nav.map((item) => (
-                <Link key={item.nameEN} href={item.href}>
+              <Link href={"/"}>
+                <a
+                  className={classNames(
+                    router.pathname === "/"
+                      ? "active-mobile-nav"
+                      : "hover-mobile-nav",
+                    "default-mobile-nav"
+                  )}
+                >
+                  {t("home")}
+                </a>
+              </Link>
+              <Link href={"/contact"}>
+                <a
+                  className={classNames(
+                    router.pathname === "/contact"
+                      ? "active-mobile-nav"
+                      : "hover-mobile-nav",
+                    "default-mobile-nav"
+                  )}
+                >
+                  {t("contact")}
+                </a>
+              </Link>
+              {session && (
+                <Link href={"/dashboard"}>
                   <a
                     className={classNames(
-                      item.current
-                        ? "border-b-2 border-blue-700 dark:border-transparent dark:bg-gray-900  dark:text-white"
-                        : "border-b-2 border-transparent hover:border-blue-700 dark:border-transparent dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white",
-                      "block px-3 py-2 text-base font-medium dark:rounded-md"
+                      router.pathname === "/dashboard"
+                        ? "active-mobile-nav"
+                        : "hover-mobile-nav",
+                      "default-mobile-nav"
                     )}
-                    aria-current={item.current ? "page" : undefined}
                   >
-                    {router.locale === "en" ? item.nameEN : item.nameAR}
+                    {t("dashboard")}
                   </a>
                 </Link>
-              ))}
+              )}
             </div>
           </Disclosure.Panel>
         </>

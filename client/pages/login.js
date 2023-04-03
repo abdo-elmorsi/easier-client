@@ -42,7 +42,7 @@ const Login = () => {
         user: JSON.stringify(respond),
       });
       router.replace("/");
-      toast.success(`${t("welcome")} ${respond.user.userName}`);
+      toast.success(t("Login Success!"));
     } catch (e) {
       toast.error(e?.data.message);
     } finally {

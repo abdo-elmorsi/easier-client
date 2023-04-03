@@ -12,6 +12,6 @@
   "password is required": "Password is required",
   "UH OH! You're lost": "UH OH! You're lost.",
   "The page you are looking for does not exist But you can click the button below to go back to the homepage": "The page you are looking for does not exist But you can click the button below to go back to the homepage.",
-  "welcome": "Welcome",
+  "login success!": "Login Success!",
   "logout": "Logout"
 }
