@@ -14,7 +14,7 @@ const GlobalSetting = ({ children }) => {
     // const userInfo = secureLocalStorage.getItem('User');
 
     // set config for any axios request
-    axios.defaults.baseURL = `http://localhost:3001/api`;
+    axios.defaults.baseURL = `https://brave-jay-jacket.cyclic.app/api`;
     // axios.defaults.headers.common.Authorization = `Bearer ${userInfo?.token}`;
 
     // check if any user info in local storage to auto log user

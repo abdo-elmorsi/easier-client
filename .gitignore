@@ -2,10 +2,7 @@
 
 # dependencies
 /node_modules
-/client/node_modules
-/server/node_modules
-/client/.next
-/client/.env
+/.next
 
 /.pnp
 .pnp.js
@@ -13,9 +10,6 @@
 # testing
 /coverage
 
-# production
-/server/build
-/client/build
 
 # misc
 .DS_Store
