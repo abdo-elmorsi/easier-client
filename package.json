@@ -6,8 +6,8 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "client": "cd client && yarn dev",
-        "server": "cd server && npm start",
-        "dev": "concurrently \"npm run server\" \"yarn client\""
+        "server": "cd server && yarn dev",
+        "dev": "concurrently \"yarn server\" \"yarn client\""
     },
     "repository": {
         "type": "git",

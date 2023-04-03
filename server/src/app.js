@@ -42,12 +42,12 @@ app.use(
 );
 
 // routers
-app.use("/users", UserRoutes);
-app.use("/towers", TowerRoutes);
-app.use("/flats", FlatRouter);
+app.use("/api/users", UserRoutes);
+app.use("/api/towers", TowerRoutes);
+app.use("/api/flats", FlatRouter);
 
 app.get("/", async (req, res) => {
-    res.send("<h1>Welcome Abdo</h1>");
+    res.send("<h1>Welcome Abdo's Plz navigate to /api</h1>");
 });
 
 module.exports = app;
