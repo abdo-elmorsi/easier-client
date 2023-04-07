@@ -13,5 +13,8 @@
   "UH OH! You're lost": "أنت ضائع.",
   "The page you are looking for does not exist But you can click the button below to go back to the homepage": "الصفحة التي تبحث عنها غير موجودة ولكن يمكنك النقر على الزر أدناه للعودة إلى الصفحة الرئيسية.",
   "login success!": "تم تسجيل الدخول بنجاح!",
-  "logout": "تسجيل خروج"
+  "logout": "تسجيل خروج",
+  "main": "الرئيسية",
+  "setting": "الاعدادات",
+  "edit your account": "تعديل الحساب"
 }

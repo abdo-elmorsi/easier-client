@@ -13,5 +13,8 @@
   "UH OH! You're lost": "UH OH! You're lost.",
   "The page you are looking for does not exist But you can click the button below to go back to the homepage": "The page you are looking for does not exist But you can click the button below to go back to the homepage.",
   "login success!": "Login Success!",
-  "logout": "Logout"
+  "logout": "Logout",
+  "main": "main",
+  "setting": "setting",
+  "edit your account": "Edit your account"
 }

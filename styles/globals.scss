@@ -3,6 +3,7 @@
 @tailwind utilities;
 @import "pages/home";
 @import "pages/login";
+@import "components/layout/sidebar";
 
 @layer utilities {
   .remain-height {
