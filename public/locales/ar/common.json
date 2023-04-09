@@ -16,5 +16,18 @@
   "logout": "تسجيل خروج",
   "main": "الرئيسية",
   "setting": "الاعدادات",
-  "edit your account": "تعديل الحساب"
+  "phone number": "رقم الهاتف",
+  "email": "البريد إلكتروني",
+  "update": "تحديث",
+  "change your image": "تغيير صورتك",
+  "allowed *.jpeg, *.jpg, *.png, *.gif": "مسموح *.jpeg ، *.jpg ، *.png ، *.gif",
+  "max size of 3.1 MB": "بحد أقصى 3.1 ميغابايت",
+  "old password": "كلمة المرور القديمة",
+  "new password": "كلمة المرور الجديدة",
+  "confirm new password": "تأكيد كلمة المرور الجديدة",
+  "old password is required": "كلمة المرور القديمة مطلوبة",
+  "new password is required": "كلمة المرور الجديدة مطلوبة",
+  "password must match new password": "يجب أن تطابق كلمة المرور كلمة المرور الجديدة",
+  "general": "عام",
+  "change password": "تغيير كلمة المرور"
 }

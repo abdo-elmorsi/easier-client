@@ -17,6 +17,7 @@ function Input({ label, name, type, className, ...rest }) {
               <input
                 className="mb-1 w-full rounded border-2 border-gray-300 bg-transparent py-2 px-4 text-gray-800 focus:outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-50"
                 type={type}
+                id={label}
                 {...rest}
                 {...field}
               />

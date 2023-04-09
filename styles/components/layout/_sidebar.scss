@@ -3,16 +3,6 @@
     display: block;
   }
 
-  &__image-box:hover &__image {
-    transform: scale(1);
-    filter: blur(3px) brightness(80%);
-  }
-
-  &__image-box:hover &__edit {
-    transform: translate(-50%, -50%);
-    opacity: 1;
-  }
-
   &:hover &__username {
     display: block;
   }
