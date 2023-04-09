@@ -30,9 +30,9 @@ const navigation = [
     category: "main",
   },
   {
-    nameAR: "الرسائل",
-    nameEN: "Messages",
-    href: "/dashboard/messages",
+    nameAR: "اختبار",
+    nameEN: "test",
+    href: "/dashboard/test",
     current: false,
     icon: <ChatBubbleBottomCenterTextIcon className="h-5 w-5" />,
     category: "main",
