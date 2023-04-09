@@ -58,6 +58,7 @@ const EditProfileForm = ({ session }) => {
                   formik.setFieldValue("image", event.currentTarget.files[0]);
                   setImage(event.currentTarget.files[0]);
                 }}
+                accept=".jpeg, .jpg, .png, .gif"
               />
               <p className="text-center text-xs text-gray-500 sm:text-sm">
                 {t("allowed *.jpeg, *.jpg, *.png, *.gif")} <br></br>{" "}
