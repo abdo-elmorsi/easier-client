@@ -11,6 +11,7 @@ import {
 import Link from "next/link";
 import { useTranslation } from "next-i18next";
 
+
 const navigation = [
   {
     nameAR: "الرئيسية",
@@ -64,6 +65,7 @@ const navigation = [
 
 const Sidebar = () => {
   const [nav, setNav] = useState(navigation);
+  const [showModal, setShowModal] = useState(false);
   const router = useRouter();
   const { t } = useTranslation("common");
 
@@ -83,16 +85,13 @@ const Sidebar = () => {
     <div className="sidebar flex w-14 flex-col border-none bg-blue-900 text-white transition-all duration-300 hover:w-64 dark:bg-gray-900 md:w-64">
       <div className="flex flex-grow flex-col overflow-y-auto overflow-x-hidden">
         <div className="mb-3 pt-5">
-          <div className="sidebar__image-box relative mx-auto mb-4 hidden h-28 w-28 cursor-pointer overflow-hidden rounded-full  shadow-lg md:block">
+          <div className="sidebar__image-box relative mx-auto mb-4 hidden h-28 w-28 overflow-hidden rounded-full  shadow-lg md:block">
             <img
               src="/images/building-1.jpg"
-              className="sidebar__image block h-full scale-125 object-cover object-center transition-all duration-500"
+              className="sidebar__image block h-full w-full object-cover object-center transition-all duration-500"
             />
-            <span className="sidebar__edit translate-y-1/5 absolute top-1/2 left-1/2 -translate-x-1/2 text-center text-sm opacity-0 transition-all duration-500">
-              {t("edit your account")}
-            </span>
           </div>
-          <div className="sidebar__username mx-auto text-center capitalize md:block">
+          <div className="sidebar__username hidden mx-auto text-center capitalize md:block">
             abdelrahman
           </div>
         </div>

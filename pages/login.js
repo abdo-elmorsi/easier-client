@@ -8,7 +8,7 @@ import { useTranslation } from "next-i18next";
 import { userLogin } from "helper/apis/login";
 import { toast } from "react-toastify";
 import Spinner from "components/UI/Spinner";
-import { signIn } from "next-auth/client";
+import { getSession, signIn } from "next-auth/client";
 import { useRouter } from "next/router";
 
 const Login = () => {
@@ -107,10 +107,25 @@ Login.getLayout = function PageLayout(page) {
   return <>{page}</>;
 };
 
-export async function getStaticProps({ locale }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale, ["common"])),
-    },
-  };
-}
+export const getServerSideProps = async (context) => {
+  const session = await getSession({ req: context.req });
+
+  const routeUrl =
+    context.locale === "ar" ? "/" : `/${context.locale}`;
+
+  if (session) {
+    return {
+      redirect: {
+        destination: routeUrl,
+        permanent: false,
+      },
+    };
+  } else {
+    return {
+      props: {
+        session,
+        ...(await serverSideTranslations(context.locale, ["common"])),
+      },
+    };
+  }
+};
