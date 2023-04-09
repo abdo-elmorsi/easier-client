@@ -16,5 +16,18 @@
   "logout": "Logout",
   "main": "main",
   "setting": "setting",
-  "edit your account": "Edit your account"
+  "phone number": "Phone number",
+  "email": "Email",
+  "update": "Update",
+  "change your image": "Change your image",
+  "allowed *.jpeg, *.jpg, *.png, *.gif": "Allowed *.jpeg, *.jpg, *.png, *.gif",
+  "max size of 3.1 MB": "max size of 3.1 MB",
+  "old password": "Old password",
+  "new password": "New password",
+  "confirm new password": "Confirm new password",
+  "old password is required": "Old password is required",
+  "new password is required": "New password is required",
+  "password must match new password": "Password must match new password",
+  "general": "General",
+  "change password": "Change Password"
 }
