@@ -8,7 +8,7 @@ import { useTranslation } from "next-i18next";
 import { userLogin } from "helper/apis/login";
 import { toast } from "react-toastify";
 import Spinner from "components/UI/Spinner";
-import { getSession, signIn } from "next-auth/client";
+import { getSession, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 
 const Login = () => {
@@ -87,7 +87,8 @@ const Login = () => {
               >
                 {isLoading ? (
                   <>
-                    <Spinner className="mr-3 h-4 w-4 rtl:ml-3" /> {t("loading")}
+                    <Spinner className="mr-3 h-4 w-4 rtl:ml-3" />{" "}
+                    {t("loading")}
                   </>
                 ) : (
                   t("login")
@@ -110,8 +111,7 @@ Login.getLayout = function PageLayout(page) {
 export const getServerSideProps = async (context) => {
   const session = await getSession({ req: context.req });
 
-  const routeUrl =
-    context.locale === "ar" ? "/" : `/${context.locale}`;
+  const routeUrl = context.locale === "ar" ? "/" : `/${context.locale}`;
 
   if (session) {
     return {

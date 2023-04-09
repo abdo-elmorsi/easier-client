@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getSession, signOut } from "next-auth/client";
+import { getSession, signOut } from "next-auth/react";
 import { toast } from "react-toastify";
 
 const axiosInstance = axios.create({

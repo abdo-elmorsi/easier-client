@@ -1,36 +1,47 @@
 import NextAuth from "next-auth";
-import Providers from "next-auth/providers";
+import CredentialsProvider from "next-auth/providers/credentials";
 
-export default NextAuth({
-  providers: [
-    Providers.Credentials({
-      name: "credentials",
-      async authorize(credentials) {
-        const { user } = credentials;
-        return JSON.parse(user);
-      },
-    }),
-  ],
-  callbacks: {
+const options = {
+    providers: [
+        CredentialsProvider({
+            name: "credentials",
+            async authorize(credentials) {
+                const { user } = credentials;
+                let data = JSON.parse(user);
+                if (user) {
+                    return {
+                        name: {
+                            ...data.user,
+                            token: data.token,
+                        },
+                    };
+                } else {
+                    return null;
+                }
+            },
+        }),
+    ],
     redirect: async (url, baseUrl) => {
-      return baseUrl;
+        return baseUrl;
     },
     async session(session, token) {
-      session.user = token.user;
-      return { ...session };
+        session.user = token.user;
+        return { ...session };
     },
     async jwt(token, user) {
-      if (user) token.user = user;
-      return token;
+        if (user) token.user = user;
+        return token;
     },
-  },
-  secret: process.env.JWT_SIGNING_PRIVATE_KEY,
-  jwt: {
     secret: process.env.JWT_SIGNING_PRIVATE_KEY,
-    encryption: true,
-  },
-  pages: {
-    signIn: "/pages/auth",
-    // signOut: "/auth/signin",
-  },
-});
+    jwt: {
+        secret: process.env.JWT_SIGNING_PRIVATE_KEY,
+        encryption: true,
+    },
+    pages: {
+        signIn: "/login",
+    },
+};
+
+const authHandler = (req, res) => NextAuth(req, res, options);
+
+export default authHandler;

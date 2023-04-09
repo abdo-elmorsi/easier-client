@@ -8,15 +8,19 @@ import store from "../store";
 import { Provider } from "react-redux";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import GlobalSetting from "helper/settings/GlobalSetting";
-import { Provider as ProviderAuth } from "next-auth/client";
+import { SessionProvider } from "next-auth/react";
 
 function MyApp({ Component, pageProps }) {
-  const getLayout = Component.getLayout || ((page) => <Layout>{page}</Layout>);
+  const getLayout =
+    Component.getLayout || ((page) => <Layout>{page}</Layout>);
   return (
-    <ProviderAuth session={pageProps.session}>
+    <SessionProvider>
       <Provider store={store}>
         <Head>
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1"
+          />
           <title>Real State Management</title>
         </Head>
         <ToastContainer
@@ -36,7 +40,7 @@ function MyApp({ Component, pageProps }) {
           </GlobalSetting>
         )}
       </Provider>
-    </ProviderAuth>
+    </SessionProvider>
   );
 }
 

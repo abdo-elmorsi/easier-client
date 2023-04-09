@@ -2,7 +2,7 @@ import React from "react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import LayoutWithSidebar from "components/layout/LayoutWithSidebar";
-import { getSession } from "next-auth/client";
+import { getSession } from "next-auth/react";
 import Layout from "components/layout/Layout";
 
 const Dashboard = ({ session }) => {

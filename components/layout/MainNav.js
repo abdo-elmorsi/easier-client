@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ReactSelect from "components/select/ReactSelect";
 import { useTranslation } from "next-i18next";
 import { toast } from "react-toastify";
-import { getSession, signOut } from "next-auth/client";
+import { getSession, signOut } from "next-auth/react";
 import { removeCookie } from "utils/cookies";
 
 const selectOptions = [
