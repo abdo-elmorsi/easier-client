@@ -3,10 +3,11 @@ import { getSession, signOut } from "next-auth/react";
 import { toast } from "react-toastify";
 
 const axiosInstance = axios.create({
-  baseURL: "https://brave-jay-jacket.cyclic.app/api",
-  headers: {
-    "Content-Type": "application/json",
-  },
+    baseURL: "http://localhost:3001/api",
+    // baseURL: "https://brave-jay-jacket.cyclic.app/api",
+    headers: {
+        "Content-Type": "application/json",
+    },
 });
 
 axiosInstance.interceptors.request.use(async (config) => {
