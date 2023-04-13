@@ -31,8 +31,8 @@ const Login = () => {
 
   const onSubmit = async (values) => {
     const submitData = {
-      email: values.username,
-      password: values.password,
+        userName: values.username,
+        password: values.password,
     };
     setIsLoading(true);
     try {

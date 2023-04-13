@@ -9,61 +9,61 @@ import EditProfileForm from "components/profile-page/EditProfileForm";
 import { UserCircleIcon, KeyIcon } from "@heroicons/react/24/outline";
 import ChangePassword from "components/profile-page/ChangePassword";
 
-const Profile = ({ session }) => {
-  const { t } = useTranslation("common");
+const Profile = () => {
+    const { t } = useTranslation("common");
 
-  const tabsData = [
-    {
-      label: t("general"),
-      icon: <UserCircleIcon className="h-5 w-5" />,
-      content: <EditProfileForm session={session} />,
-    },
-    {
-      label: t("change password"),
-      icon: <KeyIcon className="h-5 w-5" />,
-      content: <ChangePassword />,
-    },
-  ];
+    const tabsData = [
+        {
+            label: t("general"),
+            icon: <UserCircleIcon className="h-5 w-5" />,
+            content: <EditProfileForm />,
+        },
+        {
+            label: t("change password"),
+            icon: <KeyIcon className="h-5 w-5" />,
+            content: <ChangePassword />,
+        },
+    ];
 
-  return (
-    <div className="flex-1">
-      <Tabs tabsData={tabsData} />
-    </div>
-  );
+    return (
+        <div className="flex-1">
+            <Tabs tabsData={tabsData} />
+        </div>
+    );
 };
 
 export default Profile;
 
 Profile.getLayout = function PageLayout(page) {
-  return (
-    <Layout>
-      <LayoutWithSidebar>{page}</LayoutWithSidebar>
-    </Layout>
-  );
+    return (
+        <Layout>
+            <LayoutWithSidebar>{page}</LayoutWithSidebar>
+        </Layout>
+    );
 };
 
 export const getServerSideProps = async (context) => {
-  const session = await getSession({ req: context.req });
+    const session = await getSession({ req: context.req });
 
-  const loginUrl =
-    context.locale === "ar" ? "/login" : `/${context.locale}/login`;
+    const loginUrl =
+        context.locale === "ar" ? "/login" : `/${context.locale}/login`;
 
-  if (!session) {
-    return {
-      redirect: {
-        destination: loginUrl,
-        permanent: false,
-      },
-    };
-  } else {
-    return {
-      props: {
-        session,
-        ...(await serverSideTranslations(context.locale, [
-          "common",
-          "dashboard",
-        ])),
-      },
-    };
-  }
+    if (!session) {
+        return {
+            redirect: {
+                destination: loginUrl,
+                permanent: false,
+            },
+        };
+    } else {
+        return {
+            props: {
+                // session,
+                ...(await serverSideTranslations(context.locale, [
+                    "common",
+                    "dashboard",
+                ])),
+            },
+        };
+    }
 };
