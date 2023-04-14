@@ -11,24 +11,24 @@ const GlobalSetting = ({ children }) => {
 
 
   useEffect(() => {
-    if (router.locale === "en") {
-      document.documentElement.lang = "en";
-      document.body.dir = "ltr";
-      document.body.style.fontFamily = `'Cairo', sans-serif`;
-    } else {
+    if (router.locale === "ar") {
       document.documentElement.lang = "ar";
       document.body.dir = "rtl";
       document.body.style.fontFamily = `'Noto Sans Arabic', sans-serif`;
+    } else {
+      document.documentElement.lang = "en";
+      document.body.dir = "ltr";
+      document.body.style.fontFamily = `'Cairo', sans-serif`;
     }
   }, [router.locale]);
 
   useEffect(() => {
-    if (localStorage.getItem("theme") === "light") {
-      dispatch(toggleTheme("light"));
-      document.documentElement.classList.remove("dark");
-    } else {
+    if (localStorage.getItem("theme") === "dark") {
       document.documentElement.classList.add("dark");
       dispatch(toggleTheme("dark"));
+    } else {
+      dispatch(toggleTheme("light"));
+      document.documentElement.classList.remove("dark");
     }
   }, [theme]);
 
