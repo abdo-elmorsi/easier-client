@@ -37,11 +37,11 @@ function MyApp({ Component, pageProps }) {
           pauseOnHover
           theme="light"
         />
-        {getLayout(
-          <GlobalSetting>
+        <GlobalSetting>
+          {getLayout(
             <Component {...pageProps} />
-          </GlobalSetting>
-        )}
+          )}
+        </GlobalSetting>
       </Provider>
     </SessionProvider>
   );

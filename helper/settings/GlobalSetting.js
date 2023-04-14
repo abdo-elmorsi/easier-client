@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleTheme } from "store/ThemeSlice";
 import PropTypes from "prop-types"
@@ -7,8 +7,8 @@ import PropTypes from "prop-types"
 const GlobalSetting = ({ children }) => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const [isRender, setIsRender] = useState(true);
   const { theme } = useSelector((state) => state.theme);
-
 
   useEffect(() => {
     if (router.locale === "ar") {
@@ -20,6 +20,7 @@ const GlobalSetting = ({ children }) => {
       document.body.dir = "ltr";
       document.body.style.fontFamily = `'Cairo', sans-serif`;
     }
+    setIsRender(false)
   }, [router.locale]);
 
   useEffect(() => {
@@ -30,9 +31,10 @@ const GlobalSetting = ({ children }) => {
       dispatch(toggleTheme("light"));
       document.documentElement.classList.remove("dark");
     }
+    setIsRender(false)
   }, [theme]);
 
-  return <>{children}</>;
+  return <>{!isRender && children}</>;
 };
 export default GlobalSetting;
 

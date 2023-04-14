@@ -22,7 +22,7 @@ class MyDocument extends Document {
 
   render() {
     return (
-      <Html className='light' lang="ar" dir='rtl'>
+      <Html className='light' lang="ar">
         <Head>
           <link rel="icon" href="/nav/logo.png" />
           <meta
