@@ -12,7 +12,7 @@ import PropTypes from "prop-types"
 import { useSession } from "next-auth/react";
 
 const EditProfileForm = () => {
-    const { data: session } = useSession()
+    const { data: session, update } = useSession()
 
     const [isLoading, setIsLoading] = useState(false);
     const [image, setImage] = useState("");
@@ -22,7 +22,7 @@ const EditProfileForm = () => {
 
     const onSubmit = async (values) => {
 
-        if (values.userName != userName || values.email != email || values.phoneNumber != phoneNumber) {
+        if (values.userName != userName || values.email != email || values.phoneNumber != phoneNumber || image) {
 
             setIsLoading(true);
             const formData = new FormData();
@@ -33,7 +33,8 @@ const EditProfileForm = () => {
 
             try {
                 const data = await updateProfile(formData);
-                toast.success(data.message)
+                toast.success(data.message);
+                update({ ...session.user, ...data.user })
             } catch ({ response }) {
                 toast.error(response.data.message);
             } finally {

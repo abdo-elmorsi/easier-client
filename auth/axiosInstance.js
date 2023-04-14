@@ -3,8 +3,8 @@ import { getSession, signOut } from "next-auth/react";
 import { toast } from "react-toastify";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3001/api",
-  // baseURL: "https://brave-jay-jacket.cyclic.app/api",
+  // baseURL: "http://localhost:3001/api",
+  baseURL: "https://brave-jay-jacket.cyclic.app/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -23,10 +23,10 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   function (error) {
-    // if (error.response?.status === 401) {
-    //   signOut();
-    //   toast.error("Your session has expired, please login again");
-    // }
+    if (error.response?.status === 401) {
+      signOut();
+      toast.error("Your session has expired, please login again");
+    }
     return Promise.reject(error.response);
   }
 );
