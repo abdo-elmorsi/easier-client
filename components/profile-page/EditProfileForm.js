@@ -6,39 +6,47 @@ import { useTranslation } from "next-i18next";
 import Button from "components/UI/Button";
 import FileInput from "components/formik/FileInput";
 import { updateProfile } from "helper/apis/profile";
-import { useSession } from "next-auth/client";
 import Spinner from "components/UI/Spinner";
+import { toast } from "react-toastify";
+import PropTypes from "prop-types"
+import { useSession } from "next-auth/react";
 
 const EditProfileForm = () => {
-    const [session] = useSession();
+    const { data: session } = useSession()
 
     const [isLoading, setIsLoading] = useState(false);
     const [image, setImage] = useState("");
     const { t } = useTranslation("common");
 
-    const onSubmit = async (values) => {
-        setIsLoading(true);
-        const formData = new FormData();
-        formData.append("userName", values.userName);
-        formData.append("email", values.email);
-        formData.append("phoneNumber", values.phoneNumber);
-        image && formData.append("photo", image);
+    const { userName, email, phoneNumber } = session.user;
 
-        try {
-            const { data } = await updateProfile(formData);
-            console.log(data);
-        } catch ({ response }) {
-            console.error(response);
-            toast.error(response.data.message);
-        } finally {
+    const onSubmit = async (values) => {
+
+        if (values.userName != userName || values.email != email || values.phoneNumber != phoneNumber) {
+
             setIsLoading(true);
+            const formData = new FormData();
+            formData.append("userName", values.userName);
+            formData.append("email", values.email);
+            formData.append("phoneNumber", values.phoneNumber);
+            image && formData.append("photo", image);
+
+            try {
+                const data = await updateProfile(formData);
+                toast.success(data.message)
+            } catch ({ response }) {
+                toast.error(response.data.message);
+            } finally {
+                setIsLoading(false);
+            }
+        } else {
+            toast.warning("Make any changes.")
         }
     };
-
     const initialValues = {
-        userName: "",
-        phoneNumber: "",
-        email: "",
+        userName: userName || "",
+        phoneNumber: phoneNumber || "",
+        email: email || "",
     };
 
     const editProfileValidation = Yup.object().shape({
@@ -51,7 +59,7 @@ const EditProfileForm = () => {
             validationSchema={editProfileValidation}
             onSubmit={onSubmit}
         >
-            {(formik) => {
+            {() => {
                 return (
                     <Form className="flex flex-col items-center justify-around gap-8 sm:m-5 lg:flex-row">
                         <div className="mb-12 flex flex-col items-center justify-center">
@@ -62,7 +70,7 @@ const EditProfileForm = () => {
                                             src={
                                                 image
                                                     ? URL.createObjectURL(image)
-                                                    : session?.user?.user?.photo
+                                                    : session?.user?.photo
                                                         ?.secure_url
                                             }
                                             className="user__image block h-full w-full scale-105 object-cover object-center transition-all duration-500"
@@ -126,5 +134,10 @@ const EditProfileForm = () => {
         </Formik>
     );
 };
+
+
+EditProfileForm.propTypes = {
+    session: PropTypes.object.isRequired
+}
 
 export default EditProfileForm;

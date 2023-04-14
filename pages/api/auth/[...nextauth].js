@@ -1,19 +1,20 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-
 const options = {
     providers: [
         CredentialsProvider({
             name: "credentials",
             async authorize(credentials) {
                 const { user } = credentials;
-                let data = JSON.parse(user);
-                if (user) {
+                const userData = JSON.parse(user);
+                // Check if user exists and return user data with token
+                if (userData) {
                     return {
                         name: {
-                            ...data.user,
-                            token: data.token,
-                        },
+                            ...userData.user,
+                            token: userData.token,
+                        }
+
                     };
                 } else {
                     return null;
@@ -21,19 +22,17 @@ const options = {
             },
         }),
     ],
-    redirect: async (url, baseUrl) => {
-        return baseUrl;
+    callbacks: {
+        async session({ session }) {
+            session.user = session.user.name;
+            return session;
+        },
     },
-    async session(session, token) {
-        session.user = token.user;
-        return { ...session };
+    session: {
+        jwt: true,
     },
-    async jwt(token, user) {
-        if (user) token.user = user;
-        return token;
-    },
-    secret: process.env.JWT_SIGNING_PRIVATE_KEY,
     jwt: {
+        // eslint-disable-next-line no-undef
         secret: process.env.JWT_SIGNING_PRIVATE_KEY,
         encryption: true,
     },
@@ -42,6 +41,7 @@ const options = {
     },
 };
 
+// Auth handler for NextAuth
 const authHandler = (req, res) => NextAuth(req, res, options);
 
 export default authHandler;

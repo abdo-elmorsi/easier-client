@@ -31,13 +31,13 @@ const Login = () => {
 
   const onSubmit = async (values) => {
     const submitData = {
-        userName: values.username,
-        password: values.password,
+      userName: values.username,
+      password: values.password,
     };
     setIsLoading(true);
     try {
       const respond = await userLogin(submitData);
-      const result = await signIn("credentials", {
+      await signIn("credentials", {
         redirect: false,
         user: JSON.stringify(respond),
       });
@@ -65,7 +65,7 @@ const Login = () => {
         validationSchema={loginValidation}
         onSubmit={onSubmit}
       >
-        {(formik) => {
+        {() => {
           return (
             <Form className="flex w-full flex-col md:w-2/5 lg:w-1/4">
               <Input

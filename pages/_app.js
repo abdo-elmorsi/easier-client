@@ -1,3 +1,4 @@
+import React from 'react';
 import { appWithTranslation } from "next-i18next";
 import Head from "next/head";
 import "styles/globals.scss";
@@ -8,13 +9,15 @@ import store from "../store";
 import { Provider } from "react-redux";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import GlobalSetting from "helper/settings/GlobalSetting";
-import { SessionProvider } from "next-auth/react";
+import { SessionProvider } from 'next-auth/react';
+import PropTypes from "prop-types"
 
 function MyApp({ Component, pageProps }) {
   const getLayout =
     Component.getLayout || ((page) => <Layout>{page}</Layout>);
   return (
-    <SessionProvider>
+    <SessionProvider
+      session={pageProps.session} >
       <Provider store={store}>
         <Head>
           <meta
@@ -43,6 +46,11 @@ function MyApp({ Component, pageProps }) {
     </SessionProvider>
   );
 }
+MyApp.propTypes = {
+  Component: PropTypes.object.isRequired,
+  pageProps: PropTypes.object.isRequired
+}
+
 
 export async function getStaticProps({ locale }) {
   return {

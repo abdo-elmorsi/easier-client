@@ -10,6 +10,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { useTranslation } from "next-i18next";
+import { useSession } from "next-auth/react";
 
 
 const navigation = [
@@ -64,11 +65,10 @@ const navigation = [
 ];
 
 const Sidebar = () => {
+  const { data: session } = useSession()
   const [nav, setNav] = useState(navigation);
-  const [showModal, setShowModal] = useState(false);
   const router = useRouter();
   const { t } = useTranslation("common");
-
   useEffect(() => {
     // every time the router changes, we need to update the nav style.
     const newNav = navigation.map((tab) => {
@@ -87,12 +87,12 @@ const Sidebar = () => {
         <div className="mb-3 pt-5">
           <div className="sidebar__image-box relative mx-auto mb-4 hidden h-28 w-28 overflow-hidden rounded-full  shadow-lg md:block">
             <img
-              src="/images/building-1.jpg"
+              src={session.user?.photo?.secure_url || "/images/building-1.jpg"}
               className="sidebar__image block h-full w-full object-cover object-center transition-all duration-500"
             />
           </div>
           <div className="sidebar__username hidden mx-auto text-center capitalize md:block">
-            abdelrahman
+            {session?.user?.userName}
           </div>
         </div>
         <ul className="flex flex-col space-y-1 py-4">
@@ -109,11 +109,10 @@ const Sidebar = () => {
               <li key={tab.nameEN}>
                 <Link href={tab.href} key={tab.nameEN}>
                   <a
-                    className={`${
-                      tab.current
-                        ? "text-white-800 border-blue-500 bg-blue-800 dark:border-gray-800 dark:bg-gray-600"
-                        : "hover:text-white-800 hover:border-blue-500 hover:bg-blue-800 dark:hover:border-gray-800 dark:hover:bg-gray-600"
-                    } text-white-600  relative flex h-11 flex-row items-center border-l-4 border-transparent pr-6  focus:outline-none rtl:border-l-0 rtl:border-r-4 rtl:pr-4 `}
+                    className={`${tab.current
+                      ? "text-white-800 border-blue-500 bg-blue-800 dark:border-gray-800 dark:bg-gray-600"
+                      : "hover:text-white-800 hover:border-blue-500 hover:bg-blue-800 dark:hover:border-gray-800 dark:hover:bg-gray-600"
+                      } text-white-600  relative flex h-11 flex-row items-center border-l-4 border-transparent pr-6  focus:outline-none rtl:border-l-0 rtl:border-r-4 rtl:pr-4 `}
                   >
                     <span className="ml-4 inline-flex items-center justify-center">
                       {tab.icon}
@@ -138,11 +137,10 @@ const Sidebar = () => {
               <li key={tab.nameEN}>
                 <Link href={tab.href} key={tab.nameEN}>
                   <a
-                    className={`${
-                      tab.current
-                        ? "text-white-800 border-blue-500 bg-blue-800 dark:border-gray-800 dark:bg-gray-600"
-                        : "hover:text-white-800 hover:border-blue-500 hover:bg-blue-800 dark:hover:border-gray-800 dark:hover:bg-gray-600"
-                    } text-white-600  relative flex h-11 flex-row items-center border-l-4 border-transparent pr-6  focus:outline-none rtl:border-l-0 rtl:border-r-4 rtl:pr-4 `}
+                    className={`${tab.current
+                      ? "text-white-800 border-blue-500 bg-blue-800 dark:border-gray-800 dark:bg-gray-600"
+                      : "hover:text-white-800 hover:border-blue-500 hover:bg-blue-800 dark:hover:border-gray-800 dark:hover:bg-gray-600"
+                      } text-white-600  relative flex h-11 flex-row items-center border-l-4 border-transparent pr-6  focus:outline-none rtl:border-l-0 rtl:border-r-4 rtl:pr-4 `}
                   >
                     <span className="ml-4 inline-flex items-center justify-center">
                       {tab.icon}

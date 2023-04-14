@@ -8,15 +8,17 @@ import Tabs from "components/UI/Tabs";
 import EditProfileForm from "components/profile-page/EditProfileForm";
 import { UserCircleIcon, KeyIcon } from "@heroicons/react/24/outline";
 import ChangePassword from "components/profile-page/ChangePassword";
+import PropTypes from "prop-types"
 
-const Profile = () => {
+
+const Profile = ({ session }) => {
     const { t } = useTranslation("common");
 
     const tabsData = [
         {
             label: t("general"),
             icon: <UserCircleIcon className="h-5 w-5" />,
-            content: <EditProfileForm />,
+            content: <EditProfileForm session={session} />,
         },
         {
             label: t("change password"),
@@ -33,7 +35,9 @@ const Profile = () => {
 };
 
 export default Profile;
-
+Profile.propTypes = {
+    session: PropTypes.object.isRequired
+}
 Profile.getLayout = function PageLayout(page) {
     return (
         <Layout>
@@ -58,7 +62,7 @@ export const getServerSideProps = async (context) => {
     } else {
         return {
             props: {
-                // session,
+                session,
                 ...(await serverSideTranslations(context.locale, [
                     "common",
                     "dashboard",

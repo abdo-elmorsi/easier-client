@@ -1,3 +1,4 @@
+import React from 'react';
 import Hero from "components/home-page";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 

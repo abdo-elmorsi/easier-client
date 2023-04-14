@@ -6,7 +6,6 @@ import { getSession } from "next-auth/react";
 import Layout from "components/layout/Layout";
 
 const Dashboard = ({ session }) => {
-  console.log(session);
   const { t } = useTranslation("dashboard");
 
   return <div className="flex-1">dashboard</div>;
