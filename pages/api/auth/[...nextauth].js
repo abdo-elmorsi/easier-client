@@ -43,7 +43,7 @@ const options = {
       return token;
     },
   },
-
+  secret: process.env.JWT_SIGNING_PRIVATE_KEY,
   pages: {
     signIn: '/login',
   },
