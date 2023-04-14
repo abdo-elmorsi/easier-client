@@ -87,7 +87,7 @@ const Sidebar = () => {
         <div className="mb-3 pt-5">
           <div className="sidebar__image-box relative mx-auto mb-4 hidden h-28 w-28 overflow-hidden rounded-full  shadow-lg md:block">
             <img
-              src={session.user?.photo?.secure_url || "/images/building-1.jpg"}
+              src={session?.user?.photo?.secure_url || "/images/building-1.jpg"}
               className="sidebar__image block h-full w-full object-cover object-center transition-all duration-500"
             />
           </div>
