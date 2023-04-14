@@ -22,9 +22,9 @@ const selectOptions = [
   { value: "en", label: "english", image: "/flags/en.svg" },
 ];
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+// function classNames(...classes) {
+//   return classes.filter(Boolean).join(" ");
+// }
 
 export default function MainNav() {
   const router = useRouter();
@@ -97,25 +97,20 @@ export default function MainNav() {
                   <div className="flex items-center gap-2">
                     <Link href={"/"}>
                       <a
-                        className={classNames(
-                          router.pathname === "/"
-                            ? "active-desktop-nav"
-                            : "hover-desktop-nav",
-                          "default-desktop-nav"
-                        )}
+                        className={`default-desktop-nav ${router.pathname === "/"
+                          ? "active-desktop-nav"
+                          : "hover-desktop-nav"}`
+                        }
                       >
                         {t("home")}
                       </a>
                     </Link>
                     <Link href={"/contact"}>
                       <a
-                        className={classNames(
-                          router.pathname ===
-                            "/contact"
-                            ? "active-desktop-nav"
-                            : "hover-desktop-nav",
-                          "default-desktop-nav"
-                        )}
+                        className={`default-desktop-nav ${router.pathname ===
+                          "/contact"
+                          ? "active-desktop-nav"
+                          : "hover-desktop-nav"} `}
                       >
                         {t("contact")}
                       </a>
@@ -123,13 +118,9 @@ export default function MainNav() {
                     {session && (
                       <Link href={"/dashboard"}>
                         <a
-                          className={classNames(
-                            router.pathname ===
-                              "/dashboard"
-                              ? "active-desktop-nav"
-                              : "hover-desktop-nav",
-                            "default-desktop-nav"
-                          )}
+                          className={`default-desktop-nav ${router.pathname.includes("dashboard")
+                            ? "active-desktop-nav"
+                            : "hover-desktop-nav"}`}
                         >
                           {t("dashboard")}
                         </a>
@@ -202,24 +193,18 @@ export default function MainNav() {
             <div className="space-y-1 px-2 pt-2 pb-3">
               <Link href={"/"}>
                 <a
-                  className={classNames(
-                    router.pathname === "/"
-                      ? "active-mobile-nav"
-                      : "hover-mobile-nav",
-                    "default-mobile-nav"
-                  )}
+                  className={`default-mobile-nav ${router.pathname === "/"
+                    ? "active-mobile-nav"
+                    : "hover-mobile-nav"}`}
                 >
                   {t("home")}
                 </a>
               </Link>
               <Link href={"/contact"}>
                 <a
-                  className={classNames(
-                    router.pathname === "/contact"
-                      ? "active-mobile-nav"
-                      : "hover-mobile-nav",
-                    "default-mobile-nav"
-                  )}
+                  className={` default-mobile-nav ${router.pathname === "/contact"
+                    ? "active-mobile-nav"
+                    : "hover-mobile-nav"}`}
                 >
                   {t("contact")}
                 </a>
@@ -227,12 +212,9 @@ export default function MainNav() {
               {session && (
                 <Link href={"/dashboard"}>
                   <a
-                    className={classNames(
-                      router.pathname === "/dashboard"
-                        ? "active-mobile-nav"
-                        : "hover-mobile-nav",
-                      "default-mobile-nav"
-                    )}
+                    className={`default-mobile-nav ${router.pathname.includes("dashboard")
+                      ? "active-mobile-nav"
+                      : "hover-mobile-nav"}`}
                   >
                     {t("dashboard")}
                   </a>

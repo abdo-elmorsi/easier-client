@@ -1,6 +1,7 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
 @import "pages/home";
 @import "pages/login";
 @import "pages/profile";
@@ -12,26 +13,53 @@
   }
 }
 
-@layer base {
+@layer components {
+
   // desktop nav
   .default-desktop-nav {
-    @apply border-b-2 border-transparent px-3 py-2 text-sm font-medium dark:rounded-md;
+    border-bottom-width: 2px !important;
+    border-color: transparent !important;
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    line-height: 1.25rem !important;
+    border-radius: 0.25rem !important;
+    color: #FFF !important;
   }
-  .hover-desktop-nav {
-    @apply hover:border-blue-700 dark:border-b-0 dark:border-transparent dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white;
+
+  .hover-desktop-nav:hover {
+    border-color: #1d4ed8 !important;
+    color: #1d4ed8 !important;
+    background-color: transparent !important;
   }
+
   .active-desktop-nav {
-    @apply border-blue-700 dark:border-b-0 dark:border-transparent dark:bg-gray-900 dark:text-white;
+    border-color: #1d4ed8 !important;
+    background-color: #1d4ed8 !important;
+    color: #fff !important;
   }
 
   // mobile nav
   .default-mobile-nav {
-    @apply block border-b-2 px-3 py-2 text-base font-medium dark:rounded-md;
+    display: block !important;
+    border-bottom-width: 2px !important;
+    padding: 0.5rem 0.75rem !important;
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+    line-height: 1.5rem !important;
+    border-radius: 0.25rem !important;
   }
-  .hover-mobile-nav {
-    @apply border-transparent hover:border-blue-700 dark:border-b-0 dark:border-transparent dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white;
+
+  .hover-mobile-nav:hover {
+    border-color: #1d4ed8;
+    color: #1d4ed8;
+    background-color: transparent;
   }
+
   .active-mobile-nav {
-    @apply border-blue-700 dark:border-b-0 dark:border-transparent dark:bg-gray-900  dark:text-white;
+    border-color: #1d4ed8;
+    background-color: #1d4ed8;
+    color: #fff;
   }
+
 }
