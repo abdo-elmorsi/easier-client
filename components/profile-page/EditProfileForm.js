@@ -41,7 +41,7 @@ const EditProfileForm = () => {
       toast.success(data.message);
       update({ ...session.user, ...data.user })
     } catch ({ response }) {
-      toast.error(response.data.message);
+      toast.error(response.data?.message);
     } finally {
       setIsLoading(false);
     }

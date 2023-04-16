@@ -4,13 +4,24 @@ import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "next-i18next";
 import Button from "components/UI/Button";
+import Spinner from "components/UI/Spinner";
+import { updatePassword } from "helper/apis/profile";
+import { toast } from "react-toastify";
 
 const ChangePassword = () => {
   const { t } = useTranslation("common");
   const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (values) => {
-    console.log(values);
+    setIsLoading(true);
+    try {
+      const data = await updatePassword(values);
+      toast.success(data.message);
+    } catch (response) {
+      toast.error(response.data?.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const initialValues = {
@@ -40,7 +51,7 @@ const ChangePassword = () => {
       validationSchema={changePasswordValidation}
       onSubmit={onSubmit}
     >
-      {(formik) => {
+      {() => {
         return (
           <Form className="flex flex-col items-center justify-around gap-8 sm:m-5 lg:flex-row">
             <div className="w-full lg:w-2/5">

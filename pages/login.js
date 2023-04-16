@@ -43,8 +43,8 @@ const Login = () => {
       });
       router.replace("/");
       toast.success(t("Login Success!"));
-    } catch (e) {
-      toast.error(e?.data.message);
+    } catch (response) {
+      toast.error(response.data?.message);
     } finally {
       setIsLoading(false);
     }
