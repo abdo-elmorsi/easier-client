@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 
 const axiosInstance = axios.create({
   // baseURL: "http://localhost:3001/api",
-  baseURL: "https://brave-jay-jacket.cyclic.app/api",
+  baseURL: "https://impossible-garb-fawn.cyclic.app/api",
   headers: {
     "Content-Type": "application/json",
   },
