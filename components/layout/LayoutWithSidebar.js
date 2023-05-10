@@ -1,6 +1,6 @@
 import React from "react";
-import MainNav from "./MainNav";
 import Sidebar from "./Sidebar";
+import PropTypes from "prop-types"
 
 const LayoutWithSidebar = ({ children }) => {
   return (
@@ -10,5 +10,7 @@ const LayoutWithSidebar = ({ children }) => {
     </div>
   );
 };
-
+LayoutWithSidebar.propTypes = {
+  children: PropTypes.node.isRequired,
+}
 export default LayoutWithSidebar;

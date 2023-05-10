@@ -8,7 +8,7 @@ const Hero = () => {
     <div className="hero remain-height bg-cover bg-center flex items-center justify-start px-8 lg:px-40">
       <div className="basis-1/2">
         <h1 className="text-white text-4xl lg:text-6xl mb-6">Real State Management</h1>
-        <p className="leading-6	mb-4">
+        <p className="leading-6	mb-4 text-gray-300">
           It is a long established fact that a reader will be distracted by the
           readable content of a page when looking at its layout. The point of
           using Lorem Ipsum is that it has a more-or-less normal distribution of
