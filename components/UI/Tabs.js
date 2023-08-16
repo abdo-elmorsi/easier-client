@@ -1,4 +1,5 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import PropTypes from "prop-types"
 
 export default function Tabs({ tabsData }) {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
@@ -10,11 +11,10 @@ export default function Tabs({ tabsData }) {
           return (
             <button
               key={idx}
-              className={`default-desktop-nav flex items-center gap-1 capitalize ${
-                idx === activeTabIndex
-                  ? "active-desktop-nav"
-                  : "hover-desktop-nav"
-              }`}
+              className={`default-desktop-nav flex items-center gap-1 capitalize ${idx === activeTabIndex
+                ? "active-desktop-nav"
+                : "hover-desktop-nav"
+                }`}
               onClick={() => setActiveTabIndex(idx)}
             >
               {tab.icon} {tab.label}
@@ -25,4 +25,7 @@ export default function Tabs({ tabsData }) {
       <div className="py-4">{tabsData[activeTabIndex].content}</div>
     </div>
   );
+}
+Tabs.propTypes = {
+  tabsData: PropTypes.array.isRequired,
 }

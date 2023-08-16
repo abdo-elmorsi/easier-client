@@ -31,6 +31,14 @@ const navigation = [
     category: "main",
   },
   {
+    nameAR: "المستخدمين",
+    nameEN: "Users",
+    href: "/dashboard/users",
+    current: false,
+    icon: <InboxIcon className="h-5 w-5" />,
+    category: "main",
+  },
+  {
     nameAR: "اختبار",
     nameEN: "test",
     href: "/dashboard/test",
