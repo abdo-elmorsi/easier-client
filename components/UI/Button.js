@@ -1,16 +1,29 @@
 import React from "react";
+import PropTypes from "prop-types";
+import classNames from "classnames";
 
-const Button = ({ className, type, children, disabled, ...rest }) => {
+const Button = ({ className = "btn--primary", type = "button", children, disabled, ...rest }) => {
+  const boxClasses = classNames(
+    `btn`,
+    className
+  );
   return (
     <button
+      className={boxClasses}
+      type={type}
       disabled={disabled}
-      className={`${className} rounded-md bg-blue-700 py-2 px-4 text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-blue-700`}
-      type={type || "button"}
       {...rest}
     >
       {children}
     </button>
   );
+};
+
+Button.propTypes = {
+  className: PropTypes.string,
+  type: PropTypes.oneOf(["button", "submit", "reset"]),
+  children: PropTypes.node.isRequired,
+  disabled: PropTypes.bool,
 };
 
 export default Button;

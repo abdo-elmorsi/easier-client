@@ -15,8 +15,7 @@ const options = {
         if (userData) {
           return {
             name: {
-              ...userData.user,
-              token: userData.token,
+              ...userData,
             },
           };
         } else {

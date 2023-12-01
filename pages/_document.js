@@ -24,10 +24,10 @@ class MyDocument extends Document {
     return (
       <Html className='light' lang="ar">
         <Head>
-          <link rel="icon" href="/nav/logo.png" />
+          <link rel="icon" href="/favicon.ico" />
           <meta
             name="description"
-            content="Real state system management"
+            content="Easier"
           ></meta>
           <link
             rel="preconnect"

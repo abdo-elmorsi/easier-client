@@ -3,9 +3,8 @@ import Input from "components/formik/Input";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "next-i18next";
-import Button from "components/UI/Button";
-import Spinner from "components/UI/Spinner";
-import { updatePassword } from "helper/apis/profile";
+import { Button, Spinner } from "components/UI";
+import { updatePassword } from "helper/apis/tenants";
 import { toast } from "react-toastify";
 
 const ChangePassword = () => {
@@ -32,16 +31,16 @@ const ChangePassword = () => {
 
   const changePasswordValidation = Yup.object().shape({
     oldPassword: Yup.string()
-      .min(6, t("password must be at least 6 characters"))
-      .required(t("old password is required"))
+      .min(6, t("password_must_be_at_least_6_characters_key"))
+      .required(t("old_password_is_required_key"))
       .trim(),
     newPassword: Yup.string()
-      .min(6, t("password must be at least 6 characters"))
-      .required(t("new password is required"))
+      .min(6, t("password_must_be_at_least_6_characters_key"))
+      .required(t("new_password_is_required_key"))
       .trim(),
     confirmNewPassword: Yup.string()
-      .oneOf([Yup.ref("newPassword"), null], t("password must match new password"))
-      .required(t("password is required"))
+      .oneOf([Yup.ref("newPassword"), null], t("password_must_match_new_password_key"))
+      .required(t("password_is_required_key"))
       .trim(),
   });
 
@@ -54,39 +53,36 @@ const ChangePassword = () => {
       {() => {
         return (
           <Form className="flex flex-col items-center justify-around gap-8 sm:m-5 lg:flex-row">
-            <div className="w-full lg:w-2/5">
+            <div className="flex flex-col w-full gap-4 lg:w-2/5">
               <Input
-                label={t("old password")}
+                label={t("old_password_key")}
                 name="oldPassword"
                 type="password"
-                placeholder={t("old password")}
                 className={"w-full"}
               />
               <Input
-                label={t("new password")}
+                label={t("new_password_key")}
                 name="newPassword"
                 type="password"
-                placeholder={t("new password")}
                 className={"w-full"}
               />
               <Input
-                label={t("confirm new password")}
+                label={t("confirm_new_password_key")}
                 name="confirmNewPassword"
                 type="password"
-                placeholder={t("confirm new password")}
                 className={"w-full"}
               />
               <Button
                 disabled={isLoading}
-                className="mx-auto mt-6 flex w-full items-center justify-center"
+                className="flex items-center justify-center w-full mx-auto mt-6"
                 type="submit"
               >
                 {isLoading ? (
                   <>
-                    <Spinner className="mr-3 h-4 w-4 rtl:ml-3" /> {t("loading")}
+                    <Spinner className="w-4 h-4 mr-3 rtl:ml-3" /> {t("loading_key")}
                   </>
                 ) : (
-                  t("update")
+                  t("update_key")
                 )}
               </Button>
             </div>

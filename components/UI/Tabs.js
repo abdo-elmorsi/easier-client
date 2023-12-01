@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types"
+import PropTypes from 'prop-types';
 
 export default function Tabs({ tabsData }) {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
 
   return (
-    <div className="m-6 rounded-lg bg-white p-6 shadow-md dark:bg-gray-800">
-      <div className="flex gap-3 border-b dark:border-gray-500 ">
+    <div className="p-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
+      <div className="flex gap-3 border-b dark:border-gray-500">
         {tabsData.map((tab, idx) => {
           return (
             <button
@@ -26,6 +26,13 @@ export default function Tabs({ tabsData }) {
     </div>
   );
 }
+
 Tabs.propTypes = {
-  tabsData: PropTypes.array.isRequired,
-}
+  tabsData: PropTypes.arrayOf(
+    PropTypes.shape({
+      icon: PropTypes.node,
+      label: PropTypes.string,
+      content: PropTypes.node,
+    })
+  ).isRequired,
+};

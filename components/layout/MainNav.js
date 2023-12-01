@@ -1,247 +1,190 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback } from "react";
 import { Disclosure } from "@headlessui/react";
 import {
-  Bars3Icon,
   SunIcon,
   MoonIcon,
-  XMarkIcon,
+  BellAlertIcon,
+  ArrowsUpDownIcon,
+  ArrowLeftOnRectangleIcon,
+  LanguageIcon,
+  ArrowRightOnRectangleIcon,
+  FaceSmileIcon,
 } from "@heroicons/react/24/outline";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import Button from "components/UI/Button";
 import { toggleTheme } from "store/ThemeSlice";
 import { useDispatch, useSelector } from "react-redux";
-import ReactSelect from "components/select/ReactSelect";
 import { useTranslation } from "next-i18next";
-import { toast } from "react-toastify";
-import { getSession, signOut } from "next-auth/react";
-import { removeCookie } from "utils/cookies";
+import { signOut, useSession } from "next-auth/react";
+import { MainLogo } from "components/icons";
+import Link from "next/link";
+import { Button, List, ListItem, ListItemPrefix, Popover, PopoverContent, PopoverHandler, Typography } from "@material-tailwind/react";
 
-const selectOptions = [
-  { value: "ar", label: "العربية", image: "/flags/ar.svg" },
-  { value: "en", label: "english", image: "/flags/en.svg" },
-];
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
 
 export default function MainNav() {
   const router = useRouter();
+  const { data } = useSession();
+  const user = data?.user || {};
+  const firstLetter = user?.userName?.slice(0, 1) || "E";
+
+  const userRole = user?.role;
   const { theme } = useSelector((state) => state.theme);
   const dispatch = useDispatch();
   const { t } = useTranslation("common");
 
-  const [session, setSession] = useState("");
-  useEffect(() => {
-    (async () => {
-      try {
-        const respond = await getSession();
-        if (respond) {
-          setSession(respond);
-        } else {
-          setSession("");
-        }
-      } catch (error) {
-        toast.error(error.message);
-      }
-    })();
+  // Memoized language selection handler
+  const selectLanguageHandler = useCallback(() => {
+    const currentLang = router.locale.toLowerCase();
+    router.push(router.asPath, undefined, { locale: currentLang === 'ar' ? "en" : "ar" });
   }, [router]);
-
-  const selectLanguageHandler = (value) => {
-    router.push(router.asPath, undefined, { locale: value });
-  };
 
   return (
     <Disclosure
       as="nav"
-      className="relative z-50 shadow-md dark:bg-gray-800"
+      style={{ zIndex: 9999 }}
+      className="sticky top-0 bg-white dark:bg-gray-800"
     >
-      {({ open }) => (
+      {() => (
         <>
-          <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-            <div className="relative flex h-16 items-center justify-between">
+          <div className="px-2 sm:px-6">
+            <div className="relative flex items-center justify-between h-16">
               <div className="inset-y-0 left-0 flex items-center sm:hidden">
-                {/* Mobile menu button*/}
-                <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-                  <span className="sr-only">
-                    Open main menu
-                  </span>
-                  {open ? (
-                    <XMarkIcon
-                      className="block h-6 w-6"
-                      aria-hidden="true"
-                    />
-                  ) : (
-                    <Bars3Icon
-                      className="block h-6 w-6"
-                      aria-hidden="true"
-                    />
-                  )}
-                </Disclosure.Button>
               </div>
-              <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-                <div className="flex flex-shrink-0 items-center">
-                  <img
-                    className="block h-8 w-auto lg:hidden"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                    alt="Your Company"
-                  />
-                  <img
-                    className="hidden h-8 w-auto lg:block"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                    alt="Your Company"
-                  />
+              <div className="flex items-center justify-start flex-1 sm:items-stretch sm:justify-start">
+                <div className="flex items-center flex-shrink-0 w-12 md:w-52">
+                  <Link href="/">
+                    <MainLogo className="cursor-pointer" />
+                  </Link>
                 </div>
-                <div className="ml-6 hidden rtl:mr-6 sm:block">
-                  <div className="flex items-center gap-2">
-                    <Link href={"/"}>
-                      <a
-                        className={classNames(
-                          router.pathname === "/"
-                            ? "active-desktop-nav"
-                            : "hover-desktop-nav",
-                          "default-desktop-nav"
-                        )}
-                      >
-                        {t("home")}
-                      </a>
-                    </Link>
-                    <Link href={"/contact"}>
-                      <a
-                        className={classNames(
-                          router.pathname ===
-                            "/contact"
-                            ? "active-desktop-nav"
-                            : "hover-desktop-nav",
-                          "default-desktop-nav"
-                        )}
-                      >
-                        {t("contact")}
-                      </a>
-                    </Link>
-                    {session && (
-                      <Link href={"/dashboard"}>
-                        <a
-                          className={classNames(
-                            router.pathname ===
-                              "/dashboard"
-                              ? "active-desktop-nav"
-                              : "hover-desktop-nav",
-                            "default-desktop-nav"
-                          )}
-                        >
-                          {t("dashboard")}
-                        </a>
-                      </Link>
+              </div>
+
+              <div className="items-center hidden md:flex">
+
+                <Button onClick={selectLanguageHandler} className="flex items-center justify-center w-8 h-8 px-2 py-2 mx-2 text-sm bg-gray-100 rounded-full cursor-pointer text-dark hover:bg-gray-200 dark:bg-gray-500 dark:hover:bg-gray-400">
+                  {router.locale.includes("ar") ? "EN" : "AR"}
+                </Button>
+                <BellAlertIcon
+                  className="flex items-center justify-center w-8 h-8 px-2 py-2 mx-2 bg-gray-100 rounded-full cursor-pointer hover:bg-gray-200 dark:bg-gray-500 dark:hover:bg-gray-400"
+                />
+
+                {theme === "light" && (
+                  <SunIcon
+                    onClick={() => {
+                      dispatch(toggleTheme("dark"));
+                    }}
+                    className="w-8 h-8 px-2 py-2 ml-2 bg-gray-100 rounded-full cursor-pointer hover:bg-gray-200 dark:bg-gray-500 dark:hover:bg-gray-400"
+                  />
+                )}
+                {theme === "dark" && (
+                  <MoonIcon
+                    onClick={() => {
+                      dispatch(toggleTheme("light"));
+                    }}
+                    className="w-8 h-8 px-2 py-2 ml-2 text-white bg-gray-100 rounded-full cursor-pointer hover:bg-gray-200 dark:bg-gray-500 dark:hover:bg-gray-400"
+                  />
+                )}
+                <span className="mx-4 my-2 text-transparent border-l-2 border-gray-400 h-3/4">.</span>
+              </div>
+
+              <Popover placement="bottom">
+                <PopoverHandler>
+                  <Button className="flex items-center justify-between gap-4 px-2 text-black bg-transparent shadow-none dark:text-white hover:shadow-none">
+
+                    <div className="flex items-center justify-center w-10 h-10 p-2 text-sm uppercase bg-gray-100 rounded-full dark:bg-gray-500">
+                      {firstLetter}
+                    </div>
+
+
+                    <div className="flex flex-col items-center justify-between">
+                      <span> {user?.userName}</span>
+                      <span> {user?.email}</span>
+                    </div>
+
+                    <ArrowsUpDownIcon className="w-5 " />
+                  </Button>
+                </PopoverHandler>
+                <PopoverContent className=" w-auto dark:bg-gray-700 dark:border-gray-400 dark:text-white z-[9999]">
+                  <div className="flex items-center gap-4 pb-4 mb-4 border-b border-blue-gray-50 ">
+                    <div className="flex items-center justify-center w-10 h-10 p-2 text-sm uppercase bg-gray-100 rounded-full dark:bg-gray-500">
+                      {firstLetter}
+                    </div>
+                    {/* <Avatar src="/img/team-4.jpg" alt={user?.name} /> */}
+                    <div>
+                      <Typography variant="h6" className="dark:text-white">
+                        {user?.userName}
+                      </Typography>
+                      <Typography variant="small" color="gray" className="font-normal dark:text-white">
+                        {userRole}
+                      </Typography>
+                    </div>
+                  </div>
+                  <List className="p-0">
+                    {/* balance in small device */}
+                    {/* btn dark in small device */}
+                    <ListItem
+                      onClick={() => { dispatch(toggleTheme(`${theme === "light" ? "dark" : "light"}`)) }}
+                      className="gap-4 dark:text-gray-100 hover:text-black active:text-dark md:hidden">
+                      <ListItemPrefix>
+                        {theme === "light" ? (<SunIcon className="w-8" />) : (<MoonIcon className="w-8" />)}
+                      </ListItemPrefix>
+                      {t("dark_mode_key")}
+                    </ListItem>
+                    {/* btn language in small device */}
+                    <ListItem
+                      onClick={selectLanguageHandler}
+                      className="gap-4 dark:text-gray-100 hover:text-black active:text-dark md:hidden">
+
+                      <ListItemPrefix>
+                        <LanguageIcon className="w-8" />
+                      </ListItemPrefix>
+                      {/* {t("dark_mode_key")} */}
+                      {router.locale.includes("ar") ? "English" : "عربي"}
+                    </ListItem>
+
+
+
+
+
+                    {!user?._id ? (<Link href="/login">
+                      <ListItem
+                        className="gap-4 dark:text-gray-100 hover:text-black active:text-dark">
+                        <ListItemPrefix>
+                          <ArrowRightOnRectangleIcon className="w-8" />
+                        </ListItemPrefix>
+                        {t("sign_in_key")}
+                      </ListItem>
+                    </Link>) : (
+                      <>
+                        <Link href="/dashboard">
+                          <ListItem
+                            as={"a"}
+                            className="gap-4 dark:text-gray-100 hover:text-black active:text-dark">
+                            <ListItemPrefix>
+                              <FaceSmileIcon className="w-8" />
+                            </ListItemPrefix>
+                            {t("dashboard_key")}
+                          </ListItem>
+                        </Link>
+                        <ListItem
+                          onClick={signOut}
+                          className="gap-4 dark:text-gray-100 hover:text-black active:text-dark">
+                          <ListItemPrefix>
+                            <ArrowLeftOnRectangleIcon className="w-8" />
+                          </ListItemPrefix>
+                          {t("sign_out_key")}
+                        </ListItem>
+                      </>
                     )}
-                  </div>
-                </div>
-              </div>
-              <ReactSelect
-                className="ml-3"
-                options={selectOptions}
-                defaultValue={selectOptions.find(
-                  (ele) => ele.value === router.locale
-                )}
-                onSelectChange={selectLanguageHandler}
-                placeholder="Select a language"
-                isSearchable={false}
-                formatOptionLabel={(client) => (
-                  <div className={`flex items-center`}>
-                    <img
-                      className="h-4 w-4"
-                      src={client.image}
-                      alt="logo"
-                    />
-                    <span className="ml-2 capitalize rtl:mr-2 rtl:ml-0">
-                      {client.label}
-                    </span>
-                  </div>
-                )}
-              />
-              {theme === "light" && (
-                <SunIcon
-                  onClick={() => {
-                    dispatch(toggleTheme("dark"));
-                  }}
-                  className="ml-2 h-6 w-6 cursor-pointer"
-                />
-              )}
-              {theme === "dark" && (
-                <MoonIcon
-                  onClick={() => {
-                    dispatch(toggleTheme("light"));
-                  }}
-                  className="ml-2 h-6 w-6 cursor-pointer text-white"
-                />
-              )}
-              {!session && (
-                <Button
-                  className="ml-4"
-                  onClick={() => router.push("/login")}
-                >
-                  {t("login")}
-                </Button>
-              )}
-              {session && (
-                <Button
-                  className="ml-4"
-                  onClick={() => {
-                    removeCookie("updated-image");
-                    signOut();
-                  }}
-                >
-                  {t("logout")}
-                </Button>
-              )}
+
+                  </List>
+                </PopoverContent>
+              </Popover>
+
             </div>
           </div>
-
-          <Disclosure.Panel className="sm:hidden">
-            <div className="space-y-1 px-2 pt-2 pb-3">
-              <Link href={"/"}>
-                <a
-                  className={classNames(
-                    router.pathname === "/"
-                      ? "active-mobile-nav"
-                      : "hover-mobile-nav",
-                    "default-mobile-nav"
-                  )}
-                >
-                  {t("home")}
-                </a>
-              </Link>
-              <Link href={"/contact"}>
-                <a
-                  className={classNames(
-                    router.pathname === "/contact"
-                      ? "active-mobile-nav"
-                      : "hover-mobile-nav",
-                    "default-mobile-nav"
-                  )}
-                >
-                  {t("contact")}
-                </a>
-              </Link>
-              {session && (
-                <Link href={"/dashboard"}>
-                  <a
-                    className={classNames(
-                      router.pathname === "/dashboard"
-                        ? "active-mobile-nav"
-                        : "hover-mobile-nav",
-                      "default-mobile-nav"
-                    )}
-                  >
-                    {t("dashboard")}
-                  </a>
-                </Link>
-              )}
-            </div>
-          </Disclosure.Panel>
         </>
-      )}
-    </Disclosure>
+      )
+      }
+    </Disclosure >
   );
 }

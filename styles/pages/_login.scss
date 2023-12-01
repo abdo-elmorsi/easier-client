@@ -1,60 +1,19 @@
 @mixin smallScreenMedia($color) {
   @media only screen and (max-width: 768px) {
-    background-image: linear-gradient(
-        to right,
+    background-image: linear-gradient(to right,
         rgba($color, 0.9),
-        rgba($color, 0.9)
-      ),
+        rgba($color, 0.9)),
       url("../../public/images/building-1.jpg");
   }
 }
 
 // light
 .login {
-  background-image: linear-gradient(
-      to right,
-      #f9fafb 0%,
-      #f9fafb 50%,
-      transparent 50%
-    ),
+  background-image: linear-gradient(to right,
+      rgb(21 170 190 / 78%) 0%,
+      rgb(21 170 190 / 78%) 100%,
+      transparent 10%),
     url("../../public/images/building-1.jpg");
+  @include smallScreenMedia(rgb(21 170 190 / 78%));
 
-  @include smallScreenMedia(#f9fafb);
-
-  body[dir="rtl"] & {
-    background-image: linear-gradient(
-        to left,
-        #f9fafb 0%,
-        #f9fafb 50%,
-        transparent 50%
-      ),
-      url("../../public/images/building-1.jpg");
-
-    @include smallScreenMedia(#f9fafb);
-  }
-}
-
-// dark
-.dark .login {
-  background-image: linear-gradient(
-      to right,
-      #1f2937 0%,
-      #1f2937 50%,
-      transparent 50%
-    ),
-    url("../../public/images/building-1.jpg");
-
-  @include smallScreenMedia(#1f2937);
-}
-
-.dark body[dir="rtl"] .login {
-  background-image: linear-gradient(
-      to left,
-      #1f2937 0%,
-      #1f2937 50%,
-      transparent 50%
-    ),
-    url("../../public/images/building-1.jpg");
-
-  @include smallScreenMedia(#1f2937);
 }

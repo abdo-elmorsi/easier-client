@@ -39,5 +39,5 @@ const GlobalSetting = ({ children }) => {
 export default GlobalSetting;
 
 GlobalSetting.propTypes = {
-  children: PropTypes.object.isRequired
+  children: PropTypes.node.isRequired
 }

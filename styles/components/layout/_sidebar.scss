@@ -1,9 +1,15 @@
 .sidebar {
-  &:hover &__image-box {
-    display: block;
+  &:hover .arrow-icon {
+    opacity: 1 !important;
+    // display: flex !important;
   }
 
-  &:hover &__username {
-    display: block;
-  }
+  &:hover .sub-menu-icon {
+    opacity: 0 !important;
+    transform: translateX(15px);
+    -webkit-transform: translateX(15px);
+    -moz-transform: translateX(15px);
+    -ms-transform: translateX(15px);
+    -o-transform: translateX(15px);
+}
 }

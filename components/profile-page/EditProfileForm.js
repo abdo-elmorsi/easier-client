@@ -3,22 +3,20 @@ import Input from "components/formik/Input";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "next-i18next";
-import Button from "components/UI/Button";
+import { Button, Spinner } from "components/UI";
 import FileInput from "components/formik/FileInput";
-import { updateProfile } from "helper/apis/profile";
-import Spinner from "components/UI/Spinner";
+import { updateProfile } from "helper/apis/tenants";
 import { toast } from "react-toastify";
 import PropTypes from "prop-types"
 import { useSession } from "next-auth/react";
 
 const EditProfileForm = () => {
   const { data: session, update } = useSession()
-
   const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState("");
   const { t } = useTranslation("common");
 
-  const { userName, email, phoneNumber } = session.user;
+  const { name: userName, email, phone: phoneNumber } = session.user;
 
   const onSubmit = async (values) => {
     if (values.userName === userName && values.email === email && values.phoneNumber === phoneNumber && !image) {
@@ -54,7 +52,7 @@ const EditProfileForm = () => {
   };
 
   const editProfileValidation = Yup.object().shape({
-    userName: Yup.string().required(t("userName is required")).trim(),
+    userName: Yup.string().required(t("username_is_required_key")).trim(),
   });
 
   return (
@@ -66,10 +64,10 @@ const EditProfileForm = () => {
       {() => {
         return (
           <Form className="flex flex-col items-center justify-around gap-8 sm:m-5 lg:flex-row">
-            <div className="mb-12 flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center justify-center mb-12">
               <FileInput
                 label={
-                  <div className="user__image-box relative h-32 w-32 shrink-0 cursor-pointer overflow-hidden rounded-full shadow-lg outline outline-1 outline-offset-4 outline-gray-400 sm:h-48 sm:w-48">
+                  <div className="relative w-32 h-32 overflow-hidden rounded-full shadow-lg cursor-pointer user__image-box shrink-0 outline outline-1 outline-offset-4 outline-gray-400 sm:h-48 sm:w-48">
                     <img
                       src={
                         image
@@ -77,10 +75,10 @@ const EditProfileForm = () => {
                           : session?.user?.photo
                             ?.secure_url
                       }
-                      className="user__image block h-full w-full scale-105 object-cover object-center transition-all duration-500"
+                      className="block object-cover object-center w-full h-full transition-all duration-500 scale-105 user__image"
                     />
-                    <span className="user__edit translate-y-1/5 absolute  top-1/2 left-1/2 -translate-x-1/2 text-center text-sm text-white opacity-0 transition-all duration-500 md:text-lg">
-                      {t("change your image")}
+                    <span className="absolute text-sm text-center text-white transition-all duration-500 -translate-x-1/2 opacity-0 user__edit translate-y-1/5 top-1/2 left-1/2 md:text-lg">
+                      {t("change_your_image_key")}
                     </span>
                   </div>
                 }
@@ -95,40 +93,37 @@ const EditProfileForm = () => {
               </p>
             </div>
 
-            <div className="w-full lg:w-2/5">
+            <div className="flex flex-col w-full gap-4 lg:w-2/5">
               <Input
-                label={t("userName")}
+                label={t("username_key")}
                 name="userName"
                 type="text"
-                placeholder={t("userName")}
                 className={"w-full"}
               />
               <Input
-                label={t("phone number")}
+                label={t("phone_number_key")}
                 name="phoneNumber"
                 type="text"
-                placeholder={t("phone number")}
                 className={"w-full"}
               />
               <Input
-                label={t("email")}
+                label={t("email_address_key")}
                 name="email"
                 type="email"
-                placeholder={t("email")}
                 className={"w-full"}
               />
               <Button
                 disabled={isLoading}
-                className="mx-auto mt-6 flex w-full items-center justify-center"
+                className="flex items-center justify-center w-full mx-auto mt-6"
                 type="submit"
               >
                 {isLoading ? (
                   <>
-                    <Spinner className="mr-3 h-4 w-4 rtl:ml-3" />{" "}
-                    {t("loading")}
+                    <Spinner className="w-4 h-4 mr-3 rtl:ml-3" />{" "}
+                    {t("loading_key")}
                   </>
                 ) : (
-                  t("update")
+                  t("update_key")
                 )}
               </Button>
             </div>
