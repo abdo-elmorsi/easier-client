@@ -47,7 +47,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
       "rent_price": rent_price.value,
       "maintenance_price": maintenance_price.value,
       "tower": tower.value.value,
-      "tenant": tenant.value.value,
+      "user": tenant.value.value,
     }
     try {
       const req = (data) => id ? updateOne(data, id) : createOne(data);
@@ -71,7 +71,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
         rent_price.changeValue(item?.rent_price);
         maintenance_price.changeValue(item?.maintenance_price);
         tower.changeValue({ label: item?.tower?.name, value: item?.tower._id });
-        // tenant.changeValue({ label: item?.tenant?.name, value: item?.tenant._id });
+        tenant.changeValue({ label: item?.user?.name, value: item?.user._id });
         setLoading(false);
       } catch (error) {
         handleMessage(error?.response?.data?.message);
