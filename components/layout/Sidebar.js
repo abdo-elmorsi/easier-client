@@ -1,172 +1,103 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useRouter } from "next/router";
 import {
-  HomeIcon,
-  InboxIcon,
-  ChatBubbleBottomCenterTextIcon,
-  BellIcon,
-  UserIcon,
-  Cog8ToothIcon,
+  ArrowLeftCircleIcon,
+  ArrowRightCircleIcon,
+  BuildingOffice2Icon,
+  RectangleStackIcon,
+  UsersIcon,
+
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { useTranslation } from "next-i18next";
-import { useSession } from "next-auth/react";
+import { useMemo } from "react";
+import { Overview, Settlement } from "components/icons";
+import { useSavedState } from "hooks";
+import { Button } from "components/UI";
+// import { ClearStorageButton } from "components/global";
 
 
-const navigation = [
-  {
-    nameAR: "الرئيسية",
-    nameEN: "Dashboard",
-    href: "/dashboard",
-    current: false,
-    icon: <HomeIcon className="h-5 w-5" />,
-    category: "main",
-  },
-  {
-    nameAR: "سبورة",
-    nameEN: "Board",
-    href: "/dashboard/board",
-    current: false,
-    icon: <InboxIcon className="h-5 w-5" />,
-    category: "main",
-  },
-  {
-    nameAR: "المستخدمين",
-    nameEN: "Users",
-    href: "/dashboard/users",
-    current: false,
-    icon: <InboxIcon className="h-5 w-5" />,
-    category: "main",
-  },
-  {
-    nameAR: "اختبار",
-    nameEN: "test",
-    href: "/dashboard/test",
-    current: false,
-    icon: <ChatBubbleBottomCenterTextIcon className="h-5 w-5" />,
-    category: "main",
-  },
-  {
-    nameAR: "الاشعارات",
-    nameEN: "Notifications",
-    href: "/dashboard/notifications",
-    current: false,
-    icon: <BellIcon className="h-5 w-5" />,
-    category: "main",
-  },
-  {
-    nameAR: "الملف الشخصي",
-    nameEN: "Profile",
-    href: "/dashboard/profile",
-    current: false,
-    icon: <UserIcon className="h-5 w-5" />,
-    category: "setting",
-  },
-  {
-    nameAR: "الإعدادات",
-    nameEN: "Settings",
-    href: "/dashboard/settings",
-    current: false,
-    icon: <Cog8ToothIcon className="h-5 w-5" />,
-    category: "setting",
-  },
-];
-
-const Sidebar = () => {
-  const { data: session } = useSession()
-  const [nav, setNav] = useState(navigation);
+const Sidebar = React.memo(() => {
   const router = useRouter();
-  const { t } = useTranslation("common");
-  useEffect(() => {
-    // every time the router changes, we need to update the nav style.
-    const newNav = navigation.map((tab) => {
-      if (router.pathname === tab.href) {
-        return { ...tab, current: true };
-      } else {
-        return { ...tab, current: false };
-      }
-    });
-    setNav(newNav);
-  }, [router]);
+
+  const [fixedSideBar, setFixedSideBar] = useSavedState(true, "easier-fixed-side-barr-cache")
+
+
+  const Links = useMemo(() => [
+
+    {
+      nameAR: "ملخص",
+      nameEN: "overView",
+      href: "/dashboard",
+      current: router.pathname == "/dashboard",
+      icon: <Overview className="w-5 h-5" />,
+      submenuOpen: false,
+    },
+    {
+      nameAR: "المستأجرين",
+      nameEN: "Tenants",
+      href: "/dashboard/tenants",
+      current: router.pathname == "/dashboard/tenants",
+      icon: <UsersIcon className="w-5 h-5" />,
+      submenuOpen: false,
+    },
+    {
+      nameAR: "الابراج",
+      nameEN: "Towers",
+      href: "/dashboard/towers",
+      current: router.pathname == "/dashboard/towers",
+      icon: <BuildingOffice2Icon className="w-5 h-5" />,
+      submenuOpen: false,
+    },
+    {
+      nameAR: "شقق",
+      nameEN: "Apartments",
+      href: "/dashboard/apartments",
+      current: router.pathname == "/dashboard/apartments",
+      icon: <RectangleStackIcon className="w-5 h-5" />,
+      submenuOpen: false,
+    },
+  ], [router.pathname]);
+
+
 
   return (
-    <div className="sidebar flex w-14 flex-col border-none bg-blue-900 text-white transition-all duration-300 hover:w-64 dark:bg-gray-900 md:w-64">
-      <div className="flex flex-grow flex-col overflow-y-auto overflow-x-hidden">
-        <div className="mb-3 pt-5">
-          <div className="sidebar__image-box relative mx-auto mb-4 hidden h-28 w-28 overflow-hidden rounded-full  shadow-lg md:block">
-            <img
-              src={session?.user?.photo?.secure_url || "/images/building-1.jpg"}
-              className="sidebar__image block h-full w-full object-cover object-center transition-all duration-500"
-            />
-          </div>
-          <div className="sidebar__username hidden mx-auto text-center capitalize md:block">
-            {session?.user?.userName}
-          </div>
-        </div>
-        <ul className="flex flex-col space-y-1 py-4">
-          <li className="hidden px-5 md:block">
-            <div className="flex h-8 flex-row items-center">
-              <div className="text-sm font-light uppercase tracking-wide text-gray-400">
-                {t("main")}
-              </div>
-            </div>
-          </li>
-          {nav
-            .filter((item) => item.category === "main")
-            .map((tab) => (
-              <li key={tab.nameEN}>
-                <Link href={tab.href} key={tab.nameEN}>
-                  <a
-                    className={`${tab.current
-                      ? "text-white-800 border-blue-500 bg-blue-800 dark:border-gray-800 dark:bg-gray-600"
-                      : "hover:text-white-800 hover:border-blue-500 hover:bg-blue-800 dark:hover:border-gray-800 dark:hover:bg-gray-600"
-                      } text-white-600  relative flex h-11 flex-row items-center border-l-4 border-transparent pr-6  focus:outline-none rtl:border-l-0 rtl:border-r-4 rtl:pr-4 `}
-                  >
-                    <span className="ml-4 inline-flex items-center justify-center">
-                      {tab.icon}
-                    </span>
-                    <span className="ml-2 truncate text-sm tracking-wide">
-                      {router.locale === "en" ? tab.nameEN : tab.nameAR}
-                    </span>
-                  </a>
-                </Link>
-              </li>
-            ))}
-          <li className="hidden px-5 md:block">
-            <div className="flex h-8 flex-row items-center">
-              <div className="text-sm font-light uppercase tracking-wide text-gray-400">
-                {t("setting")}
-              </div>
-            </div>
-          </li>
-          {nav
-            .filter((item) => item.category === "setting")
-            .map((tab) => (
-              <li key={tab.nameEN}>
-                <Link href={tab.href} key={tab.nameEN}>
-                  <a
-                    className={`${tab.current
-                      ? "text-white-800 border-blue-500 bg-blue-800 dark:border-gray-800 dark:bg-gray-600"
-                      : "hover:text-white-800 hover:border-blue-500 hover:bg-blue-800 dark:hover:border-gray-800 dark:hover:bg-gray-600"
-                      } text-white-600  relative flex h-11 flex-row items-center border-l-4 border-transparent pr-6  focus:outline-none rtl:border-l-0 rtl:border-r-4 rtl:pr-4 `}
-                  >
-                    <span className="ml-4 inline-flex items-center justify-center">
-                      {tab.icon}
-                    </span>
-                    <span className="ml-2 truncate text-sm tracking-wide">
-                      {router.locale === "en" ? tab.nameEN : tab.nameAR}
-                    </span>
-                  </a>
-                </Link>
-              </li>
-            ))}
+    // w-14 hover:w-64
+    <div className={`flex flex-col flex-shrink-0 min-h-full transition-all duration-300 bg-white border-none hover:w-64 w-14 ${fixedSideBar ? "md:w-64" : ""} sidebar text-text dark:bg-gray-900 `}>
+      <div className="flex flex-col flex-grow overflow-x-hidden overflow-y-auto">
+        <ul className="flex flex-col py-4 space-y-1">
+
+
+          {Links.map((tab) => (
+            <li key={tab.href}>
+              <Link href={tab.href}>
+                <a
+                  className={`${tab.current
+                    ? 'dark:text-gray-100 border-primary'
+                    : 'dark:text-white border-transparent hover:border-primary dark:hover:border-primary'
+                    } text-white-600 relative flex h-11 flex-row items-center border-l-4 pr-6 focus:outline-none rtl:border-l-0 rtl:border-r-4 rtl:pr-4`}
+                >
+                  <span className="inline-flex items-center justify-center ml-4">
+                    {tab.icon}
+                  </span>
+                  <span className="ml-2 text-sm tracking-wide truncate">
+                    {router.locale === 'en' ? tab.nameEN : tab.nameAR}
+                  </span>
+                </a>
+              </Link>
+            </li>
+          ))}
+
+
         </ul>
-        <p className="mb-14 mt-auto hidden px-5 py-3 text-center text-xs md:block">
-          Copyright @2023
-        </p>
+
+        <Button onClick={() => setFixedSideBar(!fixedSideBar)} className="mx-auto mt-auto text-xs tracking-wide text-center truncate dark:text-primary">
+          <ArrowLeftCircleIcon className={` transition-all duration-300 hover:scale-110 ${!fixedSideBar ? "-rotate-180 rtl:rotate-0" : "rtl:rotate-180"}`} width={25} />
+        </Button>
+        {/* <ClearStorageButton /> */}
       </div>
     </div>
   );
-};
+});
+Sidebar.displayName = 'Sidebar';
 
 export default Sidebar;

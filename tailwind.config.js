@@ -1,8 +1,10 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+const withMT = require("@material-tailwind/react/utils/withMT");
+const colors = require('tailwindcss/colors')
+
+module.exports = withMT({
   darkMode: "class",
   content: [
-    "./app/**/*.{js,ts,jsx,tsx}",
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
@@ -12,7 +14,16 @@ module.exports = {
         english: ["Cairo", "sans-serif"],
         arabic: ["Noto Sans Arabic", "sans-serif"],
       },
+      colors: {
+        primary: '#336a86',
+        hoverPrimary: '#28556c',
+        secondary: '#e8fffe',
+        text: '#2f353b',
+        textLight: '#777e90',
+        inputBorder: '#DCDFE3',
+        ...colors
+      },
     },
   },
   plugins: [],
-};
+});

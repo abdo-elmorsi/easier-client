@@ -6,7 +6,7 @@ const Layout = ({ children }) => {
   return (
     <>
       <MainNav />
-      <main className="remain-height bg-gray-100 dark:bg-gray-700 dark:text-gray-300">
+      <main className="overflow-x-hidden bg-gray-100 remain-height dark:bg-gray-700 dark:text-gray-300">
         {children}
       </main>
     </>
@@ -15,6 +15,6 @@ const Layout = ({ children }) => {
 
 
 Layout.propTypes = {
-  children: PropTypes.object.isRequired,
+  children: PropTypes.node.isRequired,
 }
 export default Layout;

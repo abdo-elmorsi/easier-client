@@ -1,4 +1,4 @@
-import React, { useCallback, useLayoutEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import Head from "next/head";
 import PropTypes from "prop-types"
 import { appWithTranslation } from "next-i18next";
@@ -12,6 +12,9 @@ import { Provider } from "react-redux";
 import { SessionProvider } from 'next-auth/react';
 
 import Layout from "components/layout/Layout";
+
+import "react-datepicker/dist/react-datepicker.css";
+
 import "styles/globals.scss";
 
 import { ToastContainer } from "react-toastify";
@@ -19,6 +22,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import debounce from 'utils/debounce';
 import GlobalSetting from "helper/settings/GlobalSetting";
+import { CopyRights, ScrollToTopButton } from 'components/UI';
 
 const FONT_SIZE_BASE = 16;
 const FONT_SIZE_RATIO = 0.1122 / 3;
@@ -32,7 +36,7 @@ function MyApp({ Component, pageProps }) {
     document.documentElement.style.fontSize = fontSize;
   }, 100), []);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     handleResize();
     window.addEventListener("resize", handleResize);
     window.addEventListener("orientationchange", handleResize);
@@ -53,10 +57,16 @@ function MyApp({ Component, pageProps }) {
             name="viewport"
             content="width=device-width, initial-scale=1"
           />
-          <title>Real State Management</title>
+          <script
+            type="text/javascript"
+            src={`https://maps.googleapis.com/maps/api/js?key=${process.env.MAP_API_KEY}&libraries=places`}
+            async
+            defer
+          ></script>
+          <title>Easier</title>
         </Head>
         <NextNprogress
-          color="#2563EB"
+          color="#336a86"
           startPosition={0.3}
           stopDelayMs={200}
           height={3}
@@ -64,6 +74,7 @@ function MyApp({ Component, pageProps }) {
           showSpinner={false}
 
         />
+
         <ToastContainer
           position="top-center"
           autoClose={4000}
@@ -74,12 +85,19 @@ function MyApp({ Component, pageProps }) {
           draggable
           pauseOnHover
           theme="light"
+          style={{
+            zIndex: 99999
+          }}
         />
+
         <GlobalSetting>
-          {getLayout(
-            <Component {...pageProps} />
-          )}
+          {getLayout(<Component {...pageProps} />)}
         </GlobalSetting>
+
+        {/* ScrollToTopButton */}
+        <ScrollToTopButton />
+
+        <CopyRights />
       </Provider>
     </SessionProvider>
   );
