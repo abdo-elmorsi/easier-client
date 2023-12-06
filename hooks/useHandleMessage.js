@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const useErrorMessage = () => {
   const [message, setMessage] = useState(null);
@@ -36,6 +37,7 @@ const useErrorMessage = () => {
     }
     if (status === 401) {
       await signOut();
+      Cookies.remove('user-token');
     }
     setMessage({ message, type });
     if (callback && typeof callback === "function") {
