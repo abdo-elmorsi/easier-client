@@ -7,7 +7,7 @@ import { Button } from "components/UI";
 import Image from "next/image";
 
 
-const tenantColumns = (t, handleUpdate, setShowDeleteModal, date_format) => [
+const tenantColumns = (t, handleUpdate, setShowDeleteModal, date_format, is_super_admin) => [
   {
     name: t("image_key"),
     selector: (row) => row?.photo?.public_id,
@@ -19,6 +19,14 @@ const tenantColumns = (t, handleUpdate, setShowDeleteModal, date_format) => [
     />,
     sortable: false,
     width: "100px"
+  },
+
+  {
+    name: t("role_key"),
+    selector: row => row?.role,
+    sortable: true,
+    omit: !is_super_admin,
+    width: "180px"
   },
   {
     name: t("tenant_name_key"),
@@ -49,10 +57,10 @@ const tenantColumns = (t, handleUpdate, setShowDeleteModal, date_format) => [
   {
     name: t("flat_key"),
     selector: (row) => row?.flat?._id,
-    getValue: (row) => `${row?.flat?.floor_number}-${row?.flat?.number}`,
+    getValue: (row) => `${row?.flat?.floor_number}-${row?.flat?.piece_number}`,
     cell: (row) => row?.flat?._id ? <Link href={`/dashboard/flats?id=${row?.flat?._id}`}>
       <span className="font-bold cursor-pointer text-primary">
-        {`${row?.flat?.floor_number}-${row?.flat?.number}`}
+        {`${row?.flat?.floor_number}-${row?.flat?.piece_number}`}
       </span>
     </Link> : "",
     sortable: true,
@@ -87,7 +95,7 @@ const tenantColumns = (t, handleUpdate, setShowDeleteModal, date_format) => [
 const apartmentColumns = (t, handleUpdate, setShowDeleteModal, date_format) => [
   {
     name: t("number_key"),
-    selector: row => row?.number,
+    selector: row => row?.piece_number,
     sortable: true,
     width: "180px"
   },
@@ -114,10 +122,10 @@ const apartmentColumns = (t, handleUpdate, setShowDeleteModal, date_format) => [
 
   {
     name: t("tenant_key"),
-    selector: (row) => row?.owner?.name,
-    cell: (row) => row?.owner?.userId ? <Link href={`/dashboard/tenants?id=${row?.owner?.userId}`}>
+    selector: (row) => row?.user?.name,
+    cell: (row) => row?.user?.userId ? <Link href={`/dashboard/tenants?id=${row?.user?.userId}`}>
       <span className="font-bold cursor-pointer hover:text-primary">
-        {row?.owner?.name}
+        {row?.user?.name}
       </span>
     </Link> : "",
     sortable: true,
@@ -160,7 +168,7 @@ const apartmentColumns = (t, handleUpdate, setShowDeleteModal, date_format) => [
     width: "180px"
   },
 ];
-const towerColumns = (t, handleUpdate, setShowDeleteModal, showApartments, date_format) => [
+const towerColumns = (t, handleUpdate, setShowDeleteModal, showApartments, date_format, is_super_admin) => [
   {
     name: t("name_key"),
     selector: row => row?.name,
@@ -183,6 +191,7 @@ const towerColumns = (t, handleUpdate, setShowDeleteModal, showApartments, date_
       </span>
     </Link> : "",
     sortable: true,
+    omit: !is_super_admin,
     width: "160px"
   },
   {

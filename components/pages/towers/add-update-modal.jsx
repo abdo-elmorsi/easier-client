@@ -3,14 +3,17 @@ import PropTypes from "prop-types";
 import { createOne, getOne, updateOne } from "helper/apis/towers";
 
 // Custom
-import { useHandleMessage, useInput } from "hooks"
+import { useHandleMessage, useInput, useSelect } from "hooks"
 import { Button, Spinner, Input } from "components/UI";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
+import { isSuperAdmin } from "utils/utils";
+import { UserSearch } from "components/global";
 
 
-export default function AddUpdateModal({ fetchReport, handleClose, id }) {
+export default function AddUpdateModal({ fetchReport, handleClose, id, session }) {
   const { t } = useTranslation("common");
+  const is_super_admin = isSuperAdmin(session);
 
   const handleMessage = useHandleMessage();
   const [loading, setLoading] = useState(id);
@@ -19,6 +22,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
   const name = useInput("", "");
   const address = useInput("", "");
 
+  const owner = useSelect("", "select");
 
 
   const validation = useCallback(() => name.value && address.value, [address.value, name.value]);
@@ -27,7 +31,8 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
     setSubmitted(true);
     const data = {
       "name": name.value,
-      "address": address.value
+      "address": address.value,
+      ...(owner?.value?.value ? { "owner": owner.value.value } : {})
     }
     try {
       const req = (data) => id ? updateOne(data, id) : createOne(data);
@@ -35,7 +40,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
       fetchReport(1, 10);
       handleClose();
     } catch (error) {
-      handleMessage(error?.response?.data?.message);
+      handleMessage(error);
     } finally {
       setSubmitted(false);
     }
@@ -48,12 +53,14 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
         const item = await getOne(id);
         name.changeValue(item?.name)
         address.changeValue(item?.address)
+        item?.owner?._id && owner.changeValue({ label: item?.owner?.name, value: item?.owner?._id })
         setLoading(false);
       } catch (error) {
-        handleMessage(error?.response?.data?.message);
+        handleMessage(error);
       }
     }
     id && getData();
+
   }, [id]);
 
 
@@ -72,6 +79,11 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
               label={t("address_key")}
               {...address.bind}
             />
+            {is_super_admin && <UserSearch
+              label={t("owner_key")}
+              roleFilter={"admin"}
+              user={owner}
+            />}
           </div>
 
         )}

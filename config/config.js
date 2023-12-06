@@ -1,6 +1,6 @@
 const development_domain = "http://localhost:3001/api"
-const production_domain = "https://fine-teal-kangaroo-hem.cyclic.app/api"//'https://fine-teal-kangaroo-hem.cyclic.app/api'
-
+// const production_domain = "http://localhost:3001/api"
+const production_domain = "https://fine-teal-kangaroo-hem.cyclic.app/api"
 const development = {
 	apiGateway: {
 		API_URL_DEV: development_domain,

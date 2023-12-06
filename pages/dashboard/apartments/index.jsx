@@ -2,18 +2,19 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { getSession } from "next-auth/react";
-// import PropTypes from "prop-types"
+import PropTypes from "prop-types"
 import { useRouter } from "next/router";
 
 // Custom
 import { Layout, LayoutWithSidebar } from "components/layout";
 import { apartmentColumns } from "components/columns";
 import { ServerTable, DeleteModal, Header } from "components/global";
-import { Actions, Modal } from "components/UI";
+import { Actions, MinimizedBox, Modal } from "components/UI";
 import { AddUpdateModal, PrintView } from "components/pages/apartments";
 import { deleteOne, getAll } from "helper/apis/apartments";
 import exportExcel from "utils/useExportExcel";
 import { useHandleMessage } from "hooks";
+import { Filter } from "components/pages/towers";
 
 const Index = () => {
   const router = useRouter();
@@ -30,6 +31,7 @@ const Index = () => {
   const [exportingExcel, setExportingExcel] = useState(false);
   const printViewRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [gridFilter, setGridFilter] = useState({});
 
   // ================== add-update apartment ============
   const [showUpdateModal, setShowUpdateModal] = useState({
@@ -60,7 +62,7 @@ const Index = () => {
       closeDeleteModal();
       fetchReport();
     } catch (error) {
-      handleMessage(error?.response?.data?.message);
+      handleMessage(error);
     } finally {
       setShowDeleteModal(prev => ({ ...prev, loading: false }))
     }
@@ -70,25 +72,25 @@ const Index = () => {
 
   const columns = apartmentColumns(t, handleUpdate, setShowDeleteModal, date_format);
 
-  const fetchReport = async (page, perPage, query = "") => {
+  const fetchReport = async (page, perPage, query = "", filter = {}) => {
     const search = query?.trim() || searchQuery;
+    const _filter = { ...gridFilter, ...filter };
     setLoading(true);
+
     try {
       const data = await getAll({
-        search: search,
-        searchFields: ["number", "rent_price"],
-        page: page,
+        search,
+        searchFields: ["piece_number"],
+        filters: `${_filter?.tower ? `tower=${_filter?.tower.value}` : ""
+          }`,
+        page,
         limit: perPage,
       });
       setTableData(data.items);
       setTotalRows(data.totalRecords);
       setLoading(false);
     } catch (error) {
-      if (error?.data?.message == "CanceledError") {
-        return;
-      }
-      handleMessage(error?.data?.message);
-      setLoading(false);
+      handleMessage(error, null, setLoading);
     }
   };
 
@@ -115,6 +117,11 @@ const Index = () => {
   useEffect(() => {
     fetchReport(1, 10);
   }, []);
+
+  const fetchReportFromFilter = (filter) => {
+    fetchReport(1, 10, null, filter);
+    setGridFilter({ ...gridFilter, ...filter });
+  }
   return (
     <>
       <div className="min-h-full bg-gray-100 rounded-md dark:bg-gray-700">
@@ -123,6 +130,9 @@ const Index = () => {
           path="/dashboard/apartments"
           classes="bg-gray-100 dark:bg-gray-700 border-none"
         />
+        <MinimizedBox>
+          <Filter fetchReport={fetchReportFromFilter} />
+        </MinimizedBox>
         <ServerTable
           columns={columns}
           data={tableData || []}
@@ -196,9 +206,9 @@ Index.getLayout = function PageLayout(page) {
 
 export default Index;
 
-// Index.propTypes = {
-//   session: PropTypes.object.isRequired
-// };
+Index.propTypes = {
+  session: PropTypes.object.isRequired
+};
 
 export const getServerSideProps = async (context) => {
   const session = await getSession({ req: context.req });

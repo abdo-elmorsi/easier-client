@@ -1,4 +1,5 @@
-import axios from "auth/axiosInstance";
+// import axios from "auth/axiosInstance";
+import axios from "axios";
 import config from "config/config";
 
 // userLogin (login)

@@ -324,5 +324,6 @@
   "apartments_key": "Apartments",
   "apartment_name_key": "Apartment name",
   "add_apartment_key": "Add apartment",
-  "image_key": "Image"
+  "image_key": "Image",
+  "total_towers_key": "Total Towers"
 }

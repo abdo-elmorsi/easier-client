@@ -36,8 +36,8 @@ const ForgotPassword = () => {
         const response = await userVerifyCode({ code: code.value, token });
         router.push("/login")
       }
-    } catch ({ data }) {
-      handleMessage(data?.message);
+    } catch (error) {
+      handleMessage(error);
     } finally {
       setIsLoading(false);
     }
@@ -56,7 +56,7 @@ const ForgotPassword = () => {
           <div className="w-80 text-start">
 
 
-            <h1 className="dark:text-white mb-4">{step == 1 ? t("forgot_password_key") : t("reset_password_key")}</h1>
+            <h1 className="mb-4 dark:text-white">{step == 1 ? t("forgot_password_key") : t("reset_password_key")}</h1>
             <div className="flex flex-col gap-4">
               <div className="mb-4">
                 {step == 1 ? (<Input
@@ -72,7 +72,7 @@ const ForgotPassword = () => {
                 )}
               </div>
               <div className="mb-4">
-                <Button type="submit" disabled={(step == 1 && (!email.value || !email.isValid)) || (step == 2 && !code.value) || isLoading} onClick={onSubmit} className="btn--primary w-full">
+                <Button type="submit" disabled={(step == 1 && (!email.value || !email.isValid)) || (step == 2 && !code.value) || isLoading} onClick={onSubmit} className="w-full btn--primary">
                   {isLoading ? (
                     <>
                       <Spinner className="w-4 h-4 mr-3 rtl:ml-3" />
@@ -87,7 +87,7 @@ const ForgotPassword = () => {
                 <span>{t("have_an_account_key")}?</span>
 
                 <Link href={"/login"}>
-                  <span className="text-primary cursor-pointer"> {t("sign_in_key")}</span>
+                  <span className="cursor-pointer text-primary"> {t("sign_in_key")}</span>
                 </Link>
               </p>
             </div>

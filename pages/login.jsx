@@ -41,10 +41,9 @@ const Login = () => {
       };
       try {
         const User = await userLogin(submitData);
-        console.log("User", User);
         setUser(User);
       } catch (error) {
-        handleMessage(error?.data?.message);
+        handleMessage(error);
       } finally {
         setIsLoading(false);
       }
@@ -62,8 +61,8 @@ const Login = () => {
           user: JSON.stringify({ ...user.user }),
         });
         router.push(`/`);
-      } catch ({ data }) {
-        handleMessage(data?.message || data?.error);
+      } catch (error) {
+        handleMessage(error);
       } finally {
         setIsLoading(false);
       }

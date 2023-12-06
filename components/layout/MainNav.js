@@ -18,6 +18,7 @@ import { signOut, useSession } from "next-auth/react";
 import { MainLogo } from "components/icons";
 import Link from "next/link";
 import { Button, List, ListItem, ListItemPrefix, Popover, PopoverContent, PopoverHandler, Typography } from "@material-tailwind/react";
+import Cookies from "js-cookie";
 
 
 
@@ -38,6 +39,11 @@ export default function MainNav() {
     router.push(router.asPath, undefined, { locale: currentLang === 'ar' ? "en" : "ar" });
   }, [router]);
 
+  const logOut = () => {
+    signOut();
+    Cookies.remove('user-token');
+
+  }
   return (
     <Disclosure
       as="nav"
@@ -166,7 +172,7 @@ export default function MainNav() {
                           </ListItem>
                         </Link>
                         <ListItem
-                          onClick={signOut}
+                          onClick={logOut}
                           className="gap-4 dark:text-gray-100 hover:text-black active:text-dark">
                           <ListItemPrefix>
                             <ArrowLeftOnRectangleIcon className="w-8" />
