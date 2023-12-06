@@ -1,27 +1,30 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { Select } from 'components/UI';
 import { useSavedState } from 'hooks';
 import { getAll } from 'helper/apis/tenants';
+import { useSession } from 'next-auth/react';
 
-export default function TenantsSearch({ tenant, ...props }) {
+export default function UserSearch({ user, roleFilter = "user", label = null, ...props }) {
+  const { data: session } = useSession();
   const { t } = useTranslation('common');
-  const [defaultOptions, setDefaultOptions, clearDefaultOptions] = useSavedState([], "easier-tenant-cache");
+  const [defaultOptions, setDefaultOptions] = useState([]);
+
   useEffect(() => {
     const fetchData = async () => {
-      await TenantsSearch("", (data) => setDefaultOptions(data));
+      await UserSearch("", (data) => setDefaultOptions(data));
     };
     !defaultOptions?.length && fetchData();
   }, [])
 
-  const TenantsSearch = async (inputValue = "", callback) => {
+  const UserSearch = async (inputValue = "", callback) => {
     const data = await getAll({
       search: inputValue,
       searchFields: ["name"],
       sort: "name",
       select: "name role",
-      filters: "role=user",
+      filters: `role=${roleFilter},admin_id=${session?.user?._id}`,
       page: 1,
       limit: 10
     })
@@ -43,14 +46,14 @@ export default function TenantsSearch({ tenant, ...props }) {
 
   return (
     <Select
-      label={t('tenant_key')}
+      label={label || t('tenant_key')}
       mandatory
       async={true}
-      loadOptions={TenantsSearch}
+      loadOptions={UserSearch}
       isDisabled={false}
-      value={tenant.value}
+      value={user.value}
       onChange={(value) => {
-        tenant.changeValue(value);
+        user.changeValue(value);
       }}
       {...props}
       defaultOptions={defaultOptions}
@@ -58,8 +61,10 @@ export default function TenantsSearch({ tenant, ...props }) {
   );
 }
 
-TenantsSearch.propTypes = {
-  tenant: PropTypes.shape({
+UserSearch.propTypes = {
+  roleFilter: PropTypes.string,
+  label: PropTypes.string,
+  user: PropTypes.shape({
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     changeValue: PropTypes.func,
   }).isRequired,

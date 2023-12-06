@@ -2,21 +2,23 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { getSession } from "next-auth/react";
-// import PropTypes from "prop-types"
+import PropTypes from "prop-types"
 import { useRouter } from "next/router";
 
 // Custom
 import { Layout, LayoutWithSidebar } from "components/layout";
 import { towerColumns } from "components/columns";
 import { ServerTable, DeleteModal, Header } from "components/global";
-import { Actions, Modal } from "components/UI";
+import { Actions, MinimizedBox, Modal } from "components/UI";
 import { AddUpdateModal, PrintView } from "components/pages/towers";
 import { deleteOne, getAll } from "helper/apis/towers";
 import exportExcel from "utils/useExportExcel";
 import { useHandleMessage } from "hooks";
+import { isSuperAdmin } from "utils/utils";
 
-const Index = () => {
+const Index = ({ session }) => {
   const router = useRouter();
+  const is_super_admin = isSuperAdmin(session);
   const language = router.locale.toLowerCase();
   const date_format = language === 'en' ? 'DD/MM/YYYY' : 'YYYY/MM/DD';
 
@@ -60,7 +62,7 @@ const Index = () => {
       closeDeleteModal();
       fetchReport();
     } catch (error) {
-      handleMessage(error?.response?.data?.message);
+      handleMessage(error);
     } finally {
       setShowDeleteModal(prev => ({ ...prev, loading: false }))
     }
@@ -70,27 +72,24 @@ const Index = () => {
 
   const showApartments = () => { };
 
-  const columns = towerColumns(t, handleUpdate, setShowDeleteModal, showApartments, date_format);
+  const columns = towerColumns(t, handleUpdate, setShowDeleteModal, showApartments, date_format, is_super_admin);
 
   const fetchReport = async (page, perPage, query = "") => {
     const search = query?.trim() || searchQuery;
     setLoading(true);
     try {
       const data = await getAll({
-        search: search,
-        searchFields: ["name", "address"],
-        page: 1,
+        search,
+        searchFields: ["user"],
+        ...(!is_super_admin ? { filters: `owner=${session.user._id}` } : {}),
+        page,
         limit: perPage,
       });
       setTableData(data.items);
       setTotalRows(data.totalRecords);
       setLoading(false);
     } catch (error) {
-      if (error?.data?.message == "CanceledError") {
-        return;
-      }
-      handleMessage(error?.data?.message);
-      setLoading(false);
+      handleMessage(error, null, setLoading);
     }
   };
 
@@ -125,6 +124,7 @@ const Index = () => {
           path="/dashboard/towers"
           classes="bg-gray-100 dark:bg-gray-700 border-none"
         />
+        <MinimizedBox></MinimizedBox>
         <ServerTable
           columns={columns}
           data={tableData || []}
@@ -163,6 +163,7 @@ const Index = () => {
             fetchReport={fetchReport}
             handleClose={() => closeEditModal()}
             id={showUpdateModal?.id}
+            session={session}
           />
         </Modal>
       )}
@@ -198,9 +199,9 @@ Index.getLayout = function PageLayout(page) {
 
 export default Index;
 
-// Index.propTypes = {
-//   session: PropTypes.object.isRequired
-// };
+Index.propTypes = {
+  session: PropTypes.object.isRequired
+};
 
 export const getServerSideProps = async (context) => {
   const session = await getSession({ req: context.req });
@@ -216,7 +217,7 @@ export const getServerSideProps = async (context) => {
   } else {
     return {
       props: {
-        // session,
+        session,
         ...(await serverSideTranslations(context.locale, ["common"])),
       },
     };

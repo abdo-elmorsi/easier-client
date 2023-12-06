@@ -7,7 +7,7 @@ import { useHandleMessage, useInput, useSelect } from "hooks"
 import { Button, Spinner, Input } from "components/UI";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
-import { TenantsSearch, TowersSearch } from "components/global";
+import { UserSearch, TowersSearch } from "components/global";
 
 
 export default function AddUpdateModal({ fetchReport, handleClose, id }) {
@@ -17,7 +17,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
   const [loading, setLoading] = useState(id);
   const [submitted, setSubmitted] = useState(false);
 
-  const number = useInput("", "number", true);
+  const piece_number = useInput("", "number", true);
   const floor_number = useInput("", "number", true);
   const rent_price = useInput("", "number", true);
   const maintenance_price = useInput("", "number", true);
@@ -28,9 +28,9 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
 
 
   const validation = useCallback(() => {
-    return number.value && floor_number.value && rent_price.value && maintenance_price.value && tower.value?.value && tenant.value?.value
+    return piece_number.value && floor_number.value && rent_price.value && maintenance_price.value && tower.value?.value && tenant.value?.value
   }, [
-    number.value,
+    piece_number.value,
     floor_number.value,
     rent_price.value,
     maintenance_price.value,
@@ -42,7 +42,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
     e.preventDefault();
     setSubmitted(true);
     const data = {
-      "number": number.value,
+      "piece_number": piece_number.value,
       "floor_number": floor_number.value,
       "rent_price": rent_price.value,
       "maintenance_price": maintenance_price.value,
@@ -55,7 +55,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
       fetchReport(1, 10);
       handleClose();
     } catch (error) {
-      handleMessage(error?.response?.data?.message);
+      handleMessage(error);
     } finally {
       setSubmitted(false);
     }
@@ -66,7 +66,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
       setLoading(true);
       try {
         const item = await getOne(id);
-        number.changeValue(item?.number);
+        piece_number.changeValue(item?.piece_number);
         floor_number.changeValue(item?.floor_number);
         rent_price.changeValue(item?.rent_price);
         maintenance_price.changeValue(item?.maintenance_price);
@@ -74,7 +74,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
         tenant.changeValue({ label: item?.user?.name, value: item?.user._id });
         setLoading(false);
       } catch (error) {
-        handleMessage(error?.response?.data?.message);
+        handleMessage(error);
       }
     }
     id && getData();
@@ -89,7 +89,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
             <Input
               mandatory
               label={t("number_key")}
-              {...number.bind}
+              {...piece_number.bind}
             />
 
             <Input
@@ -111,8 +111,10 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
             <TowersSearch
               tower={tower}
             />
-            <TenantsSearch
-              tenant={tenant}
+            <UserSearch
+              user={tenant}
+              roleFilter={"user"}
+
             />
           </div>
 

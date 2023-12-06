@@ -1,6 +1,6 @@
 export { default as Header } from './header';
 export { default as TowersSearch } from './towers-search';
-export { default as TenantsSearch } from './tenants-search';
+export { default as UserSearch } from './user-search';
 export { default as CompanySearch } from './companySearch';
 export { default as CarImage } from './carImage';
 export { default as TrueOrFalseOptions } from './trueOrFalseOptions.jsx';

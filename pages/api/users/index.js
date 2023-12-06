@@ -1,5 +1,6 @@
 import axios from "axios";
 import config from "config/config";
+import { getHeaders, handleErrorResponse } from "helper/apis/helpers";
 
 const API_URL = config.apiGateway.API_URL_PRODUCTION;
 
@@ -25,16 +26,6 @@ export default async (req, res) => {
   }
 };
 
-const getHeaders = (req) => {
-  const token = req.cookies["user-token"];
-  return {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  };
-};
-
 // get all
 const handleGetRequest = async (req, res) => {
   try {
@@ -44,8 +35,7 @@ const handleGetRequest = async (req, res) => {
     });
     res.status(response.status).json(response.data);
   } catch (error) {
-    const errorMessage = error.response?.data?.message || "An error occurred while fetching data.";
-    res.status(error.response?.status || 500).json({ message: errorMessage });
+    handleErrorResponse(error, res);
   }
 };
 
@@ -56,8 +46,7 @@ const handleGetOneRequest = async (req, res) => {
     const response = await axios.get(`${API_URL}/users/${id}`, getHeaders(req));
     res.status(response.status).json(response.data);
   } catch (error) {
-    const errorMessage = error.response?.data?.message || "An error occurred while fetching the tenant.";
-    res.status(error.response?.status || 500).json({ message: errorMessage });
+    handleErrorResponse(error, res);
   }
 };
 
@@ -67,8 +56,7 @@ const handlePostRequest = async (req, res) => {
     const response = await axios.post(`${API_URL}/users`, req.body, getHeaders(req));
     res.status(response.status).json(response.data);
   } catch (error) {
-    const errorMessage = error.response?.data?.message || "An error occurred while creating the tenant.";
-    res.status(error.response?.status || 500).json({ message: errorMessage });
+    handleErrorResponse(error, res);
   }
 };
 
@@ -79,8 +67,7 @@ const handleDeleteRequest = async (req, res) => {
     const response = await axios.delete(`${API_URL}/users/${id}`, getHeaders(req));
     res.status(response.status).json(response.data);
   } catch (error) {
-    const errorMessage = error.response?.data?.message || "An error occurred while deleting the tenant.";
-    res.status(error.response?.status || 500).json({ message: errorMessage });
+    handleErrorResponse(error, res);
   }
 };
 
@@ -91,7 +78,7 @@ const handlePutRequest = async (req, res) => {
     const response = await axios.put(`${API_URL}/users/${id}`, req.body, getHeaders(req));
     res.status(response.status).json(response.data);
   } catch (error) {
-    const errorMessage = error.response?.data?.message || "An error occurred while updating the user.";
-    res.status(error.response?.status || 500).json({ message: errorMessage });
+    handleErrorResponse(error, res);
   }
 };
+

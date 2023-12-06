@@ -3,15 +3,18 @@ import PropTypes from "prop-types";
 import { createOne, getOne, updateOne } from "helper/apis/tenants";
 
 // Custom
-import { useHandleMessage, useInput } from "hooks"
-import { Button, Spinner, Input } from "components/UI";
+import { useCheckbox, useHandleMessage, useInput } from "hooks"
+import { Button, Spinner, Input, Checkbox } from "components/UI";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
+import { isSuperAdmin } from "utils/utils";
 
 
-export default function AddUpdateModal({ fetchReport, handleClose, id }) {
+export default function AddUpdateModal({ fetchReport, handleClose, id, session }) {
   const { t } = useTranslation("common");
 
+  const is_super_admin = isSuperAdmin(session);
+  
   const handleMessage = useHandleMessage();
   const [loading, setLoading] = useState(id);
   const [submitted, setSubmitted] = useState(false);
@@ -21,6 +24,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
   const phone_number = useInput("", "phone", true);
   const national_id = useInput("", "", true);
   const password = useInput("Password@123", "password_optional");
+  const isAdmin = useCheckbox(false, "", "checkbox");
 
 
   const validation = useCallback(() => {
@@ -40,6 +44,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
       "email": email.value,
       "phone_number": phone_number.value,
       ...(password.value ? { "password": password.value } : {}),
+      ...(isAdmin.checked ? { "role": "admin" } : {}),
       "national_id": national_id.value,
     }
     try {
@@ -48,7 +53,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
       fetchReport(1, 10);
       handleClose();
     } catch (error) {
-      handleMessage(error?.response?.data?.message);
+      handleMessage(error);
     } finally {
       setSubmitted(false);
     }
@@ -66,7 +71,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
         password.changeValue("");
         setLoading(false);
       } catch (error) {
-        handleMessage(error?.response?.data?.message);
+        handleMessage(error);
       }
     }
     id && getData();
@@ -105,6 +110,11 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
               {...password.bind}
               submitted={password.value}
             />
+            {is_super_admin && <Checkbox
+              // mandatory
+              label={t("is_admin_key")}
+              {...isAdmin.bind}
+            />}
           </div>
 
         )}
