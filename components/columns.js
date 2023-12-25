@@ -232,6 +232,42 @@ const towerColumns = (t, handleUpdate, setShowDeleteModal, showApartments, date_
     width: "180px"
   },
 ];
+const rentPaymentReportColumns = (t, viewDetails, date_format, is_super_admin) => [
+  {
+    name: t("apartments_key"),
+    selector: (row) => row?.pieces?.length,
+    cell: (row) =>
+      <Button onClick={() => viewDetails(row?._id)} className="flex gap-2 cursor-pointer btn--primary btn-small">
+        <EyeIcon width={25} />
+        <span>{row?.pieces?.length}</span>
+      </Button>
+    ,
+    sortable: true,
+    width: "160px"
+  },
+  {
+    name: t("created_at_key"),
+    selector: (row) => moment(row?.created_at).format(date_format),
+    width: "180px",
+    sortable: true,
+
+  },
+  {
+    name: t("actions_key"),
+    selector: row => row?._id,
+    noExport: true,
+    cell: (row) =>
+      <div className="flex gap-2">
+        <Button onClick={() => viewDetails(row?._id)} className="px-3 py-2 cursor-pointer btn--primary">
+          <EyeIcon width={22} />
+        </Button>
+        rentPaymentReportColumns
+      </div>
+    ,
+    sortable: false,
+    width: "180px"
+  },
+];
 
 
 
@@ -243,5 +279,6 @@ const towerColumns = (t, handleUpdate, setShowDeleteModal, showApartments, date_
 export {
   tenantColumns,
   apartmentColumns,
-  towerColumns
+  towerColumns, 
+  rentPaymentReportColumns
 }

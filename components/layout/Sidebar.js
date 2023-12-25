@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import {
   ArrowLeftCircleIcon,
   ArrowRightCircleIcon,
+  BookOpenIcon,
   BuildingOffice2Icon,
   RectangleStackIcon,
   UsersIcon,
@@ -54,6 +55,14 @@ const Sidebar = React.memo(() => {
       href: "/dashboard/apartments",
       current: router.pathname == "/dashboard/apartments",
       icon: <RectangleStackIcon className="w-5 h-5" />,
+      submenuOpen: false,
+    },
+    {
+      nameAR: "تقرير دفع الايجار ",
+      nameEN: "Rent Payment Report",
+      href: "/dashboard/rent-payment-report",
+      current: router.pathname == "/dashboard/rent-payment-report",
+      icon: <BookOpenIcon className="w-5 h-5" />,
       submenuOpen: false,
     },
   ], [router.pathname]);
