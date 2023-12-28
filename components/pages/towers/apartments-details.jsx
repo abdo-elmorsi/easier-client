@@ -1,24 +1,19 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { getSession } from "next-auth/react";
 import PropTypes from "prop-types"
 import { useRouter } from "next/router";
 
 // Custom
-import { Layout, LayoutWithSidebar } from "components/layout";
-import { towerColumns } from "components/columns";
-import { ServerTable, DeleteModal, Header } from "components/global";
-import { Actions, MinimizedBox, Modal } from "components/UI";
-import { AddUpdateModal, PrintView, ApartmentsDetails } from "components/pages/towers";
-import { deleteOne, getAll } from "helper/apis/towers";
+import { apartmentColumns } from "components/columns";
+import { ServerTable, DeleteModal } from "components/global";
+import { Actions, Modal } from "components/UI";
+import { AddUpdateModal, PrintView } from "components/pages/apartments";
+import { deleteOne, getAll } from "helper/apis/apartments";
 import exportExcel from "utils/useExportExcel";
 import { useHandleMessage } from "hooks";
-import { isSuperAdmin } from "utils/utils";
 
-const Index = ({ session }) => {
+const ApartmentsDetails = ({ session, id }) => {
   const router = useRouter();
-  const is_super_admin = isSuperAdmin(session);
   const language = router.locale.toLowerCase();
   const date_format = language === 'en' ? 'DD/MM/YYYY' : 'YYYY/MM/DD';
 
@@ -33,7 +28,7 @@ const Index = ({ session }) => {
   const printViewRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // ================== add-update tower ============
+  // ================== add-update apartment ============
   const [showUpdateModal, setShowUpdateModal] = useState({
     isOpen: false,
     id: null
@@ -44,9 +39,9 @@ const Index = ({ session }) => {
   const closeEditModal = () => {
     setShowUpdateModal(({}));
   };
-  // ================== add-update tower ============
+  // ================== add-update apartment ============
 
-  // ================== delete tower ============
+  // ================== delete apartment ============
   const [showDeleteModal, setShowDeleteModal] = useState({
     loading: false,
     isOpen: false,
@@ -67,30 +62,19 @@ const Index = ({ session }) => {
       setShowDeleteModal(prev => ({ ...prev, loading: false }))
     }
   }
-  // ================== delete tower ============
+  // ================== delete apartment ============
 
 
-  const [viewApartmentsModal, setViewApartmentsModal] = useState({
-    isOpen: false,
-    id: null
-  });
-  const closeViewApartmentsModal = () => {
-    setViewApartmentsModal(({}));
-  };
-  const showApartments = (id) => {
-    setViewApartmentsModal({ id: id, isOpen: true });
-  };
-
-  const columns = towerColumns(t, handleUpdate, setShowDeleteModal, showApartments, date_format, is_super_admin);
-
+  const columns = apartmentColumns(t, handleUpdate, setShowDeleteModal, date_format, { showTower: false });
   const fetchReport = async (page, perPage, query = "") => {
     const search = query?.trim() || searchQuery;
     setLoading(true);
+
     try {
       const data = await getAll({
         search,
-        searchFields: ["user"],
-        ...(!is_super_admin ? { filters: `owner=${session.user._id}` } : {}),
+        searchFields: ["piece_number"],
+        filters: `admin_id=${session.user._id},tower=${id}`,
         page,
         limit: perPage,
       });
@@ -111,7 +95,7 @@ const Index = ({ session }) => {
 
   const handleExportExcel = async () => {
     setExportingExcel(true);
-    await exportExcel(tableData, columns, t("towers_key"), handleMessage);
+    await exportExcel(tableData, columns, t("apartments_key"), handleMessage);
     setTimeout(() => {
       setExportingExcel(false);
     }, 1000);
@@ -125,15 +109,12 @@ const Index = ({ session }) => {
   useEffect(() => {
     fetchReport(1, 10);
   }, []);
+
+
   return (
     <>
-      <div className="min-h-full bg-gray-100 rounded-md dark:bg-gray-700">
-        <Header
-          title={t("towers_key")}
-          path="/dashboard/towers"
-          classes="bg-gray-100 dark:bg-gray-700 border-none"
-        />
-        <MinimizedBox></MinimizedBox>
+      <div className="bg-gray-100 rounded-md w-[80vh] dark:bg-gray-700">
+
         <ServerTable
           columns={columns}
           data={tableData || []}
@@ -150,7 +131,7 @@ const Index = ({ session }) => {
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
               fetchReport={fetchReport}
-              addMsg={t("add_tower_key")}
+              addMsg={t("add_apartment_key")}
               onClickAdd={() => setShowUpdateModal({ isOpen: true, id: null })}
               onClickPrint={exportPDF}
               onClickExport={handleExportExcel}
@@ -163,7 +144,7 @@ const Index = ({ session }) => {
 
       {showUpdateModal?.isOpen && (
         <Modal
-          title={t("add_tower_key")}
+          title={t("add_apartment_key")}
           show={showUpdateModal?.isOpen}
           footer={false}
           onClose={() => closeEditModal()}
@@ -172,22 +153,6 @@ const Index = ({ session }) => {
             fetchReport={fetchReport}
             handleClose={() => closeEditModal()}
             id={showUpdateModal?.id}
-            session={session}
-          />
-        </Modal>
-      )}
-
-      {viewApartmentsModal?.isOpen && (
-        <Modal
-          title={t("apartments_details_key")}
-          show={viewApartmentsModal?.isOpen}
-          footer={false}
-          onClose={() => closeViewApartmentsModal()}
-        >
-          <ApartmentsDetails
-            handleClose={() => closeViewApartmentsModal()}
-            id={viewApartmentsModal?.id}
-            session={session}
           />
         </Modal>
       )}
@@ -211,39 +176,11 @@ const Index = ({ session }) => {
   );
 };
 
-
-
-Index.getLayout = function PageLayout(page) {
-  return (
-    <Layout>
-      <LayoutWithSidebar>{page}</LayoutWithSidebar>
-    </Layout>
-  );
+ApartmentsDetails.propTypes = {
+  session: PropTypes.object.isRequired,
+  id: PropTypes.number.isRequired
 };
 
-export default Index;
 
-Index.propTypes = {
-  session: PropTypes.object.isRequired
-};
 
-export const getServerSideProps = async (context) => {
-  const session = await getSession({ req: context.req });
-  const userRole = session?.user?.role;
-  const loginUrl = context.locale === "ar" ? "/login" : `/${context.locale}/login`;
-  if (!session || (userRole != "admin" && userRole != "superAdmin")) {
-    return {
-      redirect: {
-        destination: loginUrl,
-        permanent: false,
-      },
-    };
-  } else {
-    return {
-      props: {
-        session,
-        ...(await serverSideTranslations(context.locale, ["common"])),
-      },
-    };
-  }
-}
+export default ApartmentsDetails;

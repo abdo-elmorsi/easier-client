@@ -1,7 +1,7 @@
 import React from "react"
 import Link from "next/link"
 import { formatComma } from "utils/utils"
-import { EyeIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon, EyeIcon, PencilSquareIcon, TrashIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import moment from "moment";
 import { Button } from "components/UI";
 import Image from "next/image";
@@ -92,7 +92,7 @@ const tenantColumns = (t, handleUpdate, setShowDeleteModal, date_format, is_supe
     width: "180px"
   },
 ];
-const apartmentColumns = (t, handleUpdate, setShowDeleteModal, date_format) => [
+const apartmentColumns = (t, handleUpdate, setShowDeleteModal, date_format, settings) => [
   {
     name: t("number_key"),
     selector: row => row?.piece_number,
@@ -102,6 +102,13 @@ const apartmentColumns = (t, handleUpdate, setShowDeleteModal, date_format) => [
   {
     name: t("floor_number_key"),
     selector: row => row?.floor_number,
+    sortable: true,
+    width: "180px"
+  },
+  {
+    name: t("is_rented_key"),
+    selector: row => row?.is_rented,
+    cell: row => row?.is_rented ? <CheckCircleIcon color="green" width={22} /> : <XCircleIcon color="red" width={22} />,
     sortable: true,
     width: "180px"
   },
@@ -140,7 +147,8 @@ const apartmentColumns = (t, handleUpdate, setShowDeleteModal, date_format) => [
       </span>
     </Link> : "",
     sortable: true,
-    width: "160px"
+    width: "160px",
+    omit: !settings?.showTower
   },
   {
     name: t("created_at_key"),
@@ -180,6 +188,12 @@ const towerColumns = (t, handleUpdate, setShowDeleteModal, showApartments, date_
     selector: row => row?.address,
     sortable: true,
     width: "250px"
+  },
+  {
+    name: t("number_of_floors_key"),
+    selector: row => row?.number_of_floors,
+    sortable: true,
+    width: "180px"
   },
 
   {
@@ -279,6 +293,6 @@ const rentPaymentReportColumns = (t, viewDetails, date_format, is_super_admin) =
 export {
   tenantColumns,
   apartmentColumns,
-  towerColumns, 
+  towerColumns,
   rentPaymentReportColumns
 }

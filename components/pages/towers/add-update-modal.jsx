@@ -21,17 +21,19 @@ export default function AddUpdateModal({ fetchReport, handleClose, id, session }
 
   const name = useInput("", "");
   const address = useInput("", "");
+  const number_of_floors = useInput("", "number", true);
 
   const owner = useSelect("", "select");
 
 
-  const validation = useCallback(() => name.value && address.value, [address.value, name.value]);
+  const validation = useCallback(() => name.value && address.value && number_of_floors.value, [address.value, name.value, number_of_floors.value]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitted(true);
     const data = {
       "name": name.value,
       "address": address.value,
+      "number_of_floors": number_of_floors.value,
       ...(owner?.value?.value ? { "owner": owner.value.value } : {})
     }
     try {
@@ -53,6 +55,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id, session }
         const item = await getOne(id);
         name.changeValue(item?.name)
         address.changeValue(item?.address)
+        number_of_floors.changeValue(item?.number_of_floors)
         item?.owner?._id && owner.changeValue({ label: item?.owner?.name, value: item?.owner?._id })
         setLoading(false);
       } catch (error) {
@@ -78,6 +81,11 @@ export default function AddUpdateModal({ fetchReport, handleClose, id, session }
               mandatory
               label={t("address_key")}
               {...address.bind}
+            />
+            <Input
+              mandatory
+              label={t("number_of_floors_key")}
+              {...number_of_floors.bind}
             />
             {is_super_admin && <UserSearch
               label={t("owner_key")}

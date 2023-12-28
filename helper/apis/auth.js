@@ -1,12 +1,11 @@
 // import axios from "auth/axiosInstance";
 import axios from "axios";
-import config from "config/config";
 
 // userLogin (login)
 export const userLogin = async (data) => {
   const response = await axios({
     method: "POST",
-    url: `${config.apiGateway.API_URL_PRODUCTION}/users/signIn`,
+    url: `/api/users/signIn`,
     data: JSON.stringify(data),
     headers: {
       "Content-Type": "application/json",
@@ -19,7 +18,7 @@ export const userLogin = async (data) => {
 export const loginVerify = async (data) => {
   const response = await axios({
     method: "POST",
-    url: `${config.apiGateway.API_URL_PRODUCTION}/users/verify`,
+    url: `/api/users/verify`,
     data: JSON.stringify(data),
     headers: {
       "Content-Type": "application/json",
@@ -29,37 +28,38 @@ export const loginVerify = async (data) => {
 };
 
 
-// userSetPassword (Set Pass)
-export const userSetPassword = async (data) => {
-  const response = await axios({
-    method: "POST",
-    url: `${config.apiGateway.API_URL_PRODUCTION}/v2/user/password/reset`,
-    data: JSON.stringify(data),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return response.data;
-};
 
-// userForgetPassword (ForgetPassword)
-export const userForgetPassword = async (data) => {
+
+// update profile (Password)
+export const updatePassword = async (data) => {
   const response = await axios({
-    method: "POST",
-    url: `${config.apiGateway.API_URL_PRODUCTION}/v2/user/password/forgot`,
-    data: JSON.stringify(data),
+    method: "put",
+    url: "/api/users/update-password",
+    data: data,
     headers: {
       "Content-Type": "application/json",
     },
   });
   return response.data;
 };
-// userVerifyCode (VerifyCode)
-export const userVerifyCode = async (data) => {
+// change profile (Password)
+export const changePassword = async (data) => {
   const response = await axios({
-    method: "POST",
-    url: `${config.apiGateway.API_URL_PRODUCTION}/v2/user/password/verify`,
-    data: JSON.stringify(data),
+    method: "put",
+    url: "/api/users/change-password",
+    data: data,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return response.data;
+};
+// send email
+export const forgetPassword = async (email) => {
+  const response = await axios({
+    method: "post",
+    url: "/api/users/forget-password",
+    data: JSON.stringify({ email }),
     headers: {
       "Content-Type": "application/json",
     },

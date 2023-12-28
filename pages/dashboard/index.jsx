@@ -4,7 +4,6 @@ import DatePicker from 'react-datepicker';
 import moment from "moment";
 import { useTranslation } from "react-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import PropTypes from "prop-types";
 
 // Custom
 import { Layout, LayoutWithSidebar } from "components/layout";
@@ -169,17 +168,6 @@ Index.getLayout = function PageLayout(page) {
             <LayoutWithSidebar>{page}</LayoutWithSidebar>
         </Layout>
     );
-};
-Index.propTypes = {
-    totals: PropTypes.arrayOf(
-        PropTypes.shape({
-            title: PropTypes.string.isRequired,
-            count: PropTypes.number.isRequired,
-            desc: PropTypes.string.isRequired,
-            percentage: PropTypes.string.isRequired,
-            duration: PropTypes.string.isRequired,
-        })
-    ).isRequired
 };
 export default Index;
 

@@ -10,17 +10,17 @@ import { loginVerify, userLogin } from "helper/apis/auth";
 import { Spinner, Button, Input } from "components/UI";
 import { Logo } from "components/icons";
 import Link from "next/link";
-import axiosInstance from "auth/axiosInstance";
-import config from "config/config";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const { t } = useTranslation("common");
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const handleMessage = useHandleMessage();
-  const [user, setUser] = useState("");
+
+  const [step, setStep] = useState(1);
   const [otp, setOtp] = useState([]);
   const OTPLength = otp?.filter(e => e)?.length;
 
@@ -30,18 +30,22 @@ const Login = () => {
   const [showPass, setShowPass] = useState(false);
   const handleShowPass = () => setShowPass(!showPass);
 
-  const onSubmit = async (e) => {
+  const resend = (e) => {
+    onSubmit(e, true);
+  }
+  const onSubmit = async (e, resend = false) => {
     e.preventDefault();
     setIsLoading(true);
 
-    if (OTPLength != 4) {
+    if (step == 1 || resend) {
       const submitData = {
         email: email.value,
         password: password.value,
       };
       try {
-        const User = await userLogin(submitData);
-        setUser(User);
+        const res = await userLogin(submitData);
+        toast.success(res.message);
+        setStep(2);
       } catch (error) {
         handleMessage(error);
       } finally {
@@ -49,11 +53,12 @@ const Login = () => {
       }
     } else {
       const submitData = {
-        code: otp?.join(""),
-        _id: user.user._id
+        otp: otp?.join(""),
+        email: email.value,
+        password: password.value,
       };
       try {
-        await loginVerify(submitData);
+        const user = await loginVerify(submitData);
         Cookies.set('user-token', user.token, { secure: true })
         await signIn("credentials", {
           redirect: false,
@@ -101,7 +106,7 @@ const Login = () => {
             />
           </div>
 
-          {user?.token && (
+          {step == 2 && (
 
             <>
 
@@ -133,7 +138,7 @@ const Login = () => {
               <p className="flex gap-2">
                 <span className="dark:text-gray-300">{t("didnt_receive_code_key")}</span>
 
-                <button type={OTPLength == 4 ? "button" : "submit"} disabled={OTPLength == 4} className="bg-transparent text-primary">{t("resend_key")}</button>
+                <button onClick={resend} type={"button"} className="bg-transparent text-primary">{t("resend_key")}</button>
               </p>
 
             </>
@@ -141,7 +146,7 @@ const Login = () => {
 
 
           <Button
-            disabled={isLoading || !email.value || !password.value || (user?.token && OTPLength != 4)}
+            disabled={isLoading || !email.value || !password.value || (step == 2 && OTPLength != 4)}
             className="w-full mt-6 btn--primary"
             type="submit"
           >
@@ -154,7 +159,7 @@ const Login = () => {
               t("sign_in_now_key")
             )}
           </Button>
-          <Link href="/forgot-password">
+          <Link href="/forget-password">
             <span className="mt-4 cursor-pointer text-primary">
 
               {t("forgot_password_key")}

@@ -21,8 +21,13 @@ module.exports = withMT({
         text: '#2f353b',
         textLight: '#777e90',
         inputBorder: '#DCDFE3',
-        ...colors
-      },
+        slate: colors.slate,
+        sky: colors.sky,
+        stone: colors.stone,
+        neutral: colors.neutral,
+        gray: colors.gray
+
+      }
     },
   },
   plugins: [],

@@ -5,22 +5,14 @@ const options = {
     CredentialsProvider({
       name: 'credentials',
 
-      async authorize(credentials) {
-        const { user } = credentials;
-
-        // Parse the user data from the JSON string
-        const userData = JSON.parse(user);
-
-        // Check if user exists and return user data with token
-        if (userData) {
+      async authorize({ user }) {
+        try {
+          const userData = JSON.parse(user);
           return {
-            name: {
-              ...userData,
-            },
+            name: { ...userData },
           };
-        } else {
-          // Handle error case
-          console.error('User data is missing or invalid');
+        } catch (error) {
+          console.error('Error parsing user data:', error);
           return null;
         }
       },
@@ -29,26 +21,27 @@ const options = {
 
   callbacks: {
     async session({ session }) {
-      // Simplify the session object by only including the user's name
-      session.user = session.user.name;
+      const { user: { name } } = session;
+      session.user = name;
       return session;
     },
 
     jwt({ token, trigger, session }) {
-      // Update the token with the session data
       if (trigger === 'update' && session) {
-        token.name = session;
+        const { user: { name } } = session;
+        token.name = name;
       }
       return token;
     },
   },
+
   secret: process.env.JWT_SIGNING_PRIVATE_KEY,
+
   pages: {
     signIn: '/login',
   },
 };
 
-// Define the authentication handler for NextAuth
 const authHandler = (req, res) => NextAuth(req, res, options);
 
 export default authHandler;

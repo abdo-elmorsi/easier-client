@@ -23,6 +23,7 @@ import "react-toastify/dist/ReactToastify.css";
 import debounce from 'utils/debounce';
 import GlobalSetting from "helper/settings/GlobalSetting";
 import { CopyRights, ScrollToTopButton } from 'components/UI';
+import { NextScript } from 'next/document';
 
 const FONT_SIZE_BASE = 16;
 const FONT_SIZE_RATIO = 0.1122 / 3;
@@ -57,12 +58,12 @@ function MyApp({ Component, pageProps }) {
             name="viewport"
             content="width=device-width, initial-scale=1"
           />
-          <script
+          <NextScript
             type="text/javascript"
             src={`https://maps.googleapis.com/maps/api/js?key=${process.env.MAP_API_KEY}&libraries=places`}
             async
             defer
-          ></script>
+          ></NextScript>
           <title>Easier</title>
         </Head>
         <NextNprogress
