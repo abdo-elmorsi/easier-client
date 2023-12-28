@@ -1,39 +1,43 @@
 import React, { useState } from "react";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { getSession, signIn } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import * as Yup from "yup";
 
 // Custom
 import { useHandleMessage, useInput } from "hooks";
-import { userForgetPassword, userLogin, userVerifyCode } from "helper/apis/auth";
+import { forgetPassword, changePassword } from "helper/apis/auth";
 import { Spinner, Button, Input } from "components/UI";
 import { Logo } from "components/icons";
-import { getFirstError } from "utils/utils";
 import Link from "next/link";
+import { toast } from "react-toastify";
 
-const ForgotPassword = () => {
+const Index = () => {
   const { t } = useTranslation("common");
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const handleMessage = useHandleMessage();
-  const [token, setToken] = useState("");
-
-  const [step, setStep] = useState(1);
+  console.log(router.query.step);
+  const [step, setStep] = useState(router.query.step || 1);
   const email = useInput("", "email", true)
-  const code = useInput("", "", null)
-  console.log(email.isValid);
-  const onSubmit = async () => {
+  const otp = useInput("", "", null)
+  const new_pass = useInput("", "password", true)
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
     setIsLoading(true);
     try {
       if (step == 1) {
-        const { data } = await userForgetPassword({ email: email.value });
-        console.log(data.token);
-        setToken(data.token);
+        const { message } = await forgetPassword(email.value);
+        toast.success(message);
         setStep(2);
       } else {
-        const response = await userVerifyCode({ code: code.value, token });
+        const res = await changePassword({
+          email: email.value,
+          otp: otp.value,
+          password: new_pass.value,
+        });
+        toast.success(res?.message)
         router.push("/login")
       }
     } catch (error) {
@@ -60,19 +64,33 @@ const ForgotPassword = () => {
             <div className="flex flex-col gap-4">
               <div className="mb-4">
                 {step == 1 ? (<Input
-                  label={t("email_address_key")}
                   name="email"
+                  label={t("email_address_key")}
                   {...email.bind}
                 />) : (
-                  <Input
-                    label={t("code_key")}
-                    name="email"
-                    {...code.bind}
-                  />
+                  <>
+                    <Input
+                      name="email"
+                      label={t("email_address_key")}
+                      {...email.bind}
+                    />
+                    <Input
+                      name="otp"
+                      label={t("otp_key")}
+                      {...otp.bind}
+                    />
+                    <Input
+                      label={t("new_password_key")}
+                      name="password"
+                      {...new_pass.bind}
+                    />
+                  </>
                 )}
               </div>
               <div className="mb-4">
-                <Button type="submit" disabled={(step == 1 && (!email.value || !email.isValid)) || (step == 2 && !code.value) || isLoading} onClick={onSubmit} className="w-full btn--primary">
+                <Button type="submit" disabled={
+                  (step == 1 && (!email.value || !email.isValid)) || (step == 2 && (!email.value || !email.isValid || !otp.value || !new_pass.value)) || isLoading
+                } onClick={onSubmit} className="w-full btn--primary">
                   {isLoading ? (
                     <>
                       <Spinner className="w-4 h-4 mr-3 rtl:ml-3" />
@@ -99,9 +117,9 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default Index;
 
-ForgotPassword.getLayout = function PageLayout(page) {
+Index.getLayout = function PageLayout(page) {
   return <>{page}</>;
 };
 

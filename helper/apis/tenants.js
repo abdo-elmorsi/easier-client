@@ -92,15 +92,3 @@ export const updateProfile = async (user) => {
   });
   return response.data;
 };
-// update profile (Password)
-export const updatePassword = async (data) => {
-  const response = await axios({
-    method: "put",
-    url: "users/password",
-    data: data,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return response.data;
-};

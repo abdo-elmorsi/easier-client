@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { getSession } from "next-auth/react";
 import moment from "moment";
 import { useTranslation } from "react-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import PropTypes from "prop-types";
 
 // Custom
-import { Layout, LayoutWithSidebar } from "components/layout";
+import { Layout } from "components/layout";
 import { Spinner } from "components/UI";
 import { getTotals } from "helper/apis/dashboard";
 import { useHandleMessage, useSavedState } from "hooks";
@@ -112,17 +111,7 @@ Index.getLayout = function PageLayout(page) {
         </Layout>
     );
 };
-Index.propTypes = {
-    totals: PropTypes.arrayOf(
-        PropTypes.shape({
-            title: PropTypes.string.isRequired,
-            count: PropTypes.number.isRequired,
-            desc: PropTypes.string.isRequired,
-            percentage: PropTypes.string.isRequired,
-            duration: PropTypes.string.isRequired,
-        })
-    ).isRequired
-};
+
 export default Index;
 
 export const getServerSideProps = async (context) => {
