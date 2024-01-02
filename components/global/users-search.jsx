@@ -47,7 +47,7 @@ export default function UserSearch({ user, roleFilter = "user", label = null, ..
   return (
     <Select
       label={label || t('tenant_key')}
-      mandatory
+      mandatory={props?.mandatory || true}
       async={true}
       loadOptions={UserSearch}
       isDisabled={false}

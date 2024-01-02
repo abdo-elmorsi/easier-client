@@ -74,6 +74,8 @@ SearchInput.propTypes = {
   setSearchQuery: PropTypes.func.isRequired,
   fetchReport: PropTypes.func.isRequired,
   gridFilter: PropTypes.object,
+  append: PropTypes.object,
+  disableSearch: PropTypes.bool,
 };
 
 export default SearchInput;

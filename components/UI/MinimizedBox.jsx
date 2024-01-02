@@ -76,7 +76,7 @@ const MinimizedBox = ({ children, className, title = "filters_key", actionText, 
 };
 
 MinimizedBox.propTypes = {
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node,
   className: PropTypes.string,
   title: PropTypes.string,
   actionText: PropTypes.string,

@@ -7,20 +7,21 @@ import { useRouter } from "next/router";
 
 // Custom
 import { Layout, LayoutWithSidebar } from "components/layout";
-import { apartmentColumns } from "components/columns";
-import { ServerTable, DeleteModal, Header } from "components/global";
+import { ServerTable, Header } from "components/global";
 import { Actions, MinimizedBox, Modal } from "components/UI";
-import { AddUpdateModal, PrintView } from "components/pages/apartments";
-import { deleteOne, getAll } from "helper/apis/apartments";
 import exportExcel from "utils/useExportExcel";
 import { useHandleMessage } from "hooks";
-import { Filter } from "components/pages/towers";
+import { isSuperAdmin } from "utils/utils";
+import { rentalColumns } from "components/columns";
+import { AddUpdateModal, PrintView } from "components/pages/actions/rental";
+import { getAll } from "helper/apis/actions/rental";
 
 const Index = ({ session }) => {
-  const apartment_id = router?.query?.id || "";
   const router = useRouter();
+  const is_super_admin = isSuperAdmin(session);
   const language = router.locale.toLowerCase();
   const date_format = language === 'en' ? 'DD/MM/YYYY' : 'YYYY/MM/DD';
+
   const [tableData, setTableData] = useState([]);
   const [perPage, setPerPage] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
@@ -31,56 +32,29 @@ const Index = ({ session }) => {
   const [exportingExcel, setExportingExcel] = useState(false);
   const printViewRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [gridFilter, setGridFilter] = useState({});
 
-  // ================== add-update apartment ============
+  // ================== add-update rental ============
   const [showUpdateModal, setShowUpdateModal] = useState({
     isOpen: false,
     id: null
   });
-  const handleUpdate = (id) => {
-    setShowUpdateModal(({ id: id, isOpen: true }));
-  };
+
   const closeEditModal = () => {
     setShowUpdateModal(({}));
   };
-  // ================== add-update apartment ============
-
-  // ================== delete apartment ============
-  const [showDeleteModal, setShowDeleteModal] = useState({
-    loading: false,
-    isOpen: false,
-    id: null
-  });
-  const closeDeleteModal = () => {
-    setShowDeleteModal(({}));
-  };
-  const handleDelete = async () => {
-    setShowDeleteModal(prev => ({ ...prev, loading: true }))
-    try {
-      await deleteOne(showDeleteModal?.id);
-      closeDeleteModal();
-      fetchReport();
-    } catch (error) {
-      handleMessage(error);
-    } finally {
-      setShowDeleteModal(prev => ({ ...prev, loading: false }))
-    }
-  }
-  // ================== delete apartment ============
+  // ================== add-update rental ============
 
 
-  const columns = apartmentColumns(t, handleUpdate, setShowDeleteModal, date_format);
-  const fetchReport = async (page, perPage, query = "", filter = {}) => {
+  const columns = rentalColumns(t, date_format, is_super_admin);
+
+  const fetchReport = async (page, perPage, query = "") => {
     const search = query?.trim() || searchQuery;
-    const _filter = { ...gridFilter, ...filter };
     setLoading(true);
-
     try {
       const data = await getAll({
         search,
-        searchFields: ["piece_number"],
-        filters: `admin_id=${session.user._id}${_filter?.tower ? `,tower=${_filter?.tower.value}` : ""}`,
+        searchFields: ["user"],
+        // ...(!is_super_admin ? { filters: `owner=${session.user._id}` } : {}),
         page,
         limit: perPage,
       });
@@ -101,7 +75,7 @@ const Index = ({ session }) => {
 
   const handleExportExcel = async () => {
     setExportingExcel(true);
-    await exportExcel(tableData, columns, t("apartments_key"), handleMessage);
+    await exportExcel(tableData, columns, t("rental_key"), handleMessage);
     setTimeout(() => {
       setExportingExcel(false);
     }, 1000);
@@ -115,22 +89,15 @@ const Index = ({ session }) => {
   useEffect(() => {
     fetchReport(1, 10);
   }, []);
-
-  const fetchReportFromFilter = (filter) => {
-    fetchReport(1, 10, null, filter);
-    setGridFilter({ ...gridFilter, ...filter });
-  }
   return (
     <>
       <div className="min-h-full bg-gray-100 rounded-md dark:bg-gray-700">
         <Header
-          title={t("apartments_key")}
-          path="/dashboard/apartments"
+          title={t("rental_key")}
+          path="/dashboard/actions/rental"
           classes="bg-gray-100 dark:bg-gray-700 border-none"
         />
-        <MinimizedBox>
-          <Filter fetchReport={fetchReportFromFilter} />
-        </MinimizedBox>
+        <MinimizedBox></MinimizedBox>
         <ServerTable
           columns={columns}
           data={tableData || []}
@@ -147,7 +114,7 @@ const Index = ({ session }) => {
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
               fetchReport={fetchReport}
-              addMsg={t("add_apartment_key")}
+              addMsg={t("rent_key")}
               onClickAdd={() => setShowUpdateModal({ isOpen: true, id: null })}
               onClickPrint={exportPDF}
               onClickExport={handleExportExcel}
@@ -160,7 +127,7 @@ const Index = ({ session }) => {
 
       {showUpdateModal?.isOpen && (
         <Modal
-          title={t("add_apartment_key")}
+          title={t("rent_key")}
           show={showUpdateModal?.isOpen}
           footer={false}
           onClose={() => closeEditModal()}
@@ -169,24 +136,11 @@ const Index = ({ session }) => {
             fetchReport={fetchReport}
             handleClose={() => closeEditModal()}
             id={showUpdateModal?.id}
+            session={session}
           />
         </Modal>
       )}
 
-      {showDeleteModal?.isOpen && (
-        <Modal
-          title={t("delete_key")}
-          show={showDeleteModal?.isOpen}
-          footer={false}
-          onClose={() => closeDeleteModal()}
-        >
-          <DeleteModal
-            showDeleteModal={showDeleteModal}
-            handleClose={() => closeDeleteModal()}
-            handleDelete={handleDelete}
-          />
-        </Modal>
-      )}
 
     </>
   );

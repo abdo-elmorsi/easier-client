@@ -33,24 +33,23 @@ export default function Actions({
         id="search-bar"
         name="search-bar"
         maxLength={50}
-        autoFocus={true}
       />}
       <div className="flex items-center gap-2">
-        {onClickExport && <div
+        {onClickExport && <button
           title={t('export_excel_key')}
           onClick={() => onClickExport()}
           className={`${(isDisabledExport) ? "cursor-not-allowed" : "cursor-pointer"} dark:bg-gray-gray-900 rounded-full bg-gray-100 dark:bg-gray-500 dark:hover:bg-gray-400 p-3 hover:bg-gray-200`}
         >
           <Excel />
-        </div>}
+        </button>}
 
-        {onClickPrint && <div
+        {onClickPrint && <button
           title={t('print_pdf_key')}
           onClick={() => onClickPrint()}
           className={`${(isDisabledPrint) ? "cursor-not-allowed" : "cursor-pointer"} dark:bg-gray-gray-900 rounded-full bg-gray-100 dark:bg-gray-500 dark:hover:bg-gray-400 p-3 hover:bg-gray-200`}
         >
           <PrintPdf />
-        </div>}
+        </button>}
 
         {onClickAdd && <Button
           onClick={() => onClickAdd()}
@@ -75,6 +74,7 @@ Actions.propTypes = {
   isDisabledPrint: PropTypes.bool,
   onClickExport: PropTypes.func,
   isDisabledExport: PropTypes.bool,
+  disableSearch: PropTypes.bool,
   addMsg: PropTypes.string,
   searchQuery: PropTypes.string,
   gridFilter: PropTypes.object,

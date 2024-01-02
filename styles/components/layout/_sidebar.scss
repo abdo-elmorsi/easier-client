@@ -4,7 +4,7 @@
     // display: flex !important;
   }
 
-  &:hover .sub-menu-icon {
+  .tab_link:hover .sub-menu-icon {
     opacity: 0 !important;
     transform: translateX(15px);
     -webkit-transform: translateX(15px);

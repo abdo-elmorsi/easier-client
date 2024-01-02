@@ -1,6 +1,6 @@
 import React from "react"
 import Link from "next/link"
-import { formatComma } from "utils/utils"
+import { formatComma, formatMinus } from "utils/utils"
 import { CheckCircleIcon, EyeIcon, PencilSquareIcon, TrashIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import moment from "moment";
 import { Button } from "components/UI";
@@ -56,13 +56,20 @@ const tenantColumns = (t, handleUpdate, setShowDeleteModal, date_format, is_supe
   },
   {
     name: t("flat_key"),
-    selector: (row) => row?.flat?._id,
-    getValue: (row) => `${row?.flat?.floor_number}-${row?.flat?.piece_number}`,
-    cell: (row) => row?.flat?._id ? <Link href={`/dashboard/flats?id=${row?.flat?._id}`}>
+    selector: (row) => row?.piece,
+    getValue: (row) => row?.piece,
+    cell: (row) => row?.piece ? <Link href={`/dashboard/apartments?id=${row?.piece}`}>
       <span className="font-bold cursor-pointer text-primary">
-        {`${row?.flat?.floor_number}-${row?.flat?.piece_number}`}
+        {`${row?.piece.slice(0, 5)}...`}
       </span>
     </Link> : "",
+    // selector: (row) => row?.piece?._id,
+    // getValue: (row) => `${row?.piece?.floor_number}-${row?.piece?.piece_number}`,
+    // cell: (row) => row?.piece?._id ? <Link href={`/dashboard/flats?id=${row?.piece?._id}`}>
+    //   <span className="font-bold cursor-pointer text-primary">
+    //     {`${row?.piece?.floor_number}-${row?.piece?.piece_number}`}
+    //   </span>
+    // </Link> : "",
     sortable: true,
     width: "160px"
   },
@@ -246,6 +253,53 @@ const towerColumns = (t, handleUpdate, setShowDeleteModal, showApartments, date_
     width: "180px"
   },
 ];
+const rentalColumns = (t, date_format, is_super_admin) => [
+  {
+    name: t("tenant_name_key"),
+    selector: (row) => row?.user_id?.id,
+    cell: (row) => <span>{row?.user_id?.name}</span>,
+    sortable: true,
+    width: "160px"
+  },
+  {
+    name: t("apartment_name_key"),
+    selector: (row) => row?.piece_id?.id,
+    cell: (row) => <span>{`${row?.piece_id?.piece_number}-${row?.piece_id?.floor_number}`}</span>,
+    sortable: true,
+    width: "160px"
+  },
+  {
+    name: t("tower_key"),
+    selector: (row) => row?.tower_id?.id,
+    cell: (row) => <span>{row?.tower_id?.name}</span>,
+    sortable: true,
+    width: "160px"
+  },
+  {
+    name: t("apartment_rent_price_key"),
+    selector: (row) => formatComma(row?.piece_id?.rent_price),
+    width: "200px",
+    sortable: true,
+  },
+  {
+    name: t("rent_price_key"),
+    selector: (row) => formatComma(row.rent_price),
+    width: "180px",
+    sortable: true,
+  },
+  {
+    name: t("different_key"),
+    selector: (row) => formatMinus(row?.piece_id?.rent_price - row?.rent_price),
+    width: "180px",
+    sortable: true,
+  },
+  {
+    name: t("rented_at_key"),
+    selector: (row) => moment(row?.rented_at).format(date_format),
+    width: "180px",
+    sortable: true,
+  },
+];
 const rentPaymentReportColumns = (t, viewDetails, date_format, is_super_admin) => [
   {
     name: t("apartments_key"),
@@ -294,5 +348,6 @@ export {
   tenantColumns,
   apartmentColumns,
   towerColumns,
+  rentalColumns,
   rentPaymentReportColumns
 }

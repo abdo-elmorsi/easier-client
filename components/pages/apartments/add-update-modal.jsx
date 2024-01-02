@@ -24,18 +24,17 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
 
 
   const tower = useSelect("", "select");
-  const tenant = useSelect("", "select");
+  // const tenant = useSelect("", "select");
 
 
   const validation = useCallback(() => {
-    return piece_number.value && floor_number.value && rent_price.value && maintenance_price.value && tower.value?.value && tenant.value?.value
+    return piece_number.value && floor_number.value && rent_price.value && maintenance_price.value && tower.value?.value
   }, [
     piece_number.value,
     floor_number.value,
     rent_price.value,
     maintenance_price.value,
     tower.value?.value,
-    tenant.value?.value
   ]);
 
   const handleSubmit = async (e) => {
@@ -47,7 +46,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
       "rent_price": rent_price.value,
       "maintenance_price": maintenance_price.value,
       "tower": tower.value.value,
-      "user": tenant.value.value,
+      // "user": tenant.value?.value || null,
     }
     try {
       const req = (data) => id ? updateOne(data, id) : createOne(data);
@@ -71,7 +70,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
         rent_price.changeValue(item?.rent_price);
         maintenance_price.changeValue(item?.maintenance_price);
         tower.changeValue({ label: item?.tower?.name, value: item?.tower._id });
-        tenant.changeValue({ label: item?.user?.name, value: item?.user._id });
+        // item?.user?._id && tenant.changeValue({ label: item?.user?.name, value: item?.user._id });
         setLoading(false);
       } catch (error) {
         handleMessage(error);
@@ -111,11 +110,12 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
             <TowersSearch
               tower={tower}
             />
-            <UserSearch
+            {/* <UserSearch
               user={tenant}
+              mandatory={false}
               roleFilter={"user"}
 
-            />
+            /> */}
           </div>
 
         )}

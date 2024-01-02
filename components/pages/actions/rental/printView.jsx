@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 // custom
 import PrintPageTableWrapper from "components/printPageTableWrapper";
 import { useTranslation } from "react-i18next";
+import { formatComma, formatMinus } from "utils/utils";
 
 
 const PrintView = forwardRef(({ data }, ref) => {
@@ -40,20 +41,24 @@ const PrintView = forwardRef(({ data }, ref) => {
                         <thead className="h-10 font-bold text-white bg-primary">
                             <tr>
                                 <th>{t('tenant_name_key')}</th>
-                                <th>{t('phone_number_key')}</th>
-                                <th>{t('email_key')}</th>
-                                <th>{t('national_id_key')}</th>
-                                <th>{t('birth_date_key')}</th>
+                                <th>{t('apartment_name_key')}</th>
+                                <th>{t('tower_key')}</th>
+                                <th>{t('apartment_rent_price_key')}</th>
+                                <th>{t('rent_price_at')}</th>
+                                <th>{t('different_key')}</th>
+                                <th>{t('rented_at_key')}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {data?.map((row, i) => (
                                 <tr key={`row-${i}`} className="break-inside-avoid">
-                                    <td>{row.full_name}</td>
-                                    <td>{row.phone}</td>
-                                    <td>{row.email}</td>
-                                    <td>{row.national_or_iqma_id}</td>
-                                    <td>{moment(row.birth_date_key).format(date_format)}</td>
+                                    <td>{row?.user_id?.name}</td>
+                                    <td>{`${row?.piece_id?.piece_number}-${row?.piece_id?.floor_number}`}</td>
+                                    <td>{row?.tower_id?.name}</td>
+                                    <td>{formatComma(row?.piece_id?.rent_price)}</td>
+                                    <td>{formatComma(row?.rent_price)}</td>
+                                    <td>{formatMinus(row?.piece_id?.rent_price - row?.rent_price)}</td>
+                                    <td>{moment(row?.rented_at).format(date_format)}</td>
                                     
                                 </tr>
                             ))}
@@ -65,6 +70,7 @@ const PrintView = forwardRef(({ data }, ref) => {
     </>
 });
 PrintView.propTypes = {
+    language: PropTypes.string.isRequired,
     data: PropTypes.array,
 };
 

@@ -327,5 +327,7 @@
   "image_key": "Image",
   "total_towers_key": "Total Towers",
   "rent_payment_report_key": "rent payment report",
-  "owner_key": "Owner"
+  "owner_key": "Owner",
+  "rented_at_key": "Rented at",
+  "apartment_key": "Apartment"
 }
