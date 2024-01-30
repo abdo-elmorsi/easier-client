@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from "react";
 import PropTypes from "prop-types";
-import { createOne, getOne, updateOne } from "helper/apis/towers";
 
 // Custom
 import { useHandleMessage, useInput, useSelect } from "hooks"
@@ -9,6 +8,8 @@ import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { isSuperAdmin } from "utils/utils";
 import { UserSearch } from "components/global";
+import API from "helper/apis";
+import { cancelRequestWithUrl } from "helper/apis/axiosInstance";
 
 
 export default function AddUpdateModal({ fetchReport, handleClose, id, session }) {
@@ -37,7 +38,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id, session }
       ...(owner?.value?.value ? { "owner": owner.value.value } : {})
     }
     try {
-      const req = (data) => id ? updateOne(data, id) : createOne(data);
+      const req = (data) => id ? API.updateTower(data, id) : API.createTower(data);
       await req(data);
       fetchReport(1, 10);
       handleClose();
@@ -52,7 +53,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id, session }
     const getData = async () => {
       setLoading(true);
       try {
-        const item = await getOne(id);
+        const item = await API.getOneTower(id);
         name.changeValue(item?.name)
         address.changeValue(item?.address)
         number_of_floors.changeValue(item?.number_of_floors)
@@ -63,6 +64,9 @@ export default function AddUpdateModal({ fetchReport, handleClose, id, session }
       }
     }
     id && getData();
+    return () => {
+      cancelRequestWithUrl("/towers")
+    }
 
   }, [id]);
 

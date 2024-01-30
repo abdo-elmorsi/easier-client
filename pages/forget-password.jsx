@@ -6,18 +6,17 @@ import { useRouter } from "next/router";
 
 // Custom
 import { useHandleMessage, useInput } from "hooks";
-import { forgetPassword, changePassword } from "helper/apis/auth";
 import { Spinner, Button, Input } from "components/UI";
 import { Logo } from "components/icons";
 import Link from "next/link";
 import { toast } from "react-toastify";
+import API from "helper/apis";
 
 const Index = () => {
   const { t } = useTranslation("common");
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const handleMessage = useHandleMessage();
-  console.log(router.query.step);
   const [step, setStep] = useState(router.query.step || 1);
   const email = useInput("", "email", true)
   const otp = useInput("", "", null)
@@ -28,11 +27,11 @@ const Index = () => {
     setIsLoading(true);
     try {
       if (step == 1) {
-        const { message } = await forgetPassword(email.value);
+        const { message } = await API.forgetPassword({ email: email.value });
         toast.success(message);
         setStep(2);
       } else {
-        const res = await changePassword({
+        const res = await API.changePassword({
           email: email.value,
           otp: otp.value,
           password: new_pass.value,

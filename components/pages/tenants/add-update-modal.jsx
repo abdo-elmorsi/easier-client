@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from "react";
 import PropTypes from "prop-types";
-import { createOne, getOne, updateOne } from "helper/apis/tenants";
 
 // Custom
 import { useCheckbox, useHandleMessage, useInput } from "hooks"
@@ -8,13 +7,15 @@ import { Button, Spinner, Input, Checkbox } from "components/UI";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { isSuperAdmin } from "utils/utils";
+import API from "helper/apis";
+import { cancelRequestWithUrl } from "helper/apis/axiosInstance";
 
 
 export default function AddUpdateModal({ fetchReport, handleClose, id, session }) {
   const { t } = useTranslation("common");
 
   const is_super_admin = isSuperAdmin(session);
-  
+
   const handleMessage = useHandleMessage();
   const [loading, setLoading] = useState(id);
   const [submitted, setSubmitted] = useState(false);
@@ -48,7 +49,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id, session }
       "national_id": national_id.value,
     }
     try {
-      const req = (data) => id ? updateOne(data, id) : createOne(data);
+      const req = (data) => id ? API.updateTenant(data, id) : API.createTenant(data);
       await req(data);
       fetchReport(1, 10);
       handleClose();
@@ -63,7 +64,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id, session }
     const getData = async () => {
       setLoading(true);
       try {
-        const item = await getOne(id);
+        const item = await API.getOneTenant(id);
         name.changeValue(item?.name);
         email.changeValue(item?.email);
         phone_number.changeValue(item?.phone_number);
@@ -75,6 +76,9 @@ export default function AddUpdateModal({ fetchReport, handleClose, id, session }
       }
     }
     id && getData();
+    return () => {
+      cancelRequestWithUrl("/users")
+    }
   }, [id]);
 
 

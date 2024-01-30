@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import config from 'config/config';
 import { Select } from 'components/UI';
-import axiosInstance from 'auth/axiosInstance';
 import { useRouter } from 'next/router';
 import { useSavedState } from 'hooks';
+import axiosInstance from 'helper/apis/axiosInstance';
 
 export default function CompanySearch({ companyId, fetchReport, ...reset }) {
   const { t } = useTranslation('common');
@@ -64,7 +64,6 @@ CompanySearch.propTypes = {
 // import { useTranslation } from 'react-i18next';
 // import config from 'config/config';
 // import { Select } from 'components/UI';
-// import axiosInstance from 'auth/axiosInstance';
 // import { useRouter } from 'next/router';
 
 // export default function CompanySearch({ companyId, fetchReport, ...reset }) {

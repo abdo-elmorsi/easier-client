@@ -11,10 +11,10 @@ import { apartmentColumns } from "components/columns";
 import { ServerTable, DeleteModal, Header } from "components/global";
 import { Actions, MinimizedBox, Modal } from "components/UI";
 import { AddUpdateModal, PrintView } from "components/pages/apartments";
-import { deleteOne, getAll } from "helper/apis/apartments";
 import exportExcel from "utils/useExportExcel";
 import { useHandleMessage } from "hooks";
 import { Filter } from "components/pages/towers";
+import API from "helper/apis";
 
 const Index = ({ session }) => {
   const apartment_id = router?.query?.id || "";
@@ -58,7 +58,7 @@ const Index = ({ session }) => {
   const handleDelete = async () => {
     setShowDeleteModal(prev => ({ ...prev, loading: true }))
     try {
-      await deleteOne(showDeleteModal?.id);
+      await API.deleteApartment(showDeleteModal?.id);
       closeDeleteModal();
       fetchReport();
     } catch (error) {
@@ -77,7 +77,7 @@ const Index = ({ session }) => {
     setLoading(true);
 
     try {
-      const data = await getAll({
+      const data = await API.getAllApartments({
         search,
         searchFields: ["piece_number"],
         filters: `admin_id=${session.user._id}${_filter?.tower ? `,tower=${_filter?.tower.value}` : ""}`,

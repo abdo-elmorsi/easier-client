@@ -1,9 +1,6 @@
-import { signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import axios from "axios";
-import Cookies from "js-cookie";
 
 const useErrorMessage = () => {
   const [message, setMessage] = useState(null);
@@ -31,13 +28,8 @@ const useErrorMessage = () => {
     callback = null
   ) => {
     const message = error?.response?.data?.message || "An error has occurred";
-    const status = error?.response?.status || 500;
-    if (axios.isCancel(error)) {
+    if (message == "CanceledError") {
       return;
-    }
-    if (status === 401) {
-      await signOut();
-      Cookies.remove('user-token');
     }
     setMessage({ message, type });
     if (callback && typeof callback === "function") {

@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from "react";
 import PropTypes from "prop-types";
-import { createOne, getOne, updateOne } from "helper/apis/apartments";
 
 // Custom
 import { useHandleMessage, useInput, useSelect } from "hooks"
@@ -8,6 +7,8 @@ import { Button, Spinner, Input } from "components/UI";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import { UserSearch, TowersSearch } from "components/global";
+import API from "helper/apis";
+import { cancelRequestWithUrl } from "helper/apis/axiosInstance";
 
 
 export default function AddUpdateModal({ fetchReport, handleClose, id }) {
@@ -49,7 +50,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
       // "user": tenant.value?.value || null,
     }
     try {
-      const req = (data) => id ? updateOne(data, id) : createOne(data);
+      const req = (data) => id ? API.updateApartment(data, id) : API.createApartment(data);
       await req(data);
       fetchReport(1, 10);
       handleClose();
@@ -64,19 +65,21 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
     const getData = async () => {
       setLoading(true);
       try {
-        const item = await getOne(id);
+        const item = await API.getOneApartment(id);
         piece_number.changeValue(item?.piece_number);
         floor_number.changeValue(item?.floor_number);
         rent_price.changeValue(item?.rent_price);
         maintenance_price.changeValue(item?.maintenance_price);
         tower.changeValue({ label: item?.tower?.name, value: item?.tower._id });
-        // item?.user?._id && tenant.changeValue({ label: item?.user?.name, value: item?.user._id });
         setLoading(false);
       } catch (error) {
         handleMessage(error);
       }
     }
     id && getData();
+    return () => {
+      cancelRequestWithUrl("/apartments")
+    }
   }, [id]);
 
 

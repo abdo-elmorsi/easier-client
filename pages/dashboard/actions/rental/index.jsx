@@ -14,7 +14,7 @@ import { useHandleMessage } from "hooks";
 import { isSuperAdmin } from "utils/utils";
 import { rentalColumns } from "components/columns";
 import { AddUpdateModal, PrintView } from "components/pages/actions/rental";
-import { getAll } from "helper/apis/actions/rental";
+import API from "helper/apis";
 
 const Index = ({ session }) => {
   const router = useRouter();
@@ -51,7 +51,7 @@ const Index = ({ session }) => {
     const search = query?.trim() || searchQuery;
     setLoading(true);
     try {
-      const data = await getAll({
+      const data = await API.getAllRentals({
         search,
         searchFields: ["user"],
         // ...(!is_super_admin ? { filters: `owner=${session.user._id}` } : {}),

@@ -8,10 +8,10 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 // Custom
 import { Layout, LayoutWithSidebar } from "components/layout";
 import { MinimizedBox, Spinner } from "components/UI";
-import { getTotals } from "helper/apis/dashboard";
 import { useHandleMessage, useSavedState } from "hooks";
 import { percentageChange } from "utils/utils";
 import { Date } from "components/icons";
+import API from "helper/apis";
 
 const Index = () => {
     const { t } = useTranslation("common");
@@ -72,7 +72,7 @@ const Index = () => {
     const fetchReport = async (from, to) => {
         setLoading(true);
         try {
-            const data = await getTotals({ from, to });
+            const data = await API.getTotals({ from, to });
             const totals = [
                 data?.users,
                 data?.towers,

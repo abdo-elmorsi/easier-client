@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { Select } from 'components/UI';
 import { useSavedState } from 'hooks';
-import { getAll } from 'helper/apis/tenants';
 import { useSession } from 'next-auth/react';
+import API from 'helper/apis';
 
 export default function UserSearch({ user, roleFilter = "user", label = null, ...props }) {
   const { data: session } = useSession();
@@ -19,7 +19,7 @@ export default function UserSearch({ user, roleFilter = "user", label = null, ..
   }, [])
 
   const UserSearch = async (inputValue = "", callback) => {
-    const data = await getAll({
+    const data = await API.getAllTenants({
       search: inputValue,
       searchFields: ["name"],
       sort: "name",

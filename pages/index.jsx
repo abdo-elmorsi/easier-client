@@ -7,9 +7,9 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 // Custom
 import { Layout } from "components/layout";
 import { Spinner } from "components/UI";
-import { getTotals } from "helper/apis/dashboard";
 import { useHandleMessage, useSavedState } from "hooks";
 import { percentageChange } from "utils/utils";
+import API from "helper/apis";
 
 const Index = () => {
     const { t } = useTranslation("common");
@@ -43,7 +43,7 @@ const Index = () => {
     const fetchReport = async (loading) => {
         loading && setLoading(true);
         try {
-            const data = await getTotals();
+            const data = await API.getTotals();
             const totals = [
                 data?.users,
                 data?.towers,

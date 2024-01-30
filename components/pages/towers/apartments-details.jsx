@@ -8,9 +8,9 @@ import { apartmentColumns } from "components/columns";
 import { ServerTable, DeleteModal } from "components/global";
 import { Actions, Modal } from "components/UI";
 import { AddUpdateModal, PrintView } from "components/pages/apartments";
-import { deleteOne, getAll } from "helper/apis/apartments";
 import exportExcel from "utils/useExportExcel";
 import { useHandleMessage } from "hooks";
+import API from "helper/apis";
 
 const ApartmentsDetails = ({ session, id }) => {
   const router = useRouter();
@@ -53,7 +53,7 @@ const ApartmentsDetails = ({ session, id }) => {
   const handleDelete = async () => {
     setShowDeleteModal(prev => ({ ...prev, loading: true }))
     try {
-      await deleteOne(showDeleteModal?.id);
+      await API.deleteApartment(showDeleteModal?.id);
       closeDeleteModal();
       fetchReport();
     } catch (error) {
@@ -71,7 +71,7 @@ const ApartmentsDetails = ({ session, id }) => {
     setLoading(true);
 
     try {
-      const data = await getAll({
+      const data = await API.getAllApartments({
         search,
         searchFields: ["piece_number"],
         filters: `admin_id=${session.user._id},tower=${id}`,

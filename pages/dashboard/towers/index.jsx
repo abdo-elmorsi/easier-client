@@ -11,10 +11,10 @@ import { towerColumns } from "components/columns";
 import { ServerTable, DeleteModal, Header } from "components/global";
 import { Actions, MinimizedBox, Modal } from "components/UI";
 import { AddUpdateModal, PrintView, ApartmentsDetails } from "components/pages/towers";
-import { deleteOne, getAll } from "helper/apis/towers";
 import exportExcel from "utils/useExportExcel";
 import { useHandleMessage } from "hooks";
 import { isSuperAdmin } from "utils/utils";
+import API from "helper/apis";
 
 const Index = ({ session }) => {
   const router = useRouter();
@@ -58,7 +58,7 @@ const Index = ({ session }) => {
   const handleDelete = async () => {
     setShowDeleteModal(prev => ({ ...prev, loading: true }))
     try {
-      await deleteOne(showDeleteModal?.id);
+      await API.deleteTower(showDeleteModal?.id);
       closeDeleteModal();
       fetchReport();
     } catch (error) {
@@ -87,9 +87,9 @@ const Index = ({ session }) => {
     const search = query?.trim() || searchQuery;
     setLoading(true);
     try {
-      const data = await getAll({
+      const data = await API.getAllTowers({
         search,
-        searchFields: ["user"],
+        searchFields: ["name"],
         ...(!is_super_admin ? { filters: `owner=${session.user._id}` } : {}),
         page,
         limit: perPage,

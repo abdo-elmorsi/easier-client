@@ -1,22 +1,17 @@
 import axios from "axios";
 import { CancelToken } from "axios";
-import config from "config/config";
-import { getSession, signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
 
 let cancelTokenSources = {};
 
 const axiosInstance = axios.create({
-  baseURL: config.apiGateway.API_URL_PRODUCTION,
+  baseURL: "/api",
   headers: {
     "Content-Type": "application/json",
   },
 });
 
 axiosInstance.interceptors.request.use(async (config) => {
-  const session = await getSession();
-  if (session) {
-    config.headers.Authorization = `Bearer ${session.user?.token}`;
-  }
   // Create a cancel token source for each unique request URL
   const requestUrl = config.url;
   if (cancelTokenSources[requestUrl]) {
@@ -31,15 +26,14 @@ axiosInstance.interceptors.response.use(
   function (response) {
     return response;
   },
-  function (error) {
+  async function (error) {
     if (axios.isCancel(error)) {
-      // toast.warning("Request was canceled.");
-      return Promise.reject({ data: { message: error.name } });
+      return Promise.reject({ response: { data: { message: error.name } } });
     } else if (error.response?.status === 401) {
-      signOut();
-      // toast.error("Your session has expired, please login again");
+      await signOut();
+      return Promise.reject(error);
     } else {
-      return Promise.reject(error.response);
+      return Promise.reject(error);
     }
   }
 );

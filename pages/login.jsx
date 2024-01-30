@@ -6,13 +6,13 @@ import { useRouter } from "next/router";
 
 // Custom
 import { useHandleMessage, useInput } from "hooks";
-import { loginVerify, userLogin } from "helper/apis/auth";
 import { Spinner, Button, Input } from "components/UI";
 import { Logo } from "components/icons";
 import Link from "next/link";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
+import API from "helper/apis";
 
 const Login = () => {
   const { t } = useTranslation("common");
@@ -43,7 +43,7 @@ const Login = () => {
         password: password.value,
       };
       try {
-        const res = await userLogin(submitData);
+        const res = await API.login(submitData);
         toast.success(res.message);
         setStep(2);
       } catch (error) {
@@ -58,7 +58,7 @@ const Login = () => {
         password: password.value,
       };
       try {
-        const user = await loginVerify(submitData);
+        const user = await API.verifyCode(submitData);
         Cookies.set('user-token', user.token, { secure: true })
         await signIn("credentials", {
           redirect: false,

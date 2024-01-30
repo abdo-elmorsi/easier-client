@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from "react";
 import PropTypes from "prop-types";
-import { createOne } from "helper/apis/actions/rental";
 
 // Custom
 import { useHandleMessage, useInput, useSelect } from "hooks"
@@ -9,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { isSuperAdmin } from "utils/utils";
 import { PieceSearch, TowersSearch, UserSearch } from "components/global";
 import moment from "moment";
+import API from "helper/apis";
 
 
 export default function AddUpdateModal({ fetchReport, handleClose, session }) {
@@ -50,7 +50,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, session }) {
       rented_at: moment(rented_at?.value).format('YYYY-MM-DD')
     }
     try {
-      const req = (data) => createOne(data);
+      const req = (data) => API.createRental(data);
       await req(data);
       fetchReport(1, 10);
       handleClose();

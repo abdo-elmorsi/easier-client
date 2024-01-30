@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { Select } from 'components/UI';
-import { useSavedState } from 'hooks';
-import { getAll } from 'helper/apis/apartments';
 import { useSession } from 'next-auth/react';
 import { isSuperAdmin } from 'utils/utils';
+import API from 'helper/apis';
 
 export default function PiecesSearch({ piece, ...props }) {
   const { t } = useTranslation('common');
@@ -20,7 +19,7 @@ export default function PiecesSearch({ piece, ...props }) {
   }, [])
 
   const PiecesSearch = async (inputValue = "", callback) => {
-    const data = await getAll({
+    const data = await API.getAllApartments({
       search: inputValue,
       searchFields: ["piece_number"],
       sort: "piece_number",

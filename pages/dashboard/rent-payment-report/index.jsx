@@ -11,10 +11,10 @@ import { rentPaymentReportColumns } from "components/columns";
 import { ServerTable, Header } from "components/global";
 import { Actions, MinimizedBox, Modal } from "components/UI";
 import { AddUpdateModal, PrintView } from "components/pages/tenants";
-import {  getAll } from "helper/apis/tenants";
 import exportExcel from "utils/useExportExcel";
 import { useHandleMessage } from "hooks";
 import { isSuperAdmin } from "utils/utils";
+import API from "helper/apis";
 
 
 export const conditionalRowStyles = [
@@ -70,7 +70,7 @@ const Index = ({ session }) => {
     const search = query?.trim() || searchQuery;
     setLoading(true);
     try {
-      const data = await getAll({
+      const data = await API.getAllTenants({
         search,
         searchFields: ["name", "email", "phone_number"],
         ...(!is_super_admin ? { filters: `role=user,admin_id=${session?.user?._id}` } : {}),

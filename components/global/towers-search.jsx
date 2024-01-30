@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { Select } from 'components/UI';
 import { useSavedState } from 'hooks';
-import { getAll } from 'helper/apis/towers';
 import { useSession } from 'next-auth/react';
 import { isSuperAdmin } from 'utils/utils';
+import API from 'helper/apis';
 
 export default function TowersSearch({ tower, ...props }) {
   const { t } = useTranslation('common');
@@ -20,7 +20,7 @@ export default function TowersSearch({ tower, ...props }) {
   }, [])
 
   const TowersSearch = async (inputValue = "", callback) => {
-    const data = await getAll({
+    const data = await API.getAllTowers({
       search: inputValue,
       searchFields: ["name"],
       sort: "name",
