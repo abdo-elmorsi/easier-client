@@ -88,7 +88,7 @@ const Sidebar = React.memo(() => {
 
   return (
     // w-14 hover:w-64
-    <div className={`flex flex-col flex-shrink-0 min-h-full transition-all duration-300 bg-white border-none hover:w-64 w-14 ${fixedSideBar ? "md:w-64" : ""} sidebar text-text dark:bg-gray-900 `}>
+    <div className={`flex flex-col flex-shrink-0  transition-all duration-300 bg-white border-none hover:w-64 w-14 ${fixedSideBar ? "md:w-64" : ""} sidebar text-text dark:bg-gray-900 `}>
       <div className="flex flex-col flex-grow overflow-x-hidden overflow-y-auto">
         <ul className="flex flex-col py-4 space-y-1">
 
