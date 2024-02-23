@@ -23,6 +23,7 @@ import debounce from 'utils/debounce';
 import GlobalSetting from "helper/settings/GlobalSetting";
 import { CopyRights, ScrollToTopButton } from 'components/UI';
 import Head from 'next/head';
+import { NextScript } from 'next/document';
 
 const FONT_SIZE_BASE = 16;
 const FONT_SIZE_RATIO = 0.1122 / 3;
@@ -60,7 +61,8 @@ function MyApp({ Component, pageProps }) {
             src={`https://maps.googleapis.com/maps/api/js?key=${process.env.MAP_API_KEY}&libraries=places`}
             async
             defer
-          ></NextScript>
+          />
+
         </Head>
         <NextNprogress
           color="#336a86"
