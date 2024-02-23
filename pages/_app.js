@@ -56,6 +56,7 @@ function MyApp({ Component, pageProps }) {
         <Head>
           <title>Easier</title>
           <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta name="theme-color" content="#336a86" />
           <NextScript
             type="text/javascript"
             src={`https://maps.googleapis.com/maps/api/js?key=${process.env.MAP_API_KEY}&libraries=places`}
