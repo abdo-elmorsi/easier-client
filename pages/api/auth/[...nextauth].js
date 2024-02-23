@@ -35,7 +35,7 @@ const options = {
     },
   },
 
-  secret: process.env.JWT_SIGNING_PRIVATE_KEY,
+  secret: process.env.NEXTAUTH_SECRET,
 
   pages: {
     signIn: '/login',

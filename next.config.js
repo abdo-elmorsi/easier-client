@@ -26,8 +26,9 @@ const nextConfig = {
     ],
   },
   env: {
-    JWT_SIGNING_PRIVATE_KEY: '2gyZ3GDw3LHZQKDhPmPDL3sjREVRXPr8',
-    MAP_API_KEY: 'AIzaSyCsmWfu1AwP4oZvfYxpVpdPwFMXSWyQ-sI'
+    NEXTAUTH_SECRET: '2gyZ3GDw3LHZQKDhPmPDL3sjREVRXPr8',
+    MAP_API_KEY: 'AIzaSyCsmWfu1AwP4oZvfYxpVpdPwFMXSWyQ-sI',
+    NEXTAUTH_URL: 'http://localhost:3000/'
   },
 };
 

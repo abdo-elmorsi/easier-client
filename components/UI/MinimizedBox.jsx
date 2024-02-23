@@ -9,7 +9,7 @@ import { useSavedState } from "hooks";
 const MinimizedBox = ({ children, className, title = "filters_key", actionText, bordered }) => {
   const { t } = useTranslation("common");
   const router = useRouter();
-  const [isMinimized, setIsMinimized, clearDefaultOptions] = useSavedState([], `telgani-b2b-box-${router.pathname}-cache`);
+  const [isMinimized, setIsMinimized, clearDefaultOptions] = useSavedState([], `easier-b2b-box-${router.pathname}-cache`);
 
   const [prevHeight, setPrevHeight] = useState("");
   const comRef = useRef(null);

@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect } from 'react';
-import Head from "next/head";
 import PropTypes from "prop-types"
 import { appWithTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -23,7 +22,7 @@ import "react-toastify/dist/ReactToastify.css";
 import debounce from 'utils/debounce';
 import GlobalSetting from "helper/settings/GlobalSetting";
 import { CopyRights, ScrollToTopButton } from 'components/UI';
-import { NextScript } from 'next/document';
+import Head from 'next/head';
 
 const FONT_SIZE_BASE = 16;
 const FONT_SIZE_RATIO = 0.1122 / 3;
@@ -54,17 +53,14 @@ function MyApp({ Component, pageProps }) {
       session={pageProps.session} >
       <Provider store={store}>
         <Head>
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1"
-          />
+          <title>Easier</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
           <NextScript
             type="text/javascript"
             src={`https://maps.googleapis.com/maps/api/js?key=${process.env.MAP_API_KEY}&libraries=places`}
             async
             defer
           ></NextScript>
-          <title>Easier</title>
         </Head>
         <NextNprogress
           color="#336a86"

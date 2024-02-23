@@ -9,7 +9,7 @@ import axiosInstance from 'helper/apis/axiosInstance';
 
 export default function CompanySearch({ companyId, fetchReport, ...reset }) {
   const { t } = useTranslation('common');
-  const [defaultOptions, setDefaultOptions, clearDefaultOptions] = useSavedState([], "telgani-b2b-company-cache");
+  const [defaultOptions, setDefaultOptions, clearDefaultOptions] = useSavedState([], "easier-b2b-company-cache");
 
   const router = useRouter();
   const language = router.locale.toLowerCase();

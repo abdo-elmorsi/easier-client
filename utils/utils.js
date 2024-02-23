@@ -186,7 +186,7 @@ export const getRandomCompanyName = () => {
         "Corporate 10",
         "Corporate 9",
         "Tawuniya",
-        "Telgani Test",
+        "Easier Test",
         "TAWUNIYA_test",
         "Test",
         "Corporate 8",
