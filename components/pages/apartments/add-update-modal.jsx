@@ -11,7 +11,7 @@ import API from "helper/apis";
 import { cancelRequestWithUrl } from "helper/apis/axiosInstance";
 
 
-export default function AddUpdateModal({ fetchReport, handleClose, id }) {
+export default function AddUpdateModal({  handleClose, id }) {
   const { t } = useTranslation("common");
 
   const handleMessage = useHandleMessage();
@@ -52,8 +52,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
     try {
       const req = (data) => id ? API.updateApartment(data, id) : API.createApartment(data);
       await req(data);
-      fetchReport(1, 10);
-      handleClose();
+      handleClose(true);
     } catch (error) {
       handleMessage(error);
     } finally {
@@ -125,7 +124,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
 
         <div className='flex items-center justify-end gap-4 pt-4 mt-20 border-t'>
           <Button
-            onClick={handleClose}
+            onClick={() => handleClose()}
             className="w-32 btn--secondary"
             type="button"
           >{t("cancel_key")}</Button>
@@ -150,7 +149,6 @@ export default function AddUpdateModal({ fetchReport, handleClose, id }) {
   )
 }
 AddUpdateModal.propTypes = {
-  fetchReport: PropTypes.func,
   handleClose: PropTypes.func.isRequired,
   id: PropTypes.string.isRequired,
 };

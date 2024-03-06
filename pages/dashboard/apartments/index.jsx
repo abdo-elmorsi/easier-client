@@ -34,6 +34,7 @@ const Index = ({ session }) => {
   const [gridFilter, setGridFilter] = useState({});
 
   // ================== add-update apartment ============
+  const [refetch, setRefetch] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState({
     isOpen: false,
     id: null
@@ -41,8 +42,9 @@ const Index = ({ session }) => {
   const handleUpdate = (id) => {
     setShowUpdateModal(({ id: id, isOpen: true }));
   };
-  const closeEditModal = () => {
+  const closeEditModal = (status) => {
     setShowUpdateModal(({}));
+    status &&  setRefetch(!refetch);
   };
   // ================== add-update apartment ============
 
@@ -79,7 +81,7 @@ const Index = ({ session }) => {
     try {
       const data = await API.getAllApartments({
         search,
-        searchFields: ["piece_number"],
+        searchFields: ["rent_price", "piece_number"],
         filters: `admin_id=${session.user._id}${_filter?.tower ? `,tower=${_filter?.tower.value}` : ""}`,
         page,
         limit: perPage,
@@ -114,7 +116,7 @@ const Index = ({ session }) => {
   }, [printViewRef.current]);
   useEffect(() => {
     fetchReport(1, 10);
-  }, []);
+  }, [refetch]);
 
   const fetchReportFromFilter = (filter) => {
     fetchReport(1, 10, null, filter);
@@ -167,7 +169,7 @@ const Index = ({ session }) => {
         >
           <AddUpdateModal
             fetchReport={fetchReport}
-            handleClose={() => closeEditModal()}
+            handleClose={(status) => closeEditModal(status)}
             id={showUpdateModal?.id}
           />
         </Modal>

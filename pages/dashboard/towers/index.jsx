@@ -34,6 +34,7 @@ const Index = ({ session }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   // ================== add-update tower ============
+  const [refetch, setRefetch] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState({
     isOpen: false,
     id: null
@@ -41,8 +42,9 @@ const Index = ({ session }) => {
   const handleUpdate = (id) => {
     setShowUpdateModal(({ id: id, isOpen: true }));
   };
-  const closeEditModal = () => {
+  const closeEditModal = (status) => {
     setShowUpdateModal(({}));
+    status &&  setRefetch(!refetch);
   };
   // ================== add-update tower ============
 
@@ -124,7 +126,7 @@ const Index = ({ session }) => {
   }, [printViewRef.current]);
   useEffect(() => {
     fetchReport(1, 10);
-  }, []);
+  }, [refetch]);
   return (
     <>
       <div className="min-h-full bg-gray-100 rounded-md dark:bg-gray-700">
@@ -170,7 +172,7 @@ const Index = ({ session }) => {
         >
           <AddUpdateModal
             fetchReport={fetchReport}
-            handleClose={() => closeEditModal()}
+            handleClose={(status) => closeEditModal(status)}
             id={showUpdateModal?.id}
             session={session}
           />
