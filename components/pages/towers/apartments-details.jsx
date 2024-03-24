@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { apartmentColumns } from "components/columns";
 import { ServerTable, DeleteModal } from "components/global";
 import { Actions, Modal } from "components/UI";
-import { AddUpdateModal, PrintView } from "components/pages/apartments";
+import { PrintView } from "components/pages/apartments";
 import exportExcel from "utils/useExportExcel";
 import { useHandleMessage } from "hooks";
 import API from "helper/apis";
@@ -28,18 +28,6 @@ const ApartmentsDetails = ({ session, id }) => {
   const printViewRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // ================== add-update apartment ============
-  const [showUpdateModal, setShowUpdateModal] = useState({
-    isOpen: false,
-    id: null
-  });
-  const handleUpdate = (id) => {
-    setShowUpdateModal(({ id: id, isOpen: true }));
-  };
-  const closeEditModal = () => {
-    setShowUpdateModal(({}));
-  };
-  // ================== add-update apartment ============
 
   // ================== delete apartment ============
   const [showDeleteModal, setShowDeleteModal] = useState({
@@ -64,8 +52,8 @@ const ApartmentsDetails = ({ session, id }) => {
   }
   // ================== delete apartment ============
 
-
-  const columns = apartmentColumns(t, handleUpdate, setShowDeleteModal, date_format, { showTower: false });
+  const handleUpdate = () => { }
+  const columns = apartmentColumns(t, handleUpdate, setShowDeleteModal, date_format, { details: true });
   const fetchReport = async (page, perPage, query = "") => {
     const search = query?.trim() || searchQuery;
     setLoading(true);
@@ -113,8 +101,7 @@ const ApartmentsDetails = ({ session, id }) => {
 
   return (
     <>
-      <div className="bg-gray-100 rounded-md w-[80vh] dark:bg-gray-700">
-
+      <div className="min-w-full bg-gray-100 rounded-md dark:bg-gray-700">
         <ServerTable
           columns={columns}
           data={tableData || []}
@@ -131,8 +118,6 @@ const ApartmentsDetails = ({ session, id }) => {
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
               fetchReport={fetchReport}
-              addMsg={t("add_apartment_key")}
-              onClickAdd={() => setShowUpdateModal({ isOpen: true, id: null })}
               onClickPrint={exportPDF}
               onClickExport={handleExportExcel}
               isDisabledExport={exportingExcel || !tableData?.length}
@@ -141,21 +126,6 @@ const ApartmentsDetails = ({ session, id }) => {
         />
       </div>
       <PrintView ref={printViewRef} data={tableData} />
-
-      {showUpdateModal?.isOpen && (
-        <Modal
-          title={t("add_apartment_key")}
-          show={showUpdateModal?.isOpen}
-          footer={false}
-          onClose={() => closeEditModal()}
-        >
-          <AddUpdateModal
-            fetchReport={fetchReport}
-            handleClose={() => closeEditModal()}
-            id={showUpdateModal?.id}
-          />
-        </Modal>
-      )}
 
       {showDeleteModal?.isOpen && (
         <Modal

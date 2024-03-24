@@ -117,7 +117,8 @@ const apartmentColumns = (t, handleUpdate, setShowDeleteModal, date_format, sett
     selector: row => row?.is_rented,
     cell: row => row?.is_rented ? <CheckCircleIcon color="green" width={22} /> : <XCircleIcon color="red" width={22} />,
     sortable: true,
-    width: "180px"
+    width: "180px",
+    omit: settings?.details,
   },
   {
     name: t("rent_price_key"),
@@ -143,7 +144,8 @@ const apartmentColumns = (t, handleUpdate, setShowDeleteModal, date_format, sett
       </span>
     </Link> : "",
     sortable: true,
-    width: "160px"
+    width: "160px",
+    omit: settings?.details,
   },
   {
     name: t("tower_key"),
@@ -155,7 +157,7 @@ const apartmentColumns = (t, handleUpdate, setShowDeleteModal, date_format, sett
     </Link> : "",
     sortable: true,
     width: "160px",
-    omit: !settings?.showTower
+    omit: settings?.details,
   },
   {
     name: t("created_at_key"),
@@ -180,6 +182,7 @@ const apartmentColumns = (t, handleUpdate, setShowDeleteModal, date_format, sett
       </div>
     ,
     sortable: false,
+    omit: settings?.details,
     width: "180px"
   },
 ];
