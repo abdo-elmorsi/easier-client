@@ -1,10 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "pages/home";
 @import "pages/login";
-@import "pages/profile";
-@import "pages/bock-car";
+
 
 @import "components/layout/sidebar";
 @import "global-style";
@@ -39,6 +37,7 @@
   .active-mobile-nav {
     @apply border-blue-700 dark:border-b-0 dark:border-transparent dark:bg-gray-900  dark:text-white;
   }
+  
 }
 
 @layer components {

@@ -5,7 +5,9 @@ import {
   ArrowRightCircleIcon,
   BookOpenIcon,
   BuildingOffice2Icon,
+  ChatBubbleLeftIcon,
   ChevronRightIcon,
+  InboxArrowDownIcon,
   RectangleStackIcon,
   TruckIcon,
   UsersIcon,
@@ -17,12 +19,15 @@ import { Overview } from "components/icons";
 import { useSavedState } from "hooks";
 import { Button } from "components/UI";
 // import { ClearStorageButton } from "components/global";
+import { isSuperAdmin } from 'utils/utils';
+import { useSession } from "next-auth/react";
 
 
 const Sidebar = React.memo(() => {
+  const { data } = useSession();
   const router = useRouter();
   const [activeAdminSubMenu, setActiveAdminSubMenu] = useState(null);
-
+  const is_super_admin = isSuperAdmin(data);
   const [fixedSideBar, setFixedSideBar] = useSavedState(true, "easier-fixed-side-barr-cache")
 
 
@@ -83,6 +88,24 @@ const Sidebar = React.memo(() => {
       icon: <BookOpenIcon className="w-5 h-5" />,
       submenuOpen: false,
     },
+    {
+      nameAR: "الدردشات",
+      nameEN: "Chats",
+      href: "/dashboard/chats",
+      current: router.pathname == "/dashboard/chats",
+      icon: <ChatBubbleLeftIcon className="w-5 h-5" />,
+      submenuOpen: false,
+    },
+    ...(is_super_admin ? [{
+
+      nameAR: "طلبات الانضمام",
+      nameEN: "Request Join",
+      href: "/dashboard/request-join",
+      current: router.pathname == "/dashboard/request-join",
+      icon: <InboxArrowDownIcon className="w-5 h-5" />,
+      submenuOpen: false,
+
+    }] : [])
   ], [router.pathname, activeAdminSubMenu]);
 
 

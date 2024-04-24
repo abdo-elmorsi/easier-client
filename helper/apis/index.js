@@ -162,5 +162,32 @@ class API {
   static async updateRental(rental, id) {
     return Logic.request("actions/rental", "update", id, rental);
   }
+
+
+
+  // -------------------------------- request-join --------------------------------
+  static async getAllRequestJoin(params) {
+    return Logic.getResource("request-join", params);
+  }
+
+
+  static async createRequestJoin(requestJoin) {
+    return Logic.request("request-join", "post", null, requestJoin);
+  }
+
+  static async deleteRequestJoin(id) {
+    return Logic.request("request-join", "delete", id);
+  }
+
+  static async acceptRequestJoin(requestJoin, id) {
+    return Logic.request("request-join", "update", `${id}/accept`, requestJoin);
+  }
+  static async rejectRequestJoin(id) {
+    return Logic.request("request-join", "update", `${id}/reject`);
+  }
+  static async markAsReadRequestJoin(requestJoin, id) {
+    return Logic.request("request-join", "update", `${id}/mark-as-read`, requestJoin);
+  }
+
 }
 export default API;

@@ -161,6 +161,25 @@
 
 
 
+.hide-scroll-bar {
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+/* Hide scrollbar for Webkit (Safari/Chrome) */
+.hide-scroll-bar::-webkit-scrollbar {
+  display: none;
+}
+
+
+// chat
+.chats {
+  &>div {
+
+    height: calc(100vh - 132px);
+  }
+}
+
 // // table checkboxes
 // .table input[type="checkbox"] {
 //   -webkit-appearance: none;
@@ -234,6 +253,7 @@
 div[tabindex="0"] {
   z-index: 9999;
 }
-.h-92{
+
+.h-92 {
   height: 92px;
 }

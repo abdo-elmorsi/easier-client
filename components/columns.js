@@ -340,6 +340,53 @@ const rentPaymentReportColumns = (t, viewDetails, date_format, is_super_admin) =
   },
 ];
 
+const requestJoinColumns = (t, handelAccept, handelReject, statusLoading, date_format) => [
+  {
+    name: t("name_key"),
+    selector: (row) => row?.user_name,
+    sortable: true,
+    width: "180px"
+  },
+  {
+    name: t("email_key"),
+    selector: (row) => row?.user_email,
+    sortable: true,
+    width: "200px"
+  },
+  {
+    name: t("phone_number_key"),
+    selector: (row) => row?.user_phone_number,
+    cell: (row) => <a className="hover:text-primary" href={`tel:+${row?.user_phone_number}`} dir="ltr">{row?.user_phone_number}</a>,
+    sortable: true,
+    width: "180px"
+  },
+  {
+    name: t("created_at_key"),
+    selector: (row) => moment(row?.created_at).format(date_format),
+    width: "180px",
+    sortable: true,
+
+  },
+  {
+    name: t("actions_key"),
+    selector: row => row?._id,
+    noExport: true,
+    cell: (row) =>
+      <div className="flex gap-2">
+
+        {(!row?.email_sent && <Button disabled={statusLoading} onClick={() => handelAccept(row?._id)} className="flex items-center justify-start gap-2 px-3 py-2 cursor-pointer w-28 btn--primary">
+          <span>{t("accept_key")}</span> <CheckCircleIcon width={22} />
+        </Button>)}
+        <Button disabled={statusLoading} onClick={() => handelReject(row?._id)} className="flex items-center justify-start gap-2 px-3 py-2 cursor-pointer w-28 btn--secondary">
+          <span>{t("reject_key")}</span>  <XCircleIcon width={22} />
+        </Button>
+      </div>
+    ,
+    sortable: false,
+    width: "300px"
+  },
+];
+
 
 
 
@@ -352,5 +399,6 @@ export {
   apartmentColumns,
   towerColumns,
   rentalColumns,
-  rentPaymentReportColumns
+  rentPaymentReportColumns,
+  requestJoinColumns
 }
