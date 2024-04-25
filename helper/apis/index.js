@@ -190,7 +190,7 @@ class API {
     return Logic.request("request-join", "update", `${id}/reject`, requestJoin);
   }
   static async markAsReadRequestJoin(id, requestJoin = {}) {
-    return Logic.request("request-join", "update", `${id}/read`, requestJoin);
+    return Logic.request("request-join", "update", `${id}/mark-as-read`, requestJoin);
   }
 
 }
