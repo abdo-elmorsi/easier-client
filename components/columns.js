@@ -75,7 +75,8 @@ const tenantColumns = (t, handleUpdate, setShowDeleteModal, date_format, is_supe
   },
   {
     name: t("created_at_key"),
-    selector: (row) => moment(row?.created_at).format(date_format),
+    selector: (row) => row?.createdAt,
+    cell: (row) => moment(row?.createdAt).format(date_format),
     width: "180px",
     sortable: true,
 

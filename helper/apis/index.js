@@ -171,22 +171,26 @@ class API {
   }
 
 
-  static async createRequestJoin(requestJoin) {
-    return Logic.request("request-join", "post", null, requestJoin);
+  static async completeForm(user) {
+    return Logic.request("users/complete-form", "post", null, user);
+  }
+
+  static async createRequestJoin(user) {
+    return Logic.request("request-join", "post", null, user);
   }
 
   static async deleteRequestJoin(id) {
     return Logic.request("request-join", "delete", id);
   }
 
-  static async acceptRequestJoin(requestJoin, id) {
+  static async acceptRequestJoin(id, requestJoin = {}) {
     return Logic.request("request-join", "update", `${id}/accept`, requestJoin);
   }
-  static async rejectRequestJoin(id) {
-    return Logic.request("request-join", "update", `${id}/reject`);
+  static async rejectRequestJoin(id, requestJoin = {}) {
+    return Logic.request("request-join", "update", `${id}/reject`, requestJoin);
   }
-  static async markAsReadRequestJoin(requestJoin, id) {
-    return Logic.request("request-join", "update", `${id}/mark-as-read`, requestJoin);
+  static async markAsReadRequestJoin(id, requestJoin = {}) {
+    return Logic.request("request-join", "update", `${id}/read`, requestJoin);
   }
 
 }

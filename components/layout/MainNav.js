@@ -1,14 +1,15 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Disclosure } from "@headlessui/react";
 import {
   SunIcon,
   MoonIcon,
-  BellAlertIcon,
   ArrowsUpDownIcon,
   ArrowLeftOnRectangleIcon,
   LanguageIcon,
   ArrowRightOnRectangleIcon,
   FaceSmileIcon,
+  BellIcon,
+  EyeIcon,
 } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
 import { toggleTheme } from "store/ThemeSlice";
@@ -17,8 +18,11 @@ import { useTranslation } from "next-i18next";
 import { signOut, useSession } from "next-auth/react";
 import { MainLogo } from "components/icons";
 import Link from "next/link";
-import { Button, List, ListItem, ListItemPrefix, Popover, PopoverContent, PopoverHandler, Typography } from "@material-tailwind/react";
+import { Badge, Button, List, ListItem, ListItemPrefix, Popover, PopoverContent, PopoverHandler, Typography } from "@material-tailwind/react";
 import Cookies from "js-cookie";
+import { useHandleMessage } from "hooks";
+import API from "helper/apis";
+import { isSuperAdmin } from "utils/utils";
 
 
 
@@ -26,8 +30,10 @@ export default function MainNav() {
   const router = useRouter();
   const { data } = useSession();
   const user = data?.user || {};
+  const handleMessage = useHandleMessage();
+  const is_super_admin = isSuperAdmin({ user });
   const firstLetter = user?.userName?.slice(0, 1) || "E";
-
+  const [notifications, setNotifications] = useState([]);
   const userRole = user?.role;
   const { theme } = useSelector((state) => state.theme);
   const dispatch = useDispatch();
@@ -43,7 +49,37 @@ export default function MainNav() {
     signOut();
     Cookies.remove('user-token');
 
-  }
+  };
+
+  const fetchNotifications = async () => {
+    try {
+      const data = await API.getAllRequestJoin({
+        filters: "seen_by=false",
+        page: 1,
+        limit: 10,
+      });
+      setNotifications(data.items);
+    } catch (error) {
+      handleMessage(error);
+    }
+  };
+  const readNotification = async (id) => {
+    try {
+      await API.markAsReadRequestJoin(id);
+      setNotifications(prev => {
+        const filteredNotifications = prev.filter(notification => notification._id != id);
+        return filteredNotifications;
+      })
+    } catch (error) {
+      handleMessage(error);
+    }
+  };
+
+  useEffect(() => {
+    is_super_admin && fetchNotifications();
+  }, [is_super_admin])
+
+
   return (
     <Disclosure
       as="nav"
@@ -64,21 +100,21 @@ export default function MainNav() {
                 </div>
               </div>
 
-              <div className="items-center hidden md:flex">
+              <div className="items-center hidden gap-2 md:flex">
 
-                <Button onClick={selectLanguageHandler} className="flex items-center justify-center w-8 h-8 px-2 py-2 mx-2 text-sm bg-gray-100 rounded-full cursor-pointer text-dark hover:bg-gray-200 dark:bg-gray-500 dark:hover:bg-gray-400">
+                <Button onClick={selectLanguageHandler} className="flex items-center justify-center w-8 h-8 px-2 py-2 text-sm bg-gray-100 rounded-full cursor-pointer text-dark hover:bg-gray-200 dark:bg-gray-500 dark:hover:bg-gray-400">
                   {router.locale.includes("ar") ? "EN" : "AR"}
                 </Button>
-                <BellAlertIcon
-                  className="flex items-center justify-center w-8 h-8 px-2 py-2 mx-2 bg-gray-100 rounded-full cursor-pointer hover:bg-gray-200 dark:bg-gray-500 dark:hover:bg-gray-400"
-                />
+
+
+
 
                 {theme === "light" && (
                   <SunIcon
                     onClick={() => {
                       dispatch(toggleTheme("dark"));
                     }}
-                    className="w-8 h-8 px-2 py-2 ml-2 bg-gray-100 rounded-full cursor-pointer hover:bg-gray-200 dark:bg-gray-500 dark:hover:bg-gray-400"
+                    className="w-8 h-8 px-2 py-2 mx-2 bg-gray-100 rounded-full cursor-pointer hover:bg-gray-200 dark:bg-gray-500 dark:hover:bg-gray-400"
                   />
                 )}
                 {theme === "dark" && (
@@ -86,11 +122,46 @@ export default function MainNav() {
                     onClick={() => {
                       dispatch(toggleTheme("light"));
                     }}
-                    className="w-8 h-8 px-2 py-2 ml-2 text-white bg-gray-100 rounded-full cursor-pointer hover:bg-gray-200 dark:bg-gray-500 dark:hover:bg-gray-400"
+                    className="w-8 h-8 px-2 py-2 mx-2 text-white bg-gray-100 rounded-full cursor-pointer hover:bg-gray-200 dark:bg-gray-500 dark:hover:bg-gray-400"
                   />
                 )}
-                <span className="mx-4 my-2 text-transparent border-l-2 border-gray-400 h-3/4">.</span>
               </div>
+              <Popover className="relative">
+                <PopoverHandler className="flex items-center justify-center">
+                  <button >
+                    <Badge content={notifications?.length}>
+                      <BellIcon className="flex items-center justify-center w-8 h-8 p-2 mx-2 bg-gray-100 rounded-full cursor-pointer hover:bg-gray-200 dark:bg-gray-500 dark:hover:bg-gray-400" />
+                    </Badge>
+
+                  </button>
+                </PopoverHandler>
+                <PopoverContent className="absolute right-0 z-50 w-64 mt-2 bg-white rounded-lg shadow-lg rtl:right-auto rtl:left-0 dark:bg-gray-700 dark:border-gray-400 dark:text-white">
+                  {is_super_admin && <>
+                    <div className="p-2">
+                      <h2 className="mb-2 text-lg font-semibold">{t("join_request_key")}</h2>
+                      <ul className="divide-y divide-gray-200">
+                        {notifications?.length ? notifications.map(notification => (
+                          <li key={notification._id} className="flex justify-between py-2">
+                            <div className="flex flex-col">
+                              <p className="text-sm">{t("name_key")}: {notification.user_name}</p>
+                              <p className="text-xs">{t("email_key")}: {notification.user_email}</p>
+                            </div>
+                            <button onClick={() => readNotification(notification._id)} className="flex items-center">
+                              <EyeIcon className="w-6 h-6 text-primary" />
+                            </button>
+                          </li>
+                        )) : <p className="mb-5 text-xs text-secondary">{t("table_no_data_message_key")}</p>}
+                      </ul>
+                      <Link href="/dashboard/request-join" className="text-sm font-light text-secondary">
+                        <a>{t("view_all_key")}</a>
+                      </Link>
+                    </div>
+                    <hr />
+                  </>
+                  }
+                </PopoverContent>
+              </Popover>
+              <span className="my-2 ml-5 mr-2 text-transparent border-l-2 border-gray-400 rtl:ml-2 rtl:mr-5 h-3/4">.</span>
 
               <Popover placement="bottom">
                 <PopoverHandler>
@@ -106,7 +177,7 @@ export default function MainNav() {
                       <span> {user?.email}</span>
                     </div>
 
-                    <ArrowsUpDownIcon className="w-5 " />
+                    <ArrowsUpDownIcon className="hidden w-5 md:flex" />
                   </Button>
                 </PopoverHandler>
                 <PopoverContent className=" w-auto dark:bg-gray-700 dark:border-gray-400 dark:text-white z-[9999]">
@@ -181,6 +252,7 @@ export default function MainNav() {
                         </ListItem>
                       </>
                     )}
+
 
                   </List>
                 </PopoverContent>

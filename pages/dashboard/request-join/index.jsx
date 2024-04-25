@@ -32,6 +32,8 @@ const Index = () => {
   const language = router.locale.toLowerCase();
   const date_format = language === 'en' ? 'DD/MM/YYYY' : 'YYYY/MM/DD';
 
+
+  const [refresh, setRefresh] = useState(false);
   const [tableData, setTableData] = useState([]);
   const [perPage, setPerPage] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
@@ -48,10 +50,10 @@ const Index = () => {
     setStatusLoading(true);
     try {
       await API.acceptRequestJoin(
-        { link: `${window.location.host}/complete-form` },
-        id
+        id,
+        { link: `${window.location.host}/complete-form` }
       );
-
+      setRefresh((prev) => !prev);
     } catch (error) {
       handleMessage(error, null);
     } finally {
@@ -64,7 +66,7 @@ const Index = () => {
       await API.rejectRequestJoin(
         id
       );
-
+      setRefresh((prev) => !prev);
     } catch (error) {
       handleMessage(error, null);
     } finally {
@@ -102,7 +104,7 @@ const Index = () => {
 
   useEffect(() => {
     fetchReport(1, 10);
-  }, []);
+  }, [refresh]);
   return (
     <>
       <div className="min-h-full bg-gray-100 rounded-md dark:bg-gray-700">

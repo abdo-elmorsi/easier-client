@@ -329,5 +329,6 @@
   "rent_payment_report_key": "rent payment report",
   "owner_key": "Owner",
   "rented_at_key": "Rented at",
-  "apartment_key": "Apartment"
+  "apartment_key": "Apartment",
+  "join_request_key": "Join request"
 }

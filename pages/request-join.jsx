@@ -8,42 +8,40 @@ import { useHandleMessage, useInput } from "hooks";
 import { Spinner, Button, Input } from "components/UI";
 import { Logo } from "components/icons";
 import Link from "next/link";
-import { toast } from "react-toastify";
 import API from "helper/apis";
+import { toast } from "react-toastify";
 
 const Index = () => {
   const { t } = useTranslation("common");
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmit, setIsSubmit] = useState(false);
   const handleMessage = useHandleMessage();
-  const [step, setStep] = useState(router.query.step || 1);
+
+
+  const name = useInput("", "", true)
   const email = useInput("", "email", true)
-  const otp = useInput("", "", null)
-  const new_pass = useInput("", "password", true)
+  const phone_number = useInput("", "", true)
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
+    setIsSubmit(true);
     try {
-      if (step == 1) {
-        const { message } = await API.forgetPassword({ email: email.value });
-        toast.success(message);
-        setStep(2);
-      } else {
-        const res = await API.changePassword({
-          email: email.value,
-          otp: otp.value,
-          password: new_pass.value,
-        });
-        toast.success(res?.message)
-        router.push("/login")
+      const data = {
+        "user_name": name.value,
+        "user_email": email.value,
+        "user_phone_number": phone_number.value,
       }
+
+      const res = await API.createRequestJoin(data);
+      toast.success(res.message);
+      router.push("/login")
     } catch (error) {
       handleMessage(error);
     } finally {
-      setIsLoading(false);
+      setIsSubmit(false);
     }
   };
+
 
   return (
     <div className="flex items-center justify-center h-screen dark:bg-dark dark:bg-gray-800">
@@ -54,48 +52,44 @@ const Index = () => {
       </div>
       <div className="w-full px-4 md:w-1/2 md:px-12 xl:px-48">
 
-        <form>
+        <form onSubmit={onSubmit}>
           <div className="w-80 text-start">
 
 
-            <h1 className="mb-4 dark:text-white">{step == 1 ? t("forgot_password_key") : t("reset_password_key")}</h1>
+            <h1 className="mb-4 dark:text-white">{t("request_join_key")}</h1>
             <div className="flex flex-col gap-4">
               <div className="mb-4">
-                {step == 1 ? (<Input
+                <Input
+                  mandatory
+                  label={t("name_key")}
+                  {...name.bind}
+                />
+                <Input
+                  mandatory
                   name="email"
-                  label={t("email_address_key")}
+                  label={t("email_key")}
                   {...email.bind}
-                />) : (
-                  <>
-                    <Input
-                      name="email"
-                      label={t("email_address_key")}
-                      {...email.bind}
-                    />
-                    <Input
-                      name="otp"
-                      label={t("otp_key")}
-                      {...otp.bind}
-                    />
-                    <Input
-                      label={t("new_password_key")}
-                      name="password"
-                      {...new_pass.bind}
-                    />
-                  </>
-                )}
+                />
+                <Input
+                  mandatory
+                  label={t("phone_number_key")}
+                  {...phone_number.bind}
+                />
               </div>
+
+
+
               <div className="mb-4">
                 <Button type="submit" disabled={
-                  (step == 1 && (!email.value || !email.isValid)) || (step == 2 && (!email.value || !email.isValid || !otp.value || !new_pass.value)) || isLoading
-                } onClick={onSubmit} className="w-full btn--primary">
-                  {isLoading ? (
+                  (!name.value || !phone_number.value || !email.value || !email.isValid) || isSubmit
+                } className="w-full btn--primary">
+                  {isSubmit ? (
                     <>
                       <Spinner className="w-4 h-4 mr-3 rtl:ml-3" />
                       {t("loading_key")}
                     </>
                   ) : (
-                    t("continue_key")
+                    t("submit_key")
                   )}
                 </Button>
               </div>
@@ -110,7 +104,7 @@ const Index = () => {
 
           </div>
         </form>
-      </div>
+      </div >
     </div >
   );
 };
@@ -127,5 +121,4 @@ export const getServerSideProps = async (context) => {
       ...(await serverSideTranslations(context.locale, ["common"])),
     },
   };
-
 };

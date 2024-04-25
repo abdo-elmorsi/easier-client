@@ -48,6 +48,17 @@ const handlePostRequest = async (req, res) => {
   }
 };
 
+// delete one
+const handleDeleteRequest = async (req, res) => {
+  const id = req.query.id;
+  try {
+    const response = await axios.delete(`${API_URL}/request-join/${id}`, getHeaders(req));
+    res.status(response.status).json(response.data);
+  } catch (error) {
+    handleErrorResponse(error, res);
+  }
+};
+
 // update one
 const handlePutRequest = async (req, res) => {
   const id = req.query.id;

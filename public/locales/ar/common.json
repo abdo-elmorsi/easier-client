@@ -324,5 +324,6 @@
   "apartment_name_key": "اسم الشقة",
   "add_apartment_key": "إضافة شقة",
   "image_key": "صورة",
-  "total_towers_key": "إجمالي الأبراج"
+  "total_towers_key": "إجمالي الأبراج",
+  "join_request_key": "طلبات الانضمام"
 }
