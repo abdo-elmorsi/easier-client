@@ -67,7 +67,7 @@ const Login = () => {
           callbackUrl: "/",
           user: JSON.stringify({ ...user.user }),
         });
-        router.push(router.query.returnTo || '/');
+        router.push(router.query.returnTo || '/dashboard');
       } catch (error) {
         handleMessage(error);
       } finally {
