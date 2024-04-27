@@ -44,7 +44,7 @@ const Index = ({ session }) => {
   };
   const closeEditModal = (status) => {
     setShowUpdateModal(({}));
-    status &&  setRefetch(!refetch);
+    status && setRefetch(!refetch);
   };
   // ================== add-update tower ============
 
@@ -228,15 +228,15 @@ export default Index;
 Index.propTypes = {
   session: PropTypes.object.isRequired
 };
-
-export const getServerSideProps = async (context) => {
-  const session = await getSession({ req: context.req });
+export const getServerSideProps = async ({ req, locale, resolvedUrl }) => {
+  const session = await getSession({ req: req });
   const userRole = session?.user?.role;
-  const loginUrl = context.locale === "ar" ? "/login" : `/${context.locale}/login`;
-  if (!session || (userRole != "admin" && userRole != "superAdmin")) {
+
+  if (!session || (userRole !== "admin" && userRole !== "superAdmin")) {
+    const loginUrl = locale === "en" ? `/${locale}/login` : "/login";
     return {
       redirect: {
-        destination: loginUrl,
+        destination: `${loginUrl}?returnTo=${encodeURIComponent(resolvedUrl || "/")}`,
         permanent: false,
       },
     };
@@ -244,8 +244,8 @@ export const getServerSideProps = async (context) => {
     return {
       props: {
         session,
-        ...(await serverSideTranslations(context.locale, ["common"])),
+        ...(await serverSideTranslations(locale, ["common"])),
       },
     };
   }
-}
+};

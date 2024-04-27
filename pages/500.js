@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { Button } from "components/UI";
 
-export default function Custom500() {
+export default function Error500() {
   const { t } = useTranslation("common");
   const router = useRouter()
   return (
@@ -29,7 +29,7 @@ export default function Custom500() {
     </>
   );
 }
-Custom500.getLayout = function PageLayout(page) {
+Error500.getLayout = function PageLayout(page) {
   return <>{page}</>;
 };
 

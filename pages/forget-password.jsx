@@ -6,10 +6,11 @@ import { useRouter } from "next/router";
 // Custom
 import { useHandleMessage, useInput } from "hooks";
 import { Spinner, Button, Input } from "components/UI";
-import { Logo } from "components/icons";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import API from "helper/apis";
+import { MainLogo } from "components/icons";
+import { getSession } from "next-auth/react";
 
 const Index = () => {
   const { t } = useTranslation("common");
@@ -49,7 +50,7 @@ const Index = () => {
     <div className="flex items-center justify-center h-screen dark:bg-dark dark:bg-gray-800">
       <div className="hidden bg-center bg-cover login md:block md:w-1/2">
         <div className="flex flex-col items-center justify-center h-screen">
-          <Logo className="text-white w-52" />
+          <MainLogo className="text-white w-52" />
         </div>
       </div>
       <div className="w-full px-4 md:w-1/2 md:px-12 xl:px-48">
@@ -121,11 +122,23 @@ Index.getLayout = function PageLayout(page) {
   return <>{page}</>;
 };
 
-export const getServerSideProps = async (context) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(context.locale, ["common"])),
-    },
-  };
 
+export const getServerSideProps = async ({ req, locale }) => {
+  const session = await getSession({ req: req });
+  const routeUrl = locale === 'ar' ? '/' : `/${locale}/`;
+  if (session) {
+    return {
+      redirect: {
+        destination: `${routeUrl}/dashboard`,
+        permanent: false,
+      },
+    };
+  } else {
+    return {
+      props: {
+        session,
+        ...(await serverSideTranslations(locale, ['common'])),
+      },
+    };
+  }
 };

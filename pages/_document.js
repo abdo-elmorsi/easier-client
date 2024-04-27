@@ -22,12 +22,12 @@ class MyDocument extends Document {
 
   render() {
     return (
-      <Html className='light' lang="ar">
+      <Html className='light' lang="en">
         <Head>
           <link rel="icon" href="/favicon.ico" />
           <meta
             name="description"
-            content="Easier"
+            content="Easier Desc"
           ></meta>
           <link
             rel="preconnect"

@@ -1,4 +1,3 @@
-export { default as Logo } from "./logo";
 export { default as Car } from "./car";
 export { default as PrintPdf } from "./printPdf";
 export { default as Excel } from "./excelIcon";

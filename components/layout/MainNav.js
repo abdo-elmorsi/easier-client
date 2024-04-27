@@ -32,7 +32,7 @@ export default function MainNav() {
   const user = data?.user || {};
   const handleMessage = useHandleMessage();
   const is_super_admin = isSuperAdmin({ user });
-  const firstLetter = user?.userName?.slice(0, 1) || "E";
+  const firstLetter = user?.userName?.slice(0, 1) || "U";
   const [notifications, setNotifications] = useState([]);
   const userRole = user?.role;
   const { theme } = useSelector((state) => state.theme);
@@ -181,7 +181,7 @@ export default function MainNav() {
                   </Button>
                 </PopoverHandler>
                 <PopoverContent className=" w-auto dark:bg-gray-700 dark:border-gray-400 dark:text-white z-[9999]">
-                  <div className="flex items-center gap-4 pb-4 mb-4 border-b border-blue-gray-50 ">
+                  {user?._id && <div className="flex items-center gap-4 pb-4 mb-4 border-b border-blue-gray-50 ">
                     <div className="flex items-center justify-center w-10 h-10 p-2 text-sm uppercase bg-gray-100 rounded-full dark:bg-gray-500">
                       {firstLetter}
                     </div>
@@ -194,7 +194,7 @@ export default function MainNav() {
                         {userRole}
                       </Typography>
                     </div>
-                  </div>
+                  </div>}
                   <List className="p-0">
                     {/* balance in small device */}
                     {/* btn dark in small device */}

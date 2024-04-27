@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 // Custom
 import { useHandleMessage, useInput } from "hooks";
 import { Spinner, Button, Input } from "components/UI";
-import { Logo, MainLogo } from "components/icons";
+import { MainLogo } from "components/icons";
 import Link from "next/link";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import Cookies from "js-cookie";
@@ -33,6 +33,8 @@ const Login = () => {
   const resend = (e) => {
     onSubmit(e, true);
   }
+
+
   const onSubmit = async (e, resend = false) => {
     e.preventDefault();
     setIsLoading(true);
@@ -65,7 +67,7 @@ const Login = () => {
           callbackUrl: "/",
           user: JSON.stringify({ ...user.user }),
         });
-        router.push(`/`);
+        router.push(router.query.returnTo || '/');
       } catch (error) {
         handleMessage(error);
       } finally {
@@ -179,18 +181,13 @@ Login.getLayout = function PageLayout(page) {
 };
 
 
-export const getServerSideProps = async (context) => {
-  const session = await getSession({ req: context.req });
-  const routeUrl = context.locale === 'ar' ? '/' : `/${context.locale}/`;
-
-  // const destination = context?.query?.callBackUrl ? `/${context?.query?.callBackUrl}` : "";
-
+export const getServerSideProps = async ({ req, locale }) => {
+  const session = await getSession({ req: req });
+  const routeUrl = locale === 'ar' ? '/' : `/${locale}/`;
   if (session) {
-    const role = "admin"//session?.user?.role[0];
-    const destination = role == 'admin' ? "" : "";
     return {
       redirect: {
-        destination: `${routeUrl}${destination}`,
+        destination: `${routeUrl}/dashboard`,
         permanent: false,
       },
     };
@@ -198,9 +195,8 @@ export const getServerSideProps = async (context) => {
     return {
       props: {
         session,
-        ...(await serverSideTranslations(context.locale, ['common'])),
+        ...(await serverSideTranslations(locale, ['common'])),
       },
     };
   }
 };
-

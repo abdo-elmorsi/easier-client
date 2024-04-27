@@ -1,4 +1,8 @@
-[dir="rtl"] {
+html[lang=ar] {
+  body {
+    font-family: "Noto Sans Arabic", sans-serif !important;
+  }
+
   .date_picker_icon::after {
     right: auto;
     left: 2%;
@@ -19,6 +23,7 @@
       left: 45px !important;
       right: auto !important;
     }
+
     .gm-control-active.gm-fullscreen-control {
       left: 0 !important;
       right: auto !important;

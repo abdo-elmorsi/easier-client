@@ -24,11 +24,14 @@ import GlobalSetting from "helper/settings/GlobalSetting";
 import { CopyRights, ScrollToTopButton } from 'components/UI';
 import Head from 'next/head';
 import { NextScript } from 'next/document';
+import { useRouter } from 'next/router';
 
 const FONT_SIZE_BASE = 16;
 const FONT_SIZE_RATIO = 0.1122 / 3;
 
 function MyApp({ Component, pageProps }) {
+  const router = useRouter();
+
   const handleResize = useCallback(debounce(() => {
     const fontSize =
       window.innerWidth < 425
@@ -46,6 +49,17 @@ function MyApp({ Component, pageProps }) {
       window.removeEventListener("orientationchange", handleResize);
     };
   }, [handleResize]);
+
+
+  useEffect(() => {
+    if (router.locale === "ar") {
+      document.documentElement.lang = "ar";
+      document.body.dir = "rtl";
+    } else {
+      document.documentElement.lang = "en";
+      document.body.dir = "ltr";
+    }
+  }, [router.locale]);
 
   const getLayout =
     Component.getLayout || ((page) => <Layout>{page}</Layout>);

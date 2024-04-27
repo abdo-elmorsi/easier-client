@@ -1,13 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "pages/login";
 
 
 @import "components/layout/sidebar";
 @import "global-style";
 @import "global-dark-style";
 @import "global-rtl-style";
+@import "pages/login";
 
 @layer utilities {
   .remain-height {
