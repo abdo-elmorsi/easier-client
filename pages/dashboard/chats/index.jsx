@@ -28,6 +28,7 @@ const Index = ({ session }) => {
   const router = useRouter();
   const language = router.locale.toLowerCase();
   const date_format = language === 'en' ? 'DD/MM/YYYY' : 'YYYY/MM/DD';
+  const is_super_admin = isSuperAdmin(session);
 
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([])
