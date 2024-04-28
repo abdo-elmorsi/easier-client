@@ -121,6 +121,21 @@ class API {
     return Logic.request("users", "update", id, user);
   }
 
+  // -------------------------------- message --------------------------------
+  static async getAllMessages(params) {
+    return Logic.getResource("message", params);
+  }
+
+
+  static async createMessage(message) {
+    return Logic.request("message", "post", null, message);
+  }
+
+  static async deleteMessage(id) {
+    return Logic.request("message", "delete", id);
+  }
+
+
 
   // -------------------------------- apartments --------------------------------
   static async getAllApartments(params) {

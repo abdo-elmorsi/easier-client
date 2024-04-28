@@ -20,29 +20,31 @@ const GlobalSetting = ({ children }) => {
 
 
 
-    let hidden, visibilityChange;
-    if (typeof document.hidden !== "undefined") {
-      hidden = "hidden";
-      visibilityChange = "visibilitychange";
-    } else if (typeof document.msHidden !== "undefined") {
-      hidden = "msHidden";
-      visibilityChange = "msvisibilitychange";
-    } else if (typeof document.webkitHidden !== "undefined") {
-      hidden = "webkitHidden";
-      visibilityChange = "webkitvisibilitychange";
-    }
-
-    const handleVisibilityChange = () => {
-      if (document[hidden]) {
-        showNotification();
+    if (process.env.NODE_ENV === 'production') {
+      let hidden, visibilityChange;
+      if (typeof document.hidden !== "undefined") {
+        hidden = "hidden";
+        visibilityChange = "visibilitychange";
+      } else if (typeof document.msHidden !== "undefined") {
+        hidden = "msHidden";
+        visibilityChange = "msvisibilitychange";
+      } else if (typeof document.webkitHidden !== "undefined") {
+        hidden = "webkitHidden";
+        visibilityChange = "webkitvisibilitychange";
       }
-    };
 
-    document.addEventListener(visibilityChange, handleVisibilityChange);
+      const handleVisibilityChange = () => {
+        if (document[hidden]) {
+          showNotification();
+        }
+      };
 
-    return () => {
-      document.removeEventListener(visibilityChange, handleVisibilityChange);
-    };
+      document.addEventListener(visibilityChange, handleVisibilityChange);
+
+      return () => {
+        document.removeEventListener(visibilityChange, handleVisibilityChange);
+      };
+    }
 
   }, []);
 
