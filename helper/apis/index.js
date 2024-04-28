@@ -70,7 +70,7 @@ class API {
     return Logic.request("users/verify", "post", null, data);
   }
   static async updatePassword(data) {
-    return Logic.request("users/update-password", "update", null, data);
+    return Logic.request("users/update-password", "post", null, data);
   }
   static async changePassword(data) {
     return Logic.request("users/change-password", "update", null, data);
@@ -120,6 +120,7 @@ class API {
   static async updateTenant(user, id) {
     return Logic.request("users", "update", id, user);
   }
+
 
   // -------------------------------- apartments --------------------------------
   static async getAllApartments(params) {

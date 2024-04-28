@@ -10,10 +10,10 @@ import Image from "next/image";
 const tenantColumns = (t, handleUpdate, setShowDeleteModal, date_format, is_super_admin) => [
   {
     name: t("image_key"),
-    selector: (row) => row?.photo?.public_id,
+    selector: (row) => row?.photo?.secure_url,
     cell: (row) => <Image
-      width={50}
-      height={50}
+      width={40}
+      height={40}
       className="rounded"
       src={row?.photo?.secure_url}
     />,

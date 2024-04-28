@@ -15,8 +15,57 @@ const GlobalSetting = ({ children }) => {
     } else {
       dispatch(toggleTheme("light"));
     }
-    setIsRender(false)
+    setIsRender(false);
+
+
+
+
+    let hidden, visibilityChange;
+    if (typeof document.hidden !== "undefined") {
+      hidden = "hidden";
+      visibilityChange = "visibilitychange";
+    } else if (typeof document.msHidden !== "undefined") {
+      hidden = "msHidden";
+      visibilityChange = "msvisibilitychange";
+    } else if (typeof document.webkitHidden !== "undefined") {
+      hidden = "webkitHidden";
+      visibilityChange = "webkitvisibilitychange";
+    }
+
+    const handleVisibilityChange = () => {
+      if (document[hidden]) {
+        showNotification();
+      }
+    };
+
+    document.addEventListener(visibilityChange, handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener(visibilityChange, handleVisibilityChange);
+    };
+
   }, []);
+
+
+
+
+  const showNotification = () => {
+    if ('Notification' in window) {
+      Notification.requestPermission().then(function (result) {
+        if (result === 'granted') {
+          setTimeout(() => {
+            new Notification('Come back!', {
+              body: 'We miss you. Click to return to our site.',
+              icon: '/favicon.ico'
+            }).onclick = function () {
+              window.focus();
+            };
+          }, 1000);
+        }
+      });
+    }
+  };
+
 
   return <>{!isRender && children}</>;
 };

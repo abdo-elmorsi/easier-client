@@ -28,8 +28,8 @@ const options = {
 
     jwt({ token, trigger, session }) {
       if (trigger === 'update' && session) {
-        const { user: { name } } = session;
-        token.name = name;
+        const { user } = session;
+        token.name = user;
       }
       return token;
     },

@@ -27,7 +27,7 @@ function FileInput({ value, label, name, className, errorMsg, onChange, placehol
       <div className={`${className}`}>
         <label className="block" htmlFor={name}>
           <span className="block text-sm text-gray-800 dark:text-white">{label} {mandatory && <span className="text-red-500">*</span>}</span>
-          <div className={`${disabled && "bg-gray-400"}  relative flex items-center justify-between px-4 py-2 border rounded-lg`}>
+          <div className={`${disabled ? 'bg-gray-400' : ''}  relative hidden items-center justify-between px-4 py-2 border rounded-lg`}>
             <input
               className="hidden"
               type="file"
