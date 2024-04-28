@@ -139,7 +139,8 @@ export const getServerSideProps = async ({ req, locale, resolvedUrl }) => {
   const session = await getSession({ req: req });
   const userRole = session?.user?.role;
 
-  if (!session || (userRole !== "admin" && userRole !== "superAdmin")) {
+  if (!session) {
+    // if (!session || (userRole !== "admin" && userRole !== "superAdmin")) {
     const loginUrl = locale === "en" ? `/${locale}/login` : "/login";
     return {
       redirect: {
