@@ -16,10 +16,16 @@ import ChatBox from "components/pages/chats/ChatBox";
 import moment from "moment";
 import Image from "next/image";
 
+import { io } from "socket.io-client"
+import config from "config/config";
+
+
+
 const Index = ({ session }) => {
+  const [socket, setSocket] = useState({});
+
   const { t } = useTranslation("common");
   const router = useRouter();
-  const is_super_admin = isSuperAdmin(session);
   const language = router.locale.toLowerCase();
   const date_format = language === 'en' ? 'DD/MM/YYYY' : 'YYYY/MM/DD';
 
@@ -30,6 +36,7 @@ const Index = ({ session }) => {
 
 
   useEffect(() => {
+    setSocket(io.connect(`${config.apiGateway.production_main_domain}:4000`))
     let admin_id = null;
     const isUser = session.user.role == "user";
     if (isUser) {
@@ -37,19 +44,24 @@ const Index = ({ session }) => {
     } else {
       admin_id = session.user._id
     }
-    (async () => {
-      const data = await API.getAllTenants({
-        sort: "updatedAt",
-        // select: "name role",
-        // ...(!is_super_admin ? { filters: `admin_id=${admin_id}` } : {}),
-        page: 1,
-        limit: 100
-      })
-      const items = data.items;
-      setUsers(items);
-      setLoading(false);
-    })();
+    try {
+      (async () => {
+        const data = await API.getAllTenants({
+          sort: "updatedAt",
+          // select: "name role",
+          ...(!is_super_admin ? { filters: `admin_id=${admin_id}` } : {}),
+          page: 1,
+          limit: 100
+        })
+        const items = data.items;
+        setUsers(items);
+        setLoading(false);
+      })();
+    } catch (error) {
+      handleMessage(error)
+    }
   }, []);
+
 
 
   return (
@@ -98,7 +110,7 @@ const Index = ({ session }) => {
 
         {/* Chat box */}
         <div className="flex-1 ">
-          <ChatBox selectedUser={selectedUser} user={session?.user} />
+          <ChatBox socket={socket} selectedUser={selectedUser} user={session?.user} />
         </div>
       </div>
 

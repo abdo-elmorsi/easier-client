@@ -96,7 +96,7 @@ export default function AddUpdateModal({ fetchReport, handleClose, session }) {
             <PieceSearch
               tower_id={tower_id.value?.value}
               isDisabled={!tower_id.value?.value}
-              isOptionDisabled={(option) => console.log(option)}
+              isOptionDisabled={(option) => {}}
               // label={t("tower_key")}
               piece={piece_id}
             />
