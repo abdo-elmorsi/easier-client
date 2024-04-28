@@ -50,7 +50,7 @@ const Index = ({ session }) => {
         const data = await API.getAllTenants({
           sort: "updatedAt",
           // select: "name role",
-          ...(!is_super_admin ? { filters: `admin_id=${admin_id}` } : {}),
+          // ...(!is_super_admin ? { filters: `admin_id=${admin_id}` } : {}),
           page: 1,
           limit: 100
         })
@@ -139,8 +139,7 @@ export const getServerSideProps = async ({ req, locale, resolvedUrl }) => {
   const session = await getSession({ req: req });
   const userRole = session?.user?.role;
 
-  if (!session) {
-    // if (!session || (userRole !== "admin" && userRole !== "superAdmin")) {
+  if (!session || (userRole !== "admin" && userRole !== "superAdmin")) {
     const loginUrl = locale === "en" ? `/${locale}/login` : "/login";
     return {
       redirect: {

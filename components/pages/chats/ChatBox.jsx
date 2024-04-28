@@ -56,7 +56,8 @@ const ChatBox = ({ user, selectedUser, socket }) => {
     try {
       const res = await API.getAllMessages({
         page: 1,
-        limit: 10,
+        limit: 1000,
+        sort: "createdAt",
         recipient: selectedUser._id,
       });
       setMessages(res.items);
@@ -64,6 +65,9 @@ const ChatBox = ({ user, selectedUser, socket }) => {
       handleMessage(error);
     } finally {
       setLoading(false);
+      setTimeout(() => {
+        scrollToBottom()
+      }, 100);
     }
   };
 
@@ -94,7 +98,7 @@ const ChatBox = ({ user, selectedUser, socket }) => {
       </div>
       <div className="overflow-auto hide-scroll-bar dark:bg-gray-800 bg-gray-200 rounded-md p-2 h-full my-2">
         {loading ? (
-          Array(6)
+          Array(3)
             .fill({})
             .map((_, index) => (
               <div
