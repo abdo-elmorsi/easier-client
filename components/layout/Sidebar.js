@@ -168,7 +168,7 @@ const Sidebar = React.memo(() => {
                   )}
                 </React.Fragment>
               ) : (
-                <li onClick={() => activeAdminSubMenu && setActiveAdminSubMenu(null)}>
+                <li key={tab.href} onClick={() => activeAdminSubMenu && setActiveAdminSubMenu(null)}>
                   <Link href={tab.href}>
                     <div
                       className={`${tab.current

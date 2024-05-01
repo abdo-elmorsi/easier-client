@@ -2,10 +2,12 @@ import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { Button, Input } from "components/UI";
 import API from "helper/apis";
 import { useHandleMessage, useInput } from "hooks";
+import moment from "moment";
 import Image from "next/image";
 import React, { useEffect, useState, useRef } from "react";
+import { toast } from "react-toastify";
 
-const ChatBox = ({ user, selectedUser, socket }) => {
+const ChatBox = ({ user, selectedUser, users, setUsers, socket }) => {
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState([]);
   const message = useInput("");
@@ -15,15 +17,17 @@ const ChatBox = ({ user, selectedUser, socket }) => {
   const handleMessageSend = async (e) => {
     e.preventDefault();
     try {
+      const messageContent = message.value.trim();
+      if (!messageContent) return;
       const data = {
         sender: user._id,
-        recipient: selectedUser._id,
-        message: message.value.trim(),
+        recipient: selectedUser?._id,
+        message: messageContent,
         socketID: socket.id,
       };
       message.reset();
-      const res = await API.createMessage(data);
-      setMessages((prevMessages) => [...prevMessages, res]);
+      const newMessage = await API.createMessage(data);
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
       socket.emit("sendMessage", data);
       scrollToBottom();
     } catch (error) {
@@ -32,41 +36,58 @@ const ChatBox = ({ user, selectedUser, socket }) => {
   };
 
   const handleIncomingMessage = (data) => {
+    if (data?.sender !== selectedUser?._id) {
+      setUsers((prevUsers) => {
+        const updatedUsers = prevUsers.map((user) => {
+          if (user._id === data.sender) {
+            return {
+              ...user,
+              onLine: true,
+              lastMessage: data.message,
+              updatedAt: new Date(),
+            };
+          }
+          return user;
+        });
+        return updatedUsers;
+      });
+
+      toast.success(`New message from ${users.find(user => user?._id == data?.sender)?.name}`);
+      return;
+    }
     setMessages((prevMessages) => [...prevMessages, data]);
     scrollToBottom();
   };
-  useEffect(() => {
-    if (socket.id) {
-      user._id && socket?.emit("newUser", user._id);
-      socket.on("getMessage", handleIncomingMessage);
-      return () => {
-        socket.off("getMessage");
-      };
-    }
-  }, [socket, socket.id]);
 
   useEffect(() => {
-    if (selectedUser?._id) {
-      fetchChat();
+    if (socket.id) {
+      socket.on("getMessage", handleIncomingMessage);
+      return () => {
+        socket.off("getMessage", handleIncomingMessage);
+      };
     }
-  }, [selectedUser]);
+  }, [socket, socket.id, selectedUser._id]);
+
+  useEffect(() => {
+    fetchChat();
+  }, [selectedUser._id]);
 
   const fetchChat = async () => {
     setLoading(true);
     try {
-      const res = await API.getAllMessages({
+      const chatData = await API.getAllMessages({
         page: 1,
         limit: 1000,
         sort: "createdAt",
         recipient: selectedUser._id,
       });
-      setMessages(res.items);
+      setMessages(chatData.items);
     } catch (error) {
       handleMessage(error);
     } finally {
       setLoading(false);
       setTimeout(() => {
-        scrollToBottom()
+        scrollToBottom();
       }, 100);
     }
   };
@@ -74,6 +95,7 @@ const ChatBox = ({ user, selectedUser, socket }) => {
   const scrollToBottom = () => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
 
   return (
     <div className="flex flex-col justify-between h-full p-4 rounded-lg shadow-md">
@@ -88,13 +110,13 @@ const ChatBox = ({ user, selectedUser, socket }) => {
               src={selectedUser?.photo?.secure_url}
               width={35}
               height={35}
-              alt={selectedUser.name}
+              alt={selectedUser?.name}
               className="rounded-full"
             />
           )}
-          {selectedUser.name}
+          {selectedUser?.name}
         </div>
-        <div>{selectedUser.email}</div>
+        <div>{selectedUser?.email}</div>
       </div>
       <div className="overflow-auto hide-scroll-bar dark:bg-gray-800 bg-gray-200 rounded-md p-2 h-full my-2">
         {loading ? (
@@ -112,15 +134,17 @@ const ChatBox = ({ user, selectedUser, socket }) => {
           messages.map((message, index) => (
             <div
               key={index}
-              className={`px-4 py-2 mb-2 dark:bg-gray-700 bg-gray-300 rounded-lg ${message.sender === user._id ? "text-end" : "text-start"
+              className={`px-4 flex flex-col gap-0 py-2 mb-2 dark:bg-gray-700 bg-gray-300 rounded-lg ${message.sender === user._id ? "text-end" : "text-start"
                 }`}
             >
-              {message.message}
+              <p className="m-0 p-0">{message.message}</p>
+              <span className="opacity-50  duration-500 transition-all text-xs font-thin">{moment(message.createdAt).fromNow()}</span>
             </div>
           ))
         )}
         <div ref={endRef} className="pt-12" />
       </div>
+
       <form className="flex items-center" onSubmit={handleMessageSend}>
         <Input
           formGroup={false}

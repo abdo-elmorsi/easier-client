@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { getSession } from "next-auth/react";
-import PropTypes from "prop-types"
+import PropTypes, { object } from "prop-types"
 import { useRouter } from "next/router";
 import API from 'helper/apis';
 
@@ -61,8 +61,38 @@ const Index = ({ session }) => {
     } catch (error) {
       handleMessage(error)
     }
+
+
+
   }, []);
 
+
+
+  const handleOnlineUsers = useCallback(
+    (onlineUsers) => {
+      setUsers((prevUsers) =>
+        prevUsers.map((user) => ({
+          ...user,
+          online: user._id !== session?.user?._id && onlineUsers.includes(user._id),
+        }))
+      );
+    },
+    [session]
+  );
+  useEffect(() => {
+    if (!loading) {
+      socket.emit("newUser", session.user._id);
+      const handleGetOnlineUsers = (onlineUsers) => {
+        handleOnlineUsers(onlineUsers);
+      };
+
+      socket.on("getOnlineUsers", handleGetOnlineUsers);
+
+      return () => {
+        socket.off("getOnlineUsers", handleGetOnlineUsers);
+      };
+    }
+  }, [loading]);
 
 
   return (
@@ -72,8 +102,8 @@ const Index = ({ session }) => {
           <ul className="h-full overflow-y-auto hide-scroll-bar">
             {loading ? (
               <>
-                {Array(6).fill({}).map(i => {
-                  return <div className="flex w-full h-28 justify-start items-center gap-4">
+                {Array(6).fill({}).map((i, index) => {
+                  return <div key={index} className="flex w-full h-28 justify-start items-center gap-4">
                     <div className="animate-pulse w-12 h-12 rounded-full bg-gray-600"></div>
                     <div className="flex flex-col flex-1">
                       <div className="mb-2 animate-pulse w-full h-5 rounded-sm bg-gray-600"></div>
@@ -91,7 +121,7 @@ const Index = ({ session }) => {
                     ) : (
                       <Image src={user?.photo?.secure_url} width={100} height={100} alt={user.name} className="rounded-full" />
                     )}
-                    <span className="absolute left-0 w-2 h-2 bg-green-400 rounded-full top-2"></span>
+                    {user?.online && <span className="absolute left-0 w-2 h-2 bg-green-400 rounded-full top-2"></span>}
                     <div className="flex-col hidden sm:flex">
 
                       <div className="flex items-center gap-2">
@@ -99,7 +129,7 @@ const Index = ({ session }) => {
                         <span className="text-xs font-semibold text-gray-300 ">{moment(user?.updatedAt).format(date_format)}</span>
                       </div>
 
-                      <p className=" text-nowrap overflow-hidden text-ellipsis sm:w-[200px]">Lorem ipsum dolor Lorem ipsum dolor sit amet ipsum dolor si </p>
+                      <p className=" text-nowrap overflow-hidden text-ellipsis sm:w-[200px]">{user?.lastMessage || ""}</p>
                     </div>
                   </li>
                 );
@@ -111,7 +141,13 @@ const Index = ({ session }) => {
 
         {/* Chat box */}
         <div className="flex-1 ">
-          <ChatBox socket={socket} selectedUser={selectedUser} user={session?.user} />
+          {selectedUser?._id && <ChatBox
+            socket={socket}
+            users={users}
+            setUsers={setUsers}
+            selectedUser={selectedUser}
+            user={session?.user}
+          />}
         </div>
       </div>
 
