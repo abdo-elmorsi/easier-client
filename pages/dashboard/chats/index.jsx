@@ -37,7 +37,7 @@ const Index = ({ session }) => {
 
 
   useEffect(() => {
-    setSocket(io.connect(`${config.apiGateway.production_main_domain}:4000`))
+    setSocket(io.connect(`${config.apiGateway.production_main_domain}`))
     let admin_id = null;
     const isUser = session.user.role == "user";
     if (isUser) {
